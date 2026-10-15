@@ -4,7 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// World-space speech box shown above whoever is talking. Tap anywhere for the next line; after the last line it closes.
+// World-space speech box shown above whoever is talking. Each line types out letter by letter; a tap while typing
+// shows the whole line, the next tap goes to the next line. After the last line it closes.
 // Yarn dialogue uses Say instead: one line at a time, and the box stays open until Close.
 // The box grows to fit each line: text wraps at maxTextWidth and the box height follows the line count.
 public class DialogBubble : MonoBehaviour
@@ -19,6 +20,12 @@ public class DialogBubble : MonoBehaviour
     [Tooltip("Pixels between the text and the box edges (x: left/right, y: top/bottom).")]
     [SerializeField] private Vector2Int padding = new Vector2Int(6, 4);
 
+    [Header("Typewriter")]
+    [Tooltip("Letters revealed per second. 0 shows each line at once.")]
+    [SerializeField, Min(0f)] private float charactersPerSecond = 40f;
+    [Tooltip("Extra seconds after . ! ? (half of it after , ; :).")]
+    [SerializeField, Min(0f)] private float punctuationPause = 0.2f;
+
     private PlayerMove player;
     private Transform speaker;
     private Renderer speakerRenderer;
@@ -29,8 +36,12 @@ public class DialogBubble : MonoBehaviour
     private int openedFrame;
     private int boxHeight;
     private bool waitForNext; // Say mode: the last tap reports back instead of closing
+    private int visibleCount;
+    private int totalCount;
+    private float typeTimer;
 
     public bool IsOpen => lines != null;
+    public bool IsTyping => IsOpen && visibleCount < totalCount;
 
     private void Awake()
     {
@@ -100,12 +111,19 @@ public class DialogBubble : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOpen) return;
         // Ignore the tap that picked the choice which started this dialog.
-        if (!IsOpen || Time.frameCount == openedFrame) return;
+        if (Time.frameCount != openedFrame) ReadTap();
+        if (IsOpen) Type();
+    }
+
+    private void ReadTap()
+    {
         Pointer pointer = Pointer.current;
         // Advance on release, so the touch that ends the dialog cannot also start a new interaction.
         if (pointer == null || !pointer.press.wasReleasedThisFrame) return;
-        if (lineIndex + 1 < lines.Count) ShowLine(lineIndex + 1);
+        if (IsTyping) RevealAll();
+        else if (lineIndex + 1 < lines.Count) ShowLine(lineIndex + 1);
         else if (waitForNext)
         {
             // Later taps do nothing until the next Say.
@@ -129,13 +147,49 @@ public class DialogBubble : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.Undo.RecordObjects(new UnityEngine.Object[] { box, text, text.rectTransform }, "Preview Dialog Layout");
 #endif
+        text.maxVisibleCharacters = 99999;
         LayoutLine(string.IsNullOrWhiteSpace(text.text) ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit." : text.text);
     }
 
+    // The box is laid out for the whole line first, so it keeps its size while the letters appear.
     private void ShowLine(int index)
     {
         lineIndex = index;
         LayoutLine(lines[index]);
+        text.ForceMeshUpdate();
+        totalCount = text.textInfo.characterCount;
+        visibleCount = charactersPerSecond > 0f ? 0 : totalCount;
+        typeTimer = 0f;
+        text.maxVisibleCharacters = visibleCount;
+    }
+
+    private void RevealAll()
+    {
+        visibleCount = totalCount;
+        text.maxVisibleCharacters = visibleCount;
+    }
+
+    private void Type()
+    {
+        if (visibleCount >= totalCount) return;
+        if (charactersPerSecond <= 0f) { RevealAll(); return; }
+        typeTimer -= Time.unscaledDeltaTime;
+        while (typeTimer <= 0f && visibleCount < totalCount)
+        {
+            typeTimer += 1f / charactersPerSecond + PauseAfter(visibleCount);
+            visibleCount++;
+        }
+        text.maxVisibleCharacters = visibleCount;
+    }
+
+    private float PauseAfter(int index)
+    {
+        switch (text.textInfo.characterInfo[index].character)
+        {
+            case '.': case '!': case '?': return punctuationPause;
+            case ',': case ';': case ':': return punctuationPause * 0.5f;
+            default: return 0f;
+        }
     }
 
     private void LayoutLine(string line)
