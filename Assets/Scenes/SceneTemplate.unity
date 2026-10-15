@@ -480,8 +480,8 @@ Transform:
   m_GameObject: {fileID: 151681765}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.20767999, y: 5.5184603, z: 0}
-  m_LocalScale: {x: 60, y: 16, z: 1}
+  m_LocalPosition: {x: 0.20767999, y: 4.95596, z: 0}
+  m_LocalScale: {x: 60, y: 14.875, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1543805770}
@@ -785,14 +785,14 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 2.969283
-    height: 3.4666667
+    y: 0.055555556
+    width: 0.663997
+    height: 0.66514695
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.3125
+  orthographic size: 8.4375
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -817,7 +817,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0000019073486, y: 2.99848, z: -10}
+  m_LocalPosition: {x: 0.0000017881393, y: 2.4366, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -929,9 +929,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
   m_ComponentVersion: 1
   m_AssetsPPU: 16
-  m_RefResolutionX: 585
+  m_RefResolutionX: 586
   m_RefResolutionY: 270
-  m_CropFrame: 0
+  m_CropFrame: 4
   m_GridSnapping: 2
   m_FilterMode: 0
   m_UpscaleRT: 0
@@ -1105,8 +1105,8 @@ Transform:
   m_GameObject: {fileID: 718640086}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29.20768, y: 5.5184603, z: 0}
-  m_LocalScale: {x: 2, y: 16, z: 1}
+  m_LocalPosition: {x: 29.20768, y: 4.95596, z: 0}
+  m_LocalScale: {x: 2, y: 14.875, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1543805770}
@@ -1622,7 +1622,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 1, y: 3}
+  m_Offset: {x: 1, y: 2.4375}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1632,7 +1632,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 60, y: 18}
+  m_Size: {x: 60, y: 16.875}
   m_EdgeRadius: 0
 --- !u!4 &945857408
 Transform:
@@ -1776,6 +1776,8 @@ MonoBehaviour:
   pixelsPerUnit: 16
   maxTextWidth: 280
   padding: {x: 6, y: 4}
+  charactersPerSecond: 40
+  punctuationPause: 0.2
 --- !u!4 &1326022623
 Transform:
   m_ObjectHideFlags: 0
@@ -2309,8 +2311,8 @@ Transform:
   m_GameObject: {fileID: 1642460116}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -28.79232, y: 5.5184603, z: 0}
-  m_LocalScale: {x: 2, y: 16, z: 1}
+  m_LocalPosition: {x: -28.79232, y: 4.95596, z: 0}
+  m_LocalScale: {x: 2, y: 14.875, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1543805770}
@@ -2447,7 +2449,7 @@ Transform:
   m_GameObject: {fileID: 1763339541}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.20767999, y: 12.51846, z: 0}
+  m_LocalPosition: {x: 0.20767999, y: 11.39346, z: 0}
   m_LocalScale: {x: 60, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
