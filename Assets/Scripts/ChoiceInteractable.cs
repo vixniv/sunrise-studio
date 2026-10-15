@@ -3,12 +3,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere replaces the cue with the ChoiceWheel.
-// Picking a choice plays its dialog above this object; the cue stays hidden until the whole action ends.
+// Picking a choice plays its Yarn node or its dialog lines above this object; the cue stays hidden until the whole action ends.
 public class ChoiceInteractable : MonoBehaviour
 {
     [SerializeField] private GameObject cue;
     [SerializeField] private ChoiceWheel wheel;
     [SerializeField] private DialogBubble dialog;
+    [Tooltip("Only needed for choices with a Yarn Node.")]
+    [SerializeField] private YarnDialogPresenter yarnDialog;
     [Tooltip("World offset from the top of this object's sprite to the bottom of the dialog box.")]
     [SerializeField] private Vector2 dialogOffset = new Vector2(0f, 0.25f);
     [Tooltip("This object's actions. The first one starts in the center of the wheel.")]
@@ -60,7 +62,7 @@ public class ChoiceInteractable : MonoBehaviour
     private void Update()
     {
         // The action runs from opening the wheel until the chosen dialog ends.
-        bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen);
+        bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying);
         if (cue != null) cue.SetActive(nearbyPlayer != null && !busy);
         // Presses that start during the action belong to the wheel or the dialog.
         if (nearbyPlayer == null || wheel == null || busy)
@@ -91,7 +93,9 @@ public class ChoiceInteractable : MonoBehaviour
     {
         ChoiceWheel.Choice choice = choices[index];
         Debug.Log($"{name}: chose {index + 1} ({choice.label})", this);
-        if (dialog != null && choice.dialogLines.Count > 0)
+        if (yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
+            yarnDialog.Play(choice.yarnNode.Trim(), transform, dialogOffset, nearbyPlayer, choice.onChoose.Invoke);
+        else if (dialog != null && choice.dialogLines.Count > 0)
             dialog.Show(transform, dialogOffset, choice.dialogLines, nearbyPlayer, choice.onChoose.Invoke);
         else
             choice.onChoose.Invoke();

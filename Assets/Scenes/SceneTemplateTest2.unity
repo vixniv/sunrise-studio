@@ -368,6 +368,92 @@ MonoBehaviour:
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
   stepSeconds: 0.18
+--- !u!1 &40070000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 40070003}
+  - component: {fileID: 40070002}
+  - component: {fileID: 40070001}
+  m_Layer: 0
+  m_Name: Dialogue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &40070001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40070000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bfe56dce3d8a4db9821fc80c874d923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YarnDialogPresenter
+  runner: {fileID: 40070002}
+  bubble: {fileID: 1326022622}
+  wheel: {fileID: 18589155}
+--- !u!114 &40070002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40070000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bec29c0a230741bdac901dba8da47ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.DialogueRunner
+  yarnProject: {fileID: 7545569452688597077, guid: 25707f925199542afa8707de8c982a69, type: 3}
+  variableStorage: {fileID: 0}
+  lineProvider: {fileID: 0}
+  saliencyStrategy: 0
+  dialoguePresenters:
+  - {fileID: 40070001}
+  verboseLogging: 0
+  autoStart: 0
+  startNode: Start
+  runSelectedOptionAsLine: 0
+  allowOptionFallthrough: 1
+  onNodeStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onNodeComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onDialogueStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onDialogueComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnhandledCommand:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &40070003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40070000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.15459, y: 4.1798, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &151681765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,6 +1229,7 @@ GameObject:
   - component: {fileID: 823554263}
   - component: {fileID: 823554265}
   - component: {fileID: 823554266}
+  - component: {fileID: 823554267}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -1287,10 +1374,12 @@ MonoBehaviour:
   cue: {fileID: 2071071707}
   wheel: {fileID: 18589155}
   dialog: {fileID: 1326022622}
+  yarnDialog: {fileID: 40070001}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    yarnNode: Kirana_Talk
     dialogLines:
     - Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     - Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -1299,30 +1388,48 @@ MonoBehaviour:
         m_Calls: []
   - label: Item
     icon: {fileID: 0}
+    yarnNode: 
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    yarnNode: 
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    yarnNode: 
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    yarnNode: 
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
+--- !u!114 &823554267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823554261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
+  characterName: Kirana
+  dialogOffset: {x: 0, y: 0.25}
 --- !u!1 &851998795
 GameObject:
   m_ObjectHideFlags: 0
@@ -1767,6 +1874,7 @@ GameObject:
   - component: {fileID: 1452229121}
   - component: {fileID: 1452229120}
   - component: {fileID: 1452229122}
+  - component: {fileID: 1452229123}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1938,6 +2046,20 @@ MonoBehaviour:
   runSpeed: 7
   deadZone: 0.02
   runThreshold: 0.12
+--- !u!114 &1452229123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452229117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
+  characterName: Player
+  dialogOffset: {x: 0, y: 0.25}
 --- !u!1 &1543805769
 GameObject:
   m_ObjectHideFlags: 0
@@ -3921,3 +4043,4 @@ SceneRoots:
   - {fileID: 823554262}
   - {fileID: 18589154}
   - {fileID: 1326022623}
+  - {fileID: 40070003}

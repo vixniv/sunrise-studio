@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // World-space speech box shown above whoever is talking. Tap anywhere for the next line; after the last line it closes.
+// Yarn dialogue uses Say instead: one line at a time, and the box stays open until Close.
 // The box grows to fit each line: text wraps at maxTextWidth and the box height follows the line count.
 public class DialogBubble : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class DialogBubble : MonoBehaviour
     private Action onFinished;
     private int openedFrame;
     private int boxHeight;
+    private bool waitForNext; // Say mode: the last tap reports back instead of closing
 
     public bool IsOpen => lines != null;
 
@@ -50,6 +52,31 @@ public class DialogBubble : MonoBehaviour
         onFinished = finished;
         player = listener;
         if (player != null) player.InteractionMenuOpen = true;
+        waitForNext = false;
+        openedFrame = Time.frameCount;
+        box.gameObject.SetActive(true);
+        ShowLine(0);
+        Follow();
+    }
+
+    // Shows one line above talker's sprite (plus talkerOffset); advanced runs on the tap that ends it.
+    // The line stays up until the next Say or Close, so the question is still readable while choices are open.
+    public void Say(Transform talker, Vector2 talkerOffset, string line, PlayerMove listener, Action advanced)
+    {
+        if ((IsOpen && !waitForNext) || talker == null || string.IsNullOrEmpty(line) || box == null || text == null)
+        {
+            advanced?.Invoke();
+            return;
+        }
+        speaker = talker;
+        speakerRenderer = talker.GetComponent<Renderer>();
+        offset = talkerOffset;
+        lines = new[] { line };
+        onFinished = advanced;
+        if (player != null && player != listener) player.InteractionMenuOpen = false;
+        player = listener;
+        if (player != null) player.InteractionMenuOpen = true;
+        waitForNext = true;
         openedFrame = Time.frameCount;
         box.gameObject.SetActive(true);
         ShowLine(0);
@@ -79,6 +106,13 @@ public class DialogBubble : MonoBehaviour
         // Advance on release, so the touch that ends the dialog cannot also start a new interaction.
         if (pointer == null || !pointer.press.wasReleasedThisFrame) return;
         if (lineIndex + 1 < lines.Count) ShowLine(lineIndex + 1);
+        else if (waitForNext)
+        {
+            // Later taps do nothing until the next Say.
+            Action advanced = onFinished;
+            onFinished = null;
+            advanced?.Invoke();
+        }
         else Close();
     }
 

@@ -17,6 +17,8 @@ public class ChoiceWheel : MonoBehaviour
         public string label = "Choice";
         [Tooltip("Optional. When empty, the box shows the choice number instead.")]
         public Sprite icon;
+        [Tooltip("Optional. Yarn node to run after this choice is picked (needs a YarnDialogPresenter). Used instead of Dialog Lines.")]
+        public string yarnNode;
         [Tooltip("Optional. Shown one at a time above the object after this choice is picked; tap for the next line.")]
         [TextArea] public List<string> dialogLines = new List<string>();
         [Tooltip("Runs when this choice's action ends (after its dialog, if any). Leave empty for a choice that does nothing.")]
