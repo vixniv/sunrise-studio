@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 // World-space speech box shown above whoever is talking. Each line types out letter by letter; a tap while typing
 // shows the whole line, the next tap goes to the next line. After the last line it closes.
 // Yarn dialogue uses Say instead: one line at a time, and the box stays open until Close.
 // The box grows to fit each line: text wraps at maxTextWidth and the box height follows the line count.
+// The box slides sideways (and down) to stay inside the camera view when the speaker is near an edge.
 public class DialogBubble : MonoBehaviour
 {
     [Tooltip("Needs a 9-sliced sprite with a center pivot and Draw Mode set to Sliced or Tiled.")]
@@ -19,6 +21,8 @@ public class DialogBubble : MonoBehaviour
     [SerializeField, Min(16)] private int maxTextWidth = 160;
     [Tooltip("Pixels between the text and the box edges (x: left/right, y: top/bottom).")]
     [SerializeField] private Vector2Int padding = new Vector2Int(6, 4);
+    [Tooltip("Minimum pixels between the box and the edges of the camera view.")]
+    [SerializeField, Min(0)] private int screenMargin = 4;
 
     [Header("Typewriter")]
     [Tooltip("Letters revealed per second. 0 shows each line at once.")]
@@ -34,6 +38,7 @@ public class DialogBubble : MonoBehaviour
     private int lineIndex;
     private Action onFinished;
     private int openedFrame;
+    private int boxWidth;
     private int boxHeight;
     private bool waitForNext; // Say mode: the last tap reports back instead of closing
     private int visibleCount;
@@ -210,6 +215,7 @@ public class DialogBubble : MonoBehaviour
         // Even sizes keep the centered box edges on whole pixels.
         width += width % 2;
         height += height % 2;
+        boxWidth = width;
         boxHeight = height;
         box.size = new Vector2(width, height) / pixelsPerUnit;
         text.transform.localPosition = new Vector3(-width / 2 + padding.x, height / 2 - padding.y, 0f) / pixelsPerUnit;
@@ -222,8 +228,39 @@ public class DialogBubble : MonoBehaviour
             ? new Vector3(speakerRenderer.bounds.center.x, speakerRenderer.bounds.max.y, 0f)
             : speaker.position;
         Vector3 anchor = top + (Vector3)offset;
-        float x = Mathf.Round(anchor.x * pixelsPerUnit) / pixelsPerUnit;
-        float y = (Mathf.Round(anchor.y * pixelsPerUnit) + boxHeight / 2) / pixelsPerUnit;
-        box.transform.position = new Vector3(x, y, box.transform.position.z);
+        float x = Mathf.Round(anchor.x * pixelsPerUnit);
+        float y = Mathf.Round(anchor.y * pixelsPerUnit) + boxHeight / 2;
+        if (TryGetViewPixels(out Rect view))
+        {
+            // Edges rounded inward and even box sizes keep the box on whole pixels.
+            float minX = Mathf.Ceil(view.xMin) + boxWidth / 2 + screenMargin;
+            float maxX = Mathf.Floor(view.xMax) - boxWidth / 2 - screenMargin;
+            x = minX <= maxX ? Mathf.Clamp(x, minX, maxX) : Mathf.Round(view.center.x);
+            y = Mathf.Min(y, Mathf.Floor(view.yMax) - boxHeight / 2 - screenMargin);
+        }
+        box.transform.position = new Vector3(x / pixelsPerUnit, y / pixelsPerUnit, box.transform.position.z);
+    }
+
+    // The area the main camera shows, in world pixels. A Pixel Perfect Camera that crops shows exactly its
+    // reference resolution, which can be narrower or shorter than the camera's own aspect.
+    private bool TryGetViewPixels(out Rect view)
+    {
+        view = default;
+        Camera cam = Camera.main;
+        if (cam == null || !cam.orthographic) return false;
+        float halfWidth = cam.orthographicSize * cam.aspect;
+        float halfHeight = cam.orthographicSize;
+        if (cam.TryGetComponent(out PixelPerfectCamera pixelPerfect) && pixelPerfect.enabled && pixelPerfect.assetsPPU > 0)
+        {
+            PixelPerfectCamera.CropFrame crop = pixelPerfect.cropFrame;
+            bool cropX = crop == PixelPerfectCamera.CropFrame.Pillarbox || crop == PixelPerfectCamera.CropFrame.Windowbox || crop == PixelPerfectCamera.CropFrame.StretchFill;
+            bool cropY = crop == PixelPerfectCamera.CropFrame.Letterbox || crop == PixelPerfectCamera.CropFrame.Windowbox || crop == PixelPerfectCamera.CropFrame.StretchFill;
+            if (cropX) halfWidth = pixelPerfect.refResolutionX * 0.5f / pixelPerfect.assetsPPU;
+            if (cropY) halfHeight = pixelPerfect.refResolutionY * 0.5f / pixelPerfect.assetsPPU;
+        }
+        Vector2 center = cam.transform.position;
+        view = Rect.MinMaxRect((center.x - halfWidth) * pixelsPerUnit, (center.y - halfHeight) * pixelsPerUnit,
+            (center.x + halfWidth) * pixelsPerUnit, (center.y + halfHeight) * pixelsPerUnit);
+        return true;
     }
 }
