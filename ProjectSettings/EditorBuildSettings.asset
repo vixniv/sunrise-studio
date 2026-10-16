@@ -6,10 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Prologue.unity
+    guid: f65b23ad303f24386b1234a7ebf23851
+  - enabled: 1
     path: Assets/Scenes/SceneTemplate.unity
     guid: 71d498855b12b40d0ad88e3fe685f178
   - enabled: 1
     path: Assets/Scenes/SchoolMap.unity
     guid: d47d4441907c748f884bfb8a21bdb9f4
+  - enabled: 1
+    path: Assets/Scenes/Dorm.unity
+    guid: 8048f248d6a684e64804ffca506cfd73
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}

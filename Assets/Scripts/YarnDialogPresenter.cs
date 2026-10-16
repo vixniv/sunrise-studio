@@ -7,30 +7,33 @@ using Yarn.Unity;
 // options go to the ChoiceWheel above the player. Add it to the Dialogue Runner's Dialogue Presenters list.
 // A line with a character name ("Kirana: Hi.") shows above the matching DialogSpeaker;
 // a line without one shows above the object the dialogue was started from.
+// Cutscenes pass no player: nobody is frozen, and taps still advance the lines.
 public class YarnDialogPresenter : DialoguePresenterBase
 {
     [SerializeField] private DialogueRunner runner;
     [SerializeField] private DialogBubble bubble;
     [SerializeField] private ChoiceWheel wheel;
 
+    private bool playing;
     private PlayerMove listener;
     private Transform defaultTalker;
     private Vector2 defaultOffset;
     private Action onFinished;
 
-    public bool IsPlaying => listener != null;
+    public bool IsPlaying => playing;
 
     // Runs the Yarn node. Lines without a character name show above defaultTalker (plus talkerOffset).
-    // finished runs once the dialogue ends.
+    // finished runs once the dialogue ends. player may be null (cutscenes).
     public void Play(string node, Transform talker, Vector2 talkerOffset, PlayerMove player, Action finished)
     {
-        if (IsPlaying || runner == null || player == null || runner.IsDialogueRunning)
+        if (IsPlaying || runner == null || runner.IsDialogueRunning)
         {
             finished?.Invoke();
             return;
         }
+        playing = true;
         listener = player;
-        listener.InteractionMenuOpen = true;
+        if (listener != null) listener.InteractionMenuOpen = true;
         defaultTalker = talker;
         defaultOffset = talkerOffset;
         onFinished = finished;
@@ -82,6 +85,11 @@ public class YarnDialogPresenter : DialoguePresenterBase
     public override async YarnTask<DialogueOption> RunOptionsAsync(DialogueOption[] dialogueOptions, LineCancellationToken token)
     {
         if (wheel == null || !IsPlaying) return null;
+        if (listener == null)
+        {
+            Debug.LogWarning("Yarn options need a player to show the ChoiceWheel above; skipping them.", this);
+            return null;
+        }
         // Options whose condition failed are left off the wheel.
         var available = new List<DialogueOption>();
         var choices = new List<ChoiceWheel.Choice>();
@@ -110,8 +118,9 @@ public class YarnDialogPresenter : DialoguePresenterBase
         if (!IsPlaying) return;
         if (wheel != null && wheel.IsOpen) wheel.Close();
         if (bubble != null) bubble.Close();
-        listener.InteractionMenuOpen = false;
+        if (listener != null) listener.InteractionMenuOpen = false;
         Action finished = onFinished;
+        playing = false;
         listener = null;
         defaultTalker = null;
         onFinished = null;
