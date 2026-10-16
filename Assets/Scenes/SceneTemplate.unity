@@ -784,10 +784,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00076277653
-    y: 0
-    width: 0.99827105
-    height: 1
+    x: 0
+    y: 0.055555556
+    width: 0.663997
+    height: 0.66514695
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -4171,10 +4171,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 244974681915686901}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68acfb7ef66aa402abc89678a5ee95c6, type: 3}
+  m_Script: {fileID: 11500000, guid: c8303cdfe9083414589f361c0c2e4da7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorProximityCue
+  m_EditorClassIdentifier: Assembly-CSharp::SceneDoor
   cue: {fileID: 4022139241080342954}
+  destinationScene: SchoolMap
+  tapMaxTravel: 0.02
+  tapMaxSeconds: 0.35
 --- !u!1001 &7946014470556186019
 PrefabInstance:
   m_ObjectHideFlags: 0
