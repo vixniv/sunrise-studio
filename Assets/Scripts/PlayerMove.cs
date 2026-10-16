@@ -19,6 +19,7 @@ public class PlayerMove : MonoBehaviour
 
     public bool IsRunning => running;
     public float MoveX => moveX;
+    public bool InteractionMenuOpen { get; set; }
 
     void Awake() => rb = GetComponent<Rigidbody2D>();
 
@@ -26,6 +27,12 @@ public class PlayerMove : MonoBehaviour
     {
         moveX = 0f;
         running = false;
+
+        if (InteractionMenuOpen)
+        {
+            dragging = false;
+            return;
+        }
 
         ReadPointer();
         if (moveX == 0f) ReadKeyboard(); // editor fallback
@@ -64,6 +71,6 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate()
     {
         float speed = running ? runSpeed : walkSpeed;
-        rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(InteractionMenuOpen ? 0f : moveX * speed, rb.linearVelocity.y);
     }
 }
