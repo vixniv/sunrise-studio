@@ -3628,8 +3628,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleTransition
   circle: {fileID: 2073221585}
   canvasGroup: {fileID: 1099305241}
-  closeDuration: 0.65
-  openDuration: 0.65
+  closeDuration: 0.85
+  openDuration: 0.85
 --- !u!1 &1120512413
 GameObject:
   m_ObjectHideFlags: 0
@@ -5101,7 +5101,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1854310842
 RectTransform:
   m_ObjectHideFlags: 0
