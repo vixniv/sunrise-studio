@@ -1,0 +1,22 @@
+title: Kirana_Talk
+---
+<<if $met_kirana>>
+    Kirana: Back again?
+<<else>>
+    Kirana: Oh! A customer. Welcome in.
+    <<set $met_kirana to true>>
+<<endif>>
+Kirana: What can I do for you?
+-> What do you sell?
+    Kirana: Snacks, soap, phone credit. The usual.
+-> Any news around town?
+    Kirana: They say the old pier lights up at sunrise.
+    Kirana: Never seen it myself.
+-> Nothing, just looking.
+Kirana: Come back anytime.
+===
+
+title: Kirana_Examine
+---
+A small corner shop. The sign is hand-painted.
+===
