@@ -1237,7 +1237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: Cafetaria
   buildingCollider: {fileID: 412458432}
   entryPoint: {fileID: 1976238116}
 --- !u!61 &412458432
@@ -2057,7 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: Classroom
   buildingCollider: {fileID: 803574060}
   entryPoint: {fileID: 326704158}
 --- !u!61 &803574060
@@ -2430,7 +2430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: PhotographyClub
   buildingCollider: {fileID: 834272650}
   entryPoint: {fileID: 852905518}
 --- !u!61 &834272650
@@ -2958,7 +2958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: Auditorium
   buildingCollider: {fileID: 988513711}
   entryPoint: {fileID: 1227743371}
 --- !u!61 &988513711
@@ -5307,7 +5307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: MusicRoom
   buildingCollider: {fileID: 1970477066}
   entryPoint: {fileID: 1037595205}
 --- !u!61 &1970477066

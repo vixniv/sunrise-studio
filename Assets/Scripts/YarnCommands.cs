@@ -24,12 +24,27 @@ public class YarnCommands : MonoBehaviour
     [Tooltip("Plays <<sfx>> sounds. Leave empty to use an Audio Source on this object.")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private List<Sound> sounds = new List<Sound>();
+    [Tooltip("Plays <<freeze_frame>>. Only needed in scenes whose dialogue uses it.")]
+    [SerializeField] private FreezeFrame freezeFrame;
+    [Tooltip("Scene <<loop_end>> loads. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
+    [SerializeField] private string sceneAfterLoopEnd = "";
 
     private bool leaving;
     private bool pausedAudio;
 
     // Last time of day passed to <<scene_load>>; it carries over to the next scene.
     public static string TimeOfDay { get; private set; } = "";
+
+    // Highest loop number passed to <<loop_end>>; 0 until the first loop ends.
+    public static int LoopsCompleted { get; private set; }
+
+    // Clears the static values when Play Mode starts, even with Domain Reload turned off.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetOnPlay()
+    {
+        TimeOfDay = "";
+        LoopsCompleted = 0;
+    }
 
     private void Awake()
     {
@@ -40,6 +55,8 @@ public class YarnCommands : MonoBehaviour
             return;
         }
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
+        if (!(runner.VariableStorage is PersistentVariableStorage))
+            Debug.LogWarning($"{runner.name}'s Variable Storage is not a PersistentVariableStorage, so Yarn variables start over in this scene.", runner);
 
         runner.AddCommandHandler("scene_load", (Func<string, string, YarnTask>)SceneLoad);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
@@ -47,6 +64,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("give_control", (Action)(() => { }));
         runner.AddCommandHandler("sound_cut", (Action)(() => SetAudioPaused(true)));
         runner.AddCommandHandler("sound_resume", (Action)(() => SetAudioPaused(false)));
+        runner.AddCommandHandler("freeze_frame", (Func<YarnTask>)PlayFreezeFrame);
+        runner.AddCommandHandler("loop_end", (Func<int, YarnTask>)LoopEnd);
 
         // Not built yet.
         runner.AddCommandHandler("title_card", (Action)(() => Pending("title_card")));
@@ -61,8 +80,6 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("companion_join", (Action<string>)(who => Pending($"companion_join {who}")));
         runner.AddCommandHandler("search_mode_start", (Action<string>)(id => Pending($"search_mode_start {id}")));
         runner.AddCommandHandler("search_mode_end", (Action<string>)(id => Pending($"search_mode_end {id}")));
-        runner.AddCommandHandler("freeze_frame", (Action)(() => Pending("freeze_frame")));
-        runner.AddCommandHandler("loop_end", (Action<int>)(loop => Pending($"loop_end {loop}")));
     }
 
     // <<scene_load "Dorm" "Morning">>: does nothing when the location is this scene, so a node can open with the
@@ -92,6 +109,26 @@ public class YarnCommands : MonoBehaviour
         }
         // Keeps the dialogue (and the frozen player) waiting until this scene unloads.
         return YarnTask.WaitUntil(() => this == null);
+    }
+
+    private YarnTask PlayFreezeFrame()
+    {
+        if (freezeFrame == null)
+        {
+            Debug.LogWarning($"<<freeze_frame>>: {name} has no Freeze Frame assigned.", this);
+            return YarnTask.CompletedTask;
+        }
+        return freezeFrame.Play();
+    }
+
+    // <<loop_end 1>>: records the finished loop, starts the frozen world again, and loads Scene After Loop End.
+    private YarnTask LoopEnd(int loop)
+    {
+        LoopsCompleted = Mathf.Max(LoopsCompleted, loop);
+        if (freezeFrame != null) freezeFrame.Release();
+        Debug.Log($"<<loop_end {loop}>>", this);
+        if (string.IsNullOrWhiteSpace(sceneAfterLoopEnd)) return YarnTask.CompletedTask;
+        return SceneLoad(sceneAfterLoopEnd, "Morning");
     }
 
     private void PlaySound(string soundName)

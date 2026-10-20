@@ -53,6 +53,15 @@ public class CircleTransition : MonoBehaviour
             return;
         }
 
+        // LoadSceneAsync returns null for these, which would leave the screen covered.
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError(
+                $"CircleTransition: scene \"{sceneName}\" is not in the Build Profile scene list, or the name is misspelled.",
+                this);
+            return;
+        }
+
         StartCoroutine(TransitionRoutine(sceneName));
     }
 

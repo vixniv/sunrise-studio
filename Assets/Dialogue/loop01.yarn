@@ -9,8 +9,10 @@ tags: setup
 <<declare $talked_basketball = false>>
 <<declare $talked_neighbor = false>>
 <<declare $classroom_intro_done = false>>
-<<declare $clue_location = "cafeteria">>
+// Empty until the player picks the cafeteria or the music room in Classroom_Enter. Until then the Observant Student appears in neither.
+<<declare $clue_location = "">>
 <<declare $found_clue = false>>
+<<declare $park_intro_done = false>>
 <<declare $found_redbook = false>>
 <<declare $found_dira = false>>
 <<declare $found_kirana = false>>
@@ -100,8 +102,10 @@ tags: interactable dorm
     -> Yes
         <<minimap_show>>
         <<minimap_set_marker "Auditorium">>
-        <<scene_load "Auditorium" "Morning">>
-        <<jump Auditorium_Arrival>>
+        // Temporary: goes to the school map until the Auditorium scene exists.
+        <<scene_load "SchoolMap" "Morning">>
+        // <<scene_load "Auditorium" "Morning">>
+        // <<jump Auditorium_Arrival>>
     -> Later
         // Closes the dialogue.
 <<else>>
@@ -113,16 +117,20 @@ tags: interactable dorm
 title: Auditorium_Arrival
 tags: cutscene auditorium
 ---
+// Start node of the Auditorium scene. It only plays once, so coming back to the auditorium later skips it.
+<<if $lila_intro_done>>
+    <<stop>>
+<<endif>>
 Narrator: Anin expects rows of graduates in matching uniforms. Instead, every student around her is in their regular uniform. She is the only one dressed for graduation.
 Anin: (under her breath) Isn't graduation today? Am I still dreaming? Why is everyone in their regular uniform?
 <<companion_join "Lila">>
 Lila: Well, well. Looks like someone couldn't wait to graduate. What are you cosplaying, the season finale of a high school slice-of-life anime?
 Narrator: A few students snicker. Even Lila is looking at her like she's lost it.
 Anin: (thought) What is going on? What's the date today? Why hasn't the ceremony started?
--> "What's the date today?"
+-> What's the date today?
     Anin: What's the date today?
     Lila: It's still December 10th, dumbass. And we've got a whole festival to enjoy.
--> "Isn't today graduation day?"
+-> Isn't today graduation day?
     Anin: Isn't today graduation day?
     Lila: Sure is, for you, apparently. Congrats, you're the only graduate. The rest of us are still stuck on December 10th, dumbass, and we've got a whole festival to enjoy.
 Lila: Stop messing around and let's go find Dira and Kirana. We're enjoying this festival together, no excuses!
@@ -146,11 +154,11 @@ tags: interactable auditorium npc
         Anin: Just wanted a fresh look.
         Basketball Student: It's unusual to see you wearing something different, haha. Is this Lila's doing?
         Lila: Sybau.
-        Basketball Student: I've got some training to do. See you, Anin.
     -> I thought today was graduation. Weird, haha.
         Anin: I thought today was graduation. Weird, haha.
         Basketball Student: Everyone can't wait for graduation, so we can finally be free of this school.
-        // Closing line is still undecided. The "training" exit line from the other branch could be reused here.
+    // Placeholder: both answers end with the "training" line for now.
+    Basketball Student: I've got some training to do. See you, Anin.
 <<endif>>
 ===
 
@@ -168,13 +176,21 @@ tags: interactable auditorium npc
     -> It's all Kirana's fault.
         Anin: It's all Kirana's fault.
         Student Next Door: Having you and Kirana as my neighbors made high school a lot more interesting. Any plans after graduation?
-    -> Mm, yeah. Seems like everyone can't wait to graduate.
-        Anin: Mm, yeah. Seems like everyone can't wait to graduate.
-    -> I don't know. I haven't made any plans yet.
-        Anin: I don't know. I haven't made any plans yet.
-    -> I just want to keep enjoying school while there's still time.
-        Anin: I just want to keep enjoying school while there's still time.
+    // Both answers end with a question about after graduation. The answers live in their own node:
+    // a second group of options written right below the first would merge into one five-option wheel.
+    <<jump Auditorium_NeighborStudent_Plans>>
 <<endif>>
+===
+
+title: Auditorium_NeighborStudent_Plans
+tags: auditorium npc
+---
+-> Mm, yeah. Seems like everyone can't wait to graduate.
+    Anin: Mm, yeah. Seems like everyone can't wait to graduate.
+-> I don't know. I haven't made any plans yet.
+    Anin: I don't know. I haven't made any plans yet.
+-> I just want to keep enjoying school while there's still time.
+    Anin: I just want to keep enjoying school while there's still time.
 ===
 
 title: Auditorium_Door
@@ -184,8 +200,8 @@ tags: interactable auditorium
     Anin: Head to the classroom?
     -> Yes
         Narrator: Anin decides she has either lost her mind or is about to. Either way, she and Lila head to their classroom.
+        // The Classroom scene's Intro plays Classroom_Enter as its start node.
         <<scene_load "Classroom" "Morning">>
-        <<jump Classroom_Enter>>
     -> No
         // Closes the dialogue.
 <<endif>>
@@ -194,6 +210,10 @@ tags: interactable auditorium
 title: Classroom_Enter
 tags: cutscene classroom
 ---
+// Start node of the Classroom scene. It only plays once, so coming back to the classroom later skips it.
+<<if $classroom_intro_done>>
+    <<stop>>
+<<endif>>
 Narrator: Dira sits alone by the window, writing something in a notebook. She doesn't look up until Lila bursts through the door.
 Lila: DIRAAA! LOOK AT THIS DUMBASS! Someone graduated early today. Cum laude, too, for outstanding academic performance.
 Narrator: Dira laughs softly behind her hand, careful not to hurt Anin's feelings.
@@ -209,7 +229,7 @@ Dira: She asked to borrow my book, then just ran off with it. I have no idea whe
 <<quest_check "find_the_gang" "Dira">>
 Anin: Let's look for her at...
 -> The cafeteria
-    <<set $clue_location to "cafeteria">>
+    <<set $clue_location to "cafetaria">>
 -> The music room
     <<set $clue_location to "music_room">>
 <<minimap_set_event_marker $clue_location>>
@@ -237,7 +257,9 @@ tags: interactable classroom
     -> Yes
         <<minimap_show>>
         // Minimap shows the "!" event icon at the cafeteria or music room. This also introduces the minimap events.
-        <<scene_load $clue_location "Morning">>
+        // Temporary: goes to the school map until the cafeteria and music room scenes exist.
+        <<scene_load "SchoolMap" "Morning">>
+        // <<scene_load $clue_location "Morning">>
     -> No
         // Closes the dialogue.
 <<endif>>
@@ -246,7 +268,7 @@ tags: interactable classroom
 title: Clue_ObservantStudent
 tags: interactable clue npc
 ---
-// Same NPC and dialogue in the cafeteria and the music room. Only the background changes.
+// Same NPC and dialogue in the cafeteria and the music club room. Only the background changes.
 <<if $found_clue>>
     Observant Student: Good luck finding her!
 <<else>>
@@ -260,21 +282,26 @@ tags: interactable clue npc
     Observant Student: Oh yeah, she was rushing toward the school park with a red book in her hand. Weird to see Kirana holding a book.
     Anin: School park, noted. Thanks!
     <<set $found_clue to true>>
-    <<minimap_set_marker "SchoolPark">>
+    // <<minimap_set_marker "SchoolPark">>
     Narrator: The three of them hurry over.
-    <<scene_load "SchoolPark" "LateMorning">>
-    <<jump Park_Intro>>
+    // The SchoolPark scene's Intro plays Park_Intro as its start node.
+    // <<scene_load "SchoolPark" "LateMorning">>
 <<endif>>
 ===
 
 title: Park_Intro
 tags: cutscene park
 ---
+// Start node of the SchoolPark scene. It only plays once, so coming back to the park later skips it.
+<<if $park_intro_done>>
+    <<stop>>
+<<endif>>
 Narrator: The park is packed shoulder to shoulder with festival-goers.
 Dira: There are way too many people. We'll never find Kirana in this sea of people.
 Lila: Not even Moses could part this crowd. C'mon, Anin, use your spider-sense. You two have been glued together for years.
 Dira: Let's just look for my book. It's bright red, so it should stand out.
 <<search_mode_start "red_book">>
+<<set $park_intro_done to true>>
 <<give_control>>
 ===
 
@@ -304,13 +331,6 @@ Student at Dart Game: If I win this, I can get the plushie that Student X wants.
 Anin: (thought) Is he the one with a crush on Student X?
 ===
 
-title: Park_StudentGroup
-tags: interactable park npc
----
-// Dialogue not written yet. Decide whether this group is a decoy that points toward the Student with the Red Book, or just flavor.
-Student: ...
-===
-
 title: Park_RedBook
 tags: interactable park npc
 ---
@@ -335,14 +355,17 @@ tags: interactable park npc
     Anin: Thanks.
     <<search_mode_end "red_book">>
     <<minimap_set_marker "PhotographyClub">>
-    <<scene_load "PhotographyClub" "Noon">>
-    <<jump Club_Cutscene>>
+    // The player walks to the photography club on the school map. Its Intro plays PhotographyClub_Cutscene as its start node.
 <<endif>>
 ===
 
-title: Club_Cutscene
+title: PhotographyClub_Cutscene
 tags: cutscene club
 ---
+// Start node of the PhotographyClub scene. It only plays once, so coming back to the club later skips it.
+<<if $found_kirana>>
+    <<stop>>
+<<endif>>
 Narrator: The room is cluttered with props and backdrops, with a few photo sessions running at once. It's quieter here. The first thing they see is Kirana, posing in front of the photo backdrop.
 Lila: KIRANUY! We've been looking all over for you!
 Narrator: Lila sprints over, and lands squarely in the frame just as the club member snaps the shutter.
@@ -366,6 +389,7 @@ Narrator: She shoots the club member a look.
 <<quest_complete "find_the_gang">>
 Photography Club Member: (flatly) Okay. Everyone say "cheese."
 Narrator: The four of them squeeze into the frame. The shutter clicks.
+// Flash, then the world stays frozen through Loop1_End until <<loop_end>> releases it.
 <<freeze_frame>>
 <<jump Loop1_End>>
 ===
