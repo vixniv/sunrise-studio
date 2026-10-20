@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5475098831631229392}
   - component: {fileID: 168716947436891891}
   m_Layer: 0
-  m_Name: InteractionCue 1
+  m_Name: InteractionCue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

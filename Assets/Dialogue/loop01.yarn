@@ -1,0 +1,380 @@
+title: Declarations
+tags: setup
+---
+// Never run this node. It only holds variable declarations for Yarn Spinner 2.4+/3.
+// Delete the <<declare>> lines if your project uses an older version or declares variables in code.
+
+<<declare $dressed = false>>
+<<declare $lila_intro_done = false>>
+<<declare $talked_basketball = false>>
+<<declare $talked_neighbor = false>>
+<<declare $classroom_intro_done = false>>
+<<declare $clue_location = "cafeteria">>
+<<declare $found_clue = false>>
+<<declare $found_redbook = false>>
+<<declare $found_dira = false>>
+<<declare $found_kirana = false>>
+===
+
+title: Prologue
+tags: cutscene
+---
+<<scene_load "SchoolPark" "Prologue">>
+Narrator: The school festival is in full swing. Bazaar stalls line the paths, a band plays on a makeshift stage, and students crowd around game booths, laughing and trading snacks. Every corner has something going on. For one afternoon, the school looks like a utopia.
+Narrator: The camera drifts through the crowd and settles on Anin, standing at the edge of it all.
+Anin: (to herself) What a fun day... I still can't believe the best three years of my life end tomorrow. What's everyone going to do after graduation?
+Narrator: Kirana, Dira, and Lila push through the crowd toward her.
+Kirana: There you are! What took you so long?
+Lila: I didn't know you could take a nap in the bathroom.
+Dira: Okay, enough, you two. Let's go try the gulali from class 1-C.
+Narrator: The three of them walk ahead, bickering and laughing. Anin hangs back a step and watches them, a sight she will never forget.
+Anin: (quietly) I don't want this to end. I wish I could stay in high school forever.
+<<sound_cut>>
+Narrator: All sound cuts out. For one second, the world holds perfectly still.
+<<sound_resume>>
+Narrator: Then the noise rushes back. Anin blinks, shakes it off, and hurries after her friends.
+<<title_card>>
+<<jump Dorm_Intro>>
+===
+
+title: Dorm_Intro
+tags: cutscene dorm
+---
+<<scene_load "Dorm" "Morning">>
+<<sfx "alarm_clock">>
+// Narrator: An alarm blares. Anin's hand gropes out from under the blanket and slaps at the clock until it stops.
+Anin: Good morn... huh?
+(Kirana's bed is empty.)
+Anin: Where's Kirana? There's no way she'd leave without me. Not on graduation day.
+<<give_control>>
+<<quest_start "graduation_day" "Get ready for the ceremony.">>
+===
+
+title: Dorm_Bed
+tags: interactable dorm
+---
+Anin: No time to lie around, Anin...
+===
+
+title: Dorm_Poster
+tags: interactable dorm
+---
+Anin: Kirana's favorite band. I don't listen to this kind of music.
+===
+
+title: Dorm_Calendar
+tags: interactable dorm
+---
+// Placeholder text. Replace with the final line.
+Anin: December 10th... graduation is tomorrow, right? ...Right?
+===
+
+title: Dorm_Desk
+tags: interactable dorm
+---
+<<if $dressed>>
+    Anin: I'm all ready. Time to go.
+<<else>>
+    Anin: I should hurry.
+    -> Get dressed
+        <<jump Dorm_Dressing>>
+    -> Do nothing
+        // Closes the dialogue.
+<<endif>>
+===
+
+title: Dorm_Dressing
+tags: cutscene dorm
+---
+<<set $dressed to true>>
+Narrator: Anin showers, does her makeup in a rush, and puts on her graduation uniform.
+Narrator: She stops in front of the mirror. For a moment, she just looks at herself. A single tear slides down her cheek before she even notices it. She doesn't know why.
+<<quest_update "graduation_day" "Go to the auditorium.">>
+===
+
+title: Dorm_Door
+tags: interactable dorm
+---
+<<if $dressed>>
+    Anin: Leave the room?
+    -> Yes
+        <<minimap_show>>
+        <<minimap_set_marker "Auditorium">>
+        <<scene_load "Auditorium" "Morning">>
+        <<jump Auditorium_Arrival>>
+    -> Later
+        // Closes the dialogue.
+<<else>>
+    // Blocked until the player picks "Get dressed" at the desk.
+    Anin: I can't go out like this.
+<<endif>>
+===
+
+title: Auditorium_Arrival
+tags: cutscene auditorium
+---
+Narrator: Anin expects rows of graduates in matching uniforms. Instead, every student around her is in their regular uniform. She is the only one dressed for graduation.
+Anin: (under her breath) Isn't graduation today? Am I still dreaming? Why is everyone in their regular uniform?
+<<companion_join "Lila">>
+Lila: Well, well. Looks like someone couldn't wait to graduate. What are you cosplaying, the season finale of a high school slice-of-life anime?
+Narrator: A few students snicker. Even Lila is looking at her like she's lost it.
+Anin: (thought) What is going on? What's the date today? Why hasn't the ceremony started?
+-> "What's the date today?"
+    Anin: What's the date today?
+    Lila: It's still December 10th, dumbass. And we've got a whole festival to enjoy.
+-> "Isn't today graduation day?"
+    Anin: Isn't today graduation day?
+    Lila: Sure is, for you, apparently. Congrats, you're the only graduate. The rest of us are still stuck on December 10th, dumbass, and we've got a whole festival to enjoy.
+Lila: Stop messing around and let's go find Dira and Kirana. We're enjoying this festival together, no excuses!
+Lila: Dira's probably in the classroom doing next semester's homework for fun. Lead the way, boss.
+<<quest_strike "graduation_day">>
+<<quest_start "find_the_gang" "Find Lila, Dira, and Kirana.">>
+<<quest_check "find_the_gang" "Lila">>
+<<set $lila_intro_done to true>>
+<<give_control>>
+===
+
+title: Auditorium_BasketballStudent
+tags: interactable auditorium npc
+---
+<<if $talked_basketball>>
+    Narrator: He's too busy dribbling to notice you.
+<<else>>
+    <<set $talked_basketball to true>>
+    Basketball Student: Oh, hey Anin. Why are you wearing a graduation uniform?
+    -> Just wanted a fresh look.
+        Anin: Just wanted a fresh look.
+        Basketball Student: It's unusual to see you wearing something different, haha. Is this Lila's doing?
+        Lila: Sybau.
+        Basketball Student: I've got some training to do. See you, Anin.
+    -> I thought today was graduation. Weird, haha.
+        Anin: I thought today was graduation. Weird, haha.
+        Basketball Student: Everyone can't wait for graduation, so we can finally be free of this school.
+        // Closing line is still undecided. The "training" exit line from the other branch could be reused here.
+<<endif>>
+===
+
+title: Auditorium_NeighborStudent
+tags: interactable auditorium npc
+---
+<<if $talked_neighbor>>
+    Student Next Door: Let's make the most of the festival, Anin!
+<<else>>
+    <<set $talked_neighbor to true>>
+    Student Next Door: Morning, Anin. What's with the graduation uniform?
+    -> Nothing, I just wanted to.
+        Anin: Nothing, I just wanted to.
+        Student Next Door: It does look good on you. I can't wait to graduate and go to uni. How about you?
+    -> It's all Kirana's fault.
+        Anin: It's all Kirana's fault.
+        Student Next Door: Having you and Kirana as my neighbors made high school a lot more interesting. Any plans after graduation?
+    -> Mm, yeah. Seems like everyone can't wait to graduate.
+        Anin: Mm, yeah. Seems like everyone can't wait to graduate.
+    -> I don't know. I haven't made any plans yet.
+        Anin: I don't know. I haven't made any plans yet.
+    -> I just want to keep enjoying school while there's still time.
+        Anin: I just want to keep enjoying school while there's still time.
+<<endif>>
+===
+
+title: Auditorium_Door
+tags: interactable auditorium
+---
+<<if $lila_intro_done>>
+    Anin: Head to the classroom?
+    -> Yes
+        Narrator: Anin decides she has either lost her mind or is about to. Either way, she and Lila head to their classroom.
+        <<scene_load "Classroom" "Morning">>
+        <<jump Classroom_Enter>>
+    -> No
+        // Closes the dialogue.
+<<endif>>
+===
+
+title: Classroom_Enter
+tags: cutscene classroom
+---
+Narrator: Dira sits alone by the window, writing something in a notebook. She doesn't look up until Lila bursts through the door.
+Lila: DIRAAA! LOOK AT THIS DUMBASS! Someone graduated early today. Cum laude, too, for outstanding academic performance.
+Narrator: Dira laughs softly behind her hand, careful not to hurt Anin's feelings.
+Dira: Anin, why are you wearing your graduation uniform? Are you really that nervous about graduating?
+-> I don't know... I guess I didn't get enough sleep.
+    Anin: I don't know... I guess I didn't get enough sleep.
+-> I had a really weird dream last night.
+    Anin: I had a really weird dream last night.
+Dira: Ahaha. I thought Kirana was pranking you. Where is she, by the way?
+Lila: That's what we came to ask you. I thought she was with you.
+Dira: She asked to borrow my book, then just ran off with it. I have no idea where she is now.
+<<set $found_dira to true>>
+<<quest_check "find_the_gang" "Dira">>
+Anin: Let's look for her at...
+-> The cafeteria
+    <<set $clue_location to "cafeteria">>
+-> The music room
+    <<set $clue_location to "music_room">>
+<<minimap_set_event_marker $clue_location>>
+<<set $classroom_intro_done to true>>
+<<give_control>>
+===
+
+title: Classroom_GroupStudents
+tags: interactable classroom npc
+---
+Anin: (thought) They're discussing the new K-drama episode. Wait, why did they suddenly switch to theology??
+===
+
+title: Classroom_Desk
+tags: interactable classroom
+---
+Anin: Good old desk. I'll miss you after graduation.
+===
+
+title: Classroom_Door
+tags: interactable classroom
+---
+<<if $classroom_intro_done>>
+    Anin: Leave?
+    -> Yes
+        <<minimap_show>>
+        // Minimap shows the "!" event icon at the cafeteria or music room. This also introduces the minimap events.
+        <<scene_load $clue_location "Morning">>
+    -> No
+        // Closes the dialogue.
+<<endif>>
+===
+
+title: Clue_ObservantStudent
+tags: interactable clue npc
+---
+// Same NPC and dialogue in the cafeteria and the music room. Only the background changes.
+<<if $found_clue>>
+    Observant Student: Good luck finding her!
+<<else>>
+    Dira: Oh, isn't that the Observant Student? She notices everything. I saw her talking to Kirana before she left. Maybe we can ask her.
+    Observant Student: Hi, everyone! Oh, that looks good on you, Anin.
+    Anin: Thanks.
+    -> Do you know where Kirana is?
+        Anin: Do you know where Kirana is?
+    -> We were looking for Kirana. Any clue?
+        Anin: We were looking for Kirana. Any clue?
+    Observant Student: Oh yeah, she was rushing toward the school park with a red book in her hand. Weird to see Kirana holding a book.
+    Anin: School park, noted. Thanks!
+    <<set $found_clue to true>>
+    <<minimap_set_marker "SchoolPark">>
+    Narrator: The three of them hurry over.
+    <<scene_load "SchoolPark" "LateMorning">>
+    <<jump Park_Intro>>
+<<endif>>
+===
+
+title: Park_Intro
+tags: cutscene park
+---
+Narrator: The park is packed shoulder to shoulder with festival-goers.
+Dira: There are way too many people. We'll never find Kirana in this sea of people.
+Lila: Not even Moses could part this crowd. C'mon, Anin, use your spider-sense. You two have been glued together for years.
+Dira: Let's just look for my book. It's bright red, so it should stand out.
+<<search_mode_start "red_book">>
+<<give_control>>
+===
+
+title: Park_Takoyaki
+tags: interactable park
+---
+Vendor: Takoyaki, takoyaki! Come treat your mouth to our special sauce!
+Anin: (thought) Ball-shaped dough filled with octopus. The sauce is what makes it good, savory with umami from the bonito flakes. The perfect snack after a long day.
+===
+
+title: Park_CottonCandy
+tags: interactable park npc
+---
+Student with Cotton Candy: Hmmmm, so sweet and fluffy. This might be the greatest human invention ever.
+-> Sorry to bother you, but have you seen Kirana around here?
+    Anin: Sorry to bother you, but have you seen Kirana around here?
+-> Where did you get that cotton candy?
+    Anin: Where did you get that cotton candy?
+Student with Cotton Candy: Hmmmm, it's sticky.
+Anin: (thought) This guy is too busy with his cotton candy.
+===
+
+title: Park_DartGame
+tags: interactable park npc
+---
+Student at Dart Game: If I win this, I can get the plushie that Student X wants.
+Anin: (thought) Is he the one with a crush on Student X?
+===
+
+title: Park_StudentGroup
+tags: interactable park npc
+---
+// Dialogue not written yet. Decide whether this group is a decoy that points toward the Student with the Red Book, or just flavor.
+Student: ...
+===
+
+title: Park_RedBook
+tags: interactable park npc
+---
+<<if $found_redbook>>
+    Bookworm Student: Good luck finding Kirana!
+<<else>>
+    <<set $found_redbook to true>>
+    Anin: There you are! Where have you b...?!
+    Narrator: The student turns around. It isn't Kirana.
+    Bookworm Student: Oh, hey, Anin. What's up?
+    Narrator: The three of them freeze.
+    Dira: Sorry! We thought you were Kirana, since you have my book.
+    Bookworm Student: Oh, it's yours? Kirana gave it to me. She said she has a copy of this one somewhere in her room.
+    -> She doesn't even read her school books.
+        Anin: She doesn't even read her school books.
+    -> There is zero literature in her room.
+        Anin: There is zero literature in her room.
+    -> If she ever read a book, the world would end tomorrow.
+        Anin: If she ever read a book, the world would end tomorrow.
+    Anin: So where is she now?
+    Bookworm Student: She left right after she gave me the book. Maybe check the photography club? I saw her talking to someone with a camera.
+    Anin: Thanks.
+    <<search_mode_end "red_book">>
+    <<minimap_set_marker "PhotographyClub">>
+    <<scene_load "PhotographyClub" "Noon">>
+    <<jump Club_Cutscene>>
+<<endif>>
+===
+
+title: Club_Cutscene
+tags: cutscene club
+---
+Narrator: The room is cluttered with props and backdrops, with a few photo sessions running at once. It's quieter here. The first thing they see is Kirana, posing in front of the photo backdrop.
+Lila: KIRANUY! We've been looking all over for you!
+Narrator: Lila sprints over, and lands squarely in the frame just as the club member snaps the shutter.
+Kirana: You ruined my photoshoot!
+Lila: I made your photo a thousand times prettier. Also, behold: the graduate.
+-> Call me Anin-senpai from now on.
+    Anin: Call me Anin-senpai from now on.
+-> You'll have to find a new roommate tomorrow.
+    Anin: You'll have to find a new roommate tomorrow.
+Narrator: Kirana bursts out laughing.
+Kirana: Okay, but seriously, why are you dressed like that?
+-> It's your fault for leaving without me.
+    Anin: It's your fault for leaving without me.
+-> If only someone had woken me up this morning.
+    Anin: If only someone had woken me up this morning.
+Kirana: Sorry, sorry! I couldn't wait to see what everyone was doing for the festival. So what's the plan? Just wander around and have fun?
+Lila: I mean, yeah, that's the plan. But first, a group photo. Who knows when we'll get another chance to be photographed by the greatest photographer in the world?
+Narrator: She shoots the club member a look.
+<<set $found_kirana to true>>
+<<quest_check "find_the_gang" "Kirana">>
+<<quest_complete "find_the_gang">>
+Photography Club Member: (flatly) Okay. Everyone say "cheese."
+Narrator: The four of them squeeze into the frame. The shutter clicks.
+<<freeze_frame>>
+<<jump Loop1_End>>
+===
+
+title: Loop1_End
+tags: cutscene
+---
+Narrator: Lila was right. There would never be a better time than right now, because time itself had broken.
+Narrator: Tomorrow would come, and it would still be December 10th, the day before graduation. So would the day after that, and the day after that, for Anin and for everyone at school.
+Narrator: The girls spent the rest of the day wandering the festival, and that night they slept soundly, ready for whatever tomorrow would, or wouldn't, bring.
+<<loop_end 1>>
+===
