@@ -7,6 +7,9 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Prologue.unity
+    guid: 8048f248d6a684e64804ffca506cfd73
+  - enabled: 1
+    path: Assets/Scenes/Dorm.unity
     guid: f65b23ad303f24386b1234a7ebf23851
   - enabled: 1
     path: Assets/Scenes/SceneTemplate.unity
@@ -15,7 +18,22 @@ EditorBuildSettings:
     path: Assets/Scenes/SchoolMap.unity
     guid: d47d4441907c748f884bfb8a21bdb9f4
   - enabled: 1
-    path: Assets/Scenes/Dorm.unity
-    guid: 8048f248d6a684e64804ffca506cfd73
+    path: Assets/Scenes/Auditorium.unity
+    guid: 7de117eaf58354ac084af2abd8ec2d27
+  - enabled: 1
+    path: Assets/Scenes/Classroom.unity
+    guid: c5dca6f76946c4b2a8b8ee8da51934d5
+  - enabled: 1
+    path: Assets/Scenes/MusicRoom.unity
+    guid: 8c82ba566999243f9929e1c573e5cd3e
+  - enabled: 1
+    path: Assets/Scenes/Cafetaria.unity
+    guid: d37ac78da428345ddaa9671c5f09319c
+  - enabled: 1
+    path: Assets/Scenes/SchoolPark.unity
+    guid: a5d381170fa954b20ab24be81a125d24
+  - enabled: 1
+    path: Assets/Scenes/PhotographyClub.unity
+    guid: 58ff575e22d5246a0907c674b7b9b0af
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}

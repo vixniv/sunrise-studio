@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 // Uses CircleTransition when one exists (it persists across scenes); otherwise loads the scene directly.
 public class SceneDoor : MonoBehaviour
 {
+    [Tooltip("Can be one cue shared by every interactable, such as a cue above the player's head.")]
     [SerializeField] private GameObject cue;
     [Tooltip("Scene to load. Must be in the Build Profile scene list.")]
     [SerializeField] private string destinationScene = "SchoolMap";
@@ -18,10 +19,11 @@ public class SceneDoor : MonoBehaviour
     private float maxTravel;
     private bool tracking;
     private bool leaving;
+    private bool cueShown;
 
     private void Awake()
     {
-        if (cue != null) cue.SetActive(false);
+        SharedCue.Init(cue);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -43,7 +45,7 @@ public class SceneDoor : MonoBehaviour
     private void Update()
     {
         if (leaving) return;
-        if (cue != null) cue.SetActive(nearbyPlayer != null);
+        SharedCue.Set(cue, ref cueShown, nearbyPlayer != null);
         if (nearbyPlayer == null)
         {
             tracking = false;
@@ -86,7 +88,7 @@ public class SceneDoor : MonoBehaviour
 
         leaving = true;
         tracking = false;
-        if (cue != null) cue.SetActive(false);
+        SharedCue.Set(cue, ref cueShown, false);
         // Stops the player in place until the new scene replaces this one.
         nearbyPlayer.InteractionMenuOpen = true;
 
@@ -101,6 +103,6 @@ public class SceneDoor : MonoBehaviour
         tracking = false;
         if (leaving) return;
         nearbyPlayer = null;
-        if (cue != null) cue.SetActive(false);
+        SharedCue.Set(cue, ref cueShown, false);
     }
 }
