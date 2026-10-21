@@ -140,7 +140,7 @@ title: Auditorium_BasketballStudent
 tags: interactable auditorium npc
 ---
 <<if $talked_basketball>>
-    Narrator: He's too busy dribbling to notice you.
+    Anin: He's too busy dribbling.
 <<else>>
     <<set $talked_basketball to true>>
     Basketball Student: Oh, hey Anin. Why are you wearing a graduation uniform?
