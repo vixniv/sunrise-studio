@@ -6,7 +6,7 @@ using Yarn.Unity;
 
 // Shows the targets only when a Yarn variable has the given value when the scene starts; hides them otherwise.
 // Example: the Observant Student is in both the cafeteria and the music room, and only appears in the one
-// the player picked in the classroom ($clue_location is "cafetaria" or "music_room").
+// the player picked in the classroom ($clue_location is "cafeteria" or "music_room").
 // Needs the Dialogue Runner to use a PersistentVariableStorage, so the value set in an earlier scene is still there.
 // Keep this object active in the scene: an inactive object never runs the check.
 public class ActiveIfYarnVariable : MonoBehaviour
@@ -14,8 +14,8 @@ public class ActiveIfYarnVariable : MonoBehaviour
     [Tooltip("Leave empty to use this scene's Dialogue Runner.")]
     [SerializeField] private DialogueRunner runner;
     [SerializeField] private string variable = "$clue_location";
-    [Tooltip("Matched as text, ignoring case: \"cafetaria\", \"true\", \"3\".")]
-    [SerializeField] private string value = "cafetaria";
+    [Tooltip("Matched as text, ignoring case: \"cafeteria\", \"true\", \"3\".")]
+    [SerializeField] private string value = "cafeteria";
     [Tooltip("Objects to show or hide. Leave empty to show or hide this object.")]
     [SerializeField] private List<GameObject> targets = new List<GameObject>();
 

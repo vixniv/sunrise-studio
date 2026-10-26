@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Yarn.Unity;
@@ -19,7 +20,7 @@ public class YarnCommands : MonoBehaviour
     }
 
     [SerializeField] private DialogueRunner runner;
-    [Tooltip("Other location names in <<scene_load>> that mean this scene. This scene's own name always counts.")]
+    [Tooltip("Other location names in <<scene_load>> that mean this scene. This scene's own name always counts. Case, spaces, and underscores are ignored.")]
     [SerializeField] private List<string> locationsInThisScene = new List<string>();
     [Tooltip("Plays <<sfx>> sounds. Leave empty to use an Audio Source on this object.")]
     [SerializeField] private AudioSource sfxSource;
@@ -85,16 +86,18 @@ public class YarnCommands : MonoBehaviour
     // <<scene_load "Dorm" "Morning">>: does nothing when the location is this scene, so a node can open with the
     // scene it belongs to. Otherwise it loads that scene and the dialogue never continues here: the rest of the node
     // (such as a <<jump>>) is left to the next scene, which plays its own start node.
+    // Location names ignore case, spaces, and underscores, so "music_room" loads the MusicRoom scene.
     private YarnTask SceneLoad(string location, string timeOfDay)
     {
         TimeOfDay = timeOfDay;
-        string scene = location.Trim();
-        if (scene == SceneManager.GetActiveScene().name || locationsInThisScene.Contains(scene))
+        string key = LocationKey(location);
+        if (key == LocationKey(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => LocationKey(l) == key))
             return YarnTask.CompletedTask;
 
-        if (!Application.CanStreamedLevelBeLoaded(scene))
+        string scene = FindBuildScene(key);
+        if (scene == null)
         {
-            Debug.LogError($"<<scene_load>>: scene \"{scene}\" is not in the Build Profile scene list. Ending the dialogue.", this);
+            Debug.LogError($"<<scene_load>>: no scene in the Build Profile scene list matches \"{location.Trim()}\". Ending the dialogue.", this);
             runner.Stop().Forget();
             return YarnTask.CompletedTask;
         }
@@ -109,6 +112,19 @@ public class YarnCommands : MonoBehaviour
         }
         // Keeps the dialogue (and the frozen player) waiting until this scene unloads.
         return YarnTask.WaitUntil(() => this == null);
+    }
+
+    private static string LocationKey(string name) => name.Trim().Replace("_", "").Replace(" ", "").ToLowerInvariant();
+
+    // Name of the Build Profile scene whose LocationKey is key, or null when none is.
+    private static string FindBuildScene(string key)
+    {
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scene = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
+            if (LocationKey(scene) == key) return scene;
+        }
+        return null;
     }
 
     private YarnTask PlayFreezeFrame()
