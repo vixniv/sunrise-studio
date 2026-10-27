@@ -3,11 +3,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere replaces the cue with the ChoiceWheel.
+// When several interactables are in range, the InteractionCue picks the nearest and only that one takes the tap.
 // With a single choice there is nothing to pick, so the tap runs it directly and no wheel is needed.
 // Picking a choice plays its Yarn node or its dialog lines above this object; the cue stays hidden until the whole action ends.
 public class ChoiceInteractable : MonoBehaviour
 {
-    [Tooltip("Can be one cue shared by every interactable, such as a cue above the player's head.")]
+    [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
     [SerializeField] private ChoiceWheel wheel;
     [SerializeField] private DialogBubble dialog;
@@ -41,10 +42,13 @@ public class ChoiceInteractable : MonoBehaviour
     private float maxTravel;
     private bool tracking;
     private bool cueShown;
+    // The cue field when it is this object's own cue, not the shared InteractionCue.
+    private GameObject ownCue;
 
     private void Awake()
     {
-        SharedCue.Init(cue);
+        ownCue = InteractionCue.IsSharedCue(cue) ? null : cue;
+        SharedCue.Init(ownCue);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -66,9 +70,12 @@ public class ChoiceInteractable : MonoBehaviour
     {
         // The action runs from opening the wheel until the chosen dialog ends.
         bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying);
-        SharedCue.Set(cue, ref cueShown, nearbyPlayer != null && !busy);
+        bool want = nearbyPlayer != null && !busy;
+        InteractionCue.Request(this, want, ownCue != null);
+        bool isTarget = InteractionCue.IsTarget(this);
+        SharedCue.Set(ownCue, ref cueShown, want && isTarget);
         // Presses that start during the action belong to the wheel or the dialog.
-        if (nearbyPlayer == null || busy || (wheel == null && choices.Count != 1))
+        if (!want || !isTarget || (wheel == null && choices.Count != 1))
         {
             tracking = false;
             return;
@@ -109,6 +116,7 @@ public class ChoiceInteractable : MonoBehaviour
     {
         tracking = false;
         nearbyPlayer = null;
-        SharedCue.Set(cue, ref cueShown, false);
+        InteractionCue.Request(this, false, ownCue != null);
+        SharedCue.Set(ownCue, ref cueShown, false);
     }
 }

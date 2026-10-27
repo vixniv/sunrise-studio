@@ -35,5 +35,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PhotographyClub.unity
     guid: 58ff575e22d5246a0907c674b7b9b0af
+  - enabled: 1
+    path: Assets/Scenes/Library.unity
+    guid: 63567704adc1f4e8a8fc27fd060471d3
+  - enabled: 1
+    path: Assets/Scenes/LockerRoom.unity
+    guid: c574ac9d097ea442388aa09a5b8751ad
+  - enabled: 1
+    path: Assets/Scenes/Kitchen.unity
+    guid: 859c077002dde4774b5e8b450163925e
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
