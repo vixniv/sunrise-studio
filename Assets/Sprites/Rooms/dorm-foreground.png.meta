@@ -3,17 +3,17 @@ guid: 85756d45df9ce40e0b91dc6ee7c0aee0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6615350700874796208
-    second: dorm-foreground 1_0
+      213: -7765294108867944619
+    second: dorm-foreground_0
   - first:
-      213: -7855102224793515853
-    second: dorm-foreground 1_1
+      213: -4583285106859068591
+    second: dorm-foreground_1
   - first:
-      213: 3320442811400634639
-    second: dorm-foreground 1_2
+      213: -8008479722565065639
+    second: dorm-foreground_2
   - first:
-      213: 1530410643029793640
-    second: dorm-foreground 1_3
+      213: -8718495525946309789
+    second: dorm-foreground_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -135,7 +135,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: dorm-foreground 1_0
+      name: dorm-foreground_0
       rect:
         serializedVersion: 2
         x: 55
@@ -150,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 053f9b1569d8134a0800000000000000
-      internalID: -6615350700874796208
+      spriteID: 55f1e7876222c3490800000000000000
+      internalID: -7765294108867944619
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: dorm-foreground 1_1
+      name: dorm-foreground_1
       rect:
         serializedVersion: 2
         x: 236
@@ -172,14 +172,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3b84dc805221df290800000000000000
-      internalID: -7855102224793515853
+      spriteID: 153b3558a76e460c0800000000000000
+      internalID: -4583285106859068591
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: dorm-foreground 1_2
+      name: dorm-foreground_2
       rect:
         serializedVersion: 2
         x: 306
@@ -194,14 +194,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f01c88ef425941e20800000000000000
-      internalID: 3320442811400634639
+      spriteID: 95427918f1a2cd090800000000000000
+      internalID: -8008479722565065639
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: dorm-foreground 1_3
+      name: dorm-foreground_3
       rect:
         serializedVersion: 2
         x: 461
@@ -216,8 +216,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 86b94421f5c1d3510800000000000000
-      internalID: 1530410643029793640
+      spriteID: 3634320038ea10780800000000000000
+      internalID: -8718495525946309789
       vertices: []
       indices: 
       edges: []
@@ -236,10 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      dorm-foreground 1_0: -6615350700874796208
-      dorm-foreground 1_1: -7855102224793515853
-      dorm-foreground 1_2: 3320442811400634639
-      dorm-foreground 1_3: 1530410643029793640
+      dorm-foreground_0: -7765294108867944619
+      dorm-foreground_1: -4583285106859068591
+      dorm-foreground_2: -8008479722565065639
+      dorm-foreground_3: -8718495525946309789
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
