@@ -17,6 +17,15 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("Tick if the art is drawn looking left, untick if it looks right.")]
     public bool artFacesLeft = true;
 
+    [Header("Animation")]
+    [Tooltip("Animator with an IsWalking bool and a WalkAnimSpeed float. Left empty, the Animator on the Visual sprite is used.")]
+    public Animator animator;
+    [Tooltip("Walk animation playback speed while running (1 = normal walk speed).")]
+    [Min(0.1f)] public float runAnimSpeed = 1.6f;
+
+    static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
+    static readonly int WalkAnimSpeedHash = Animator.StringToHash("WalkAnimSpeed");
+
     Rigidbody2D rb;
     bool dragging;
     Vector2 dragStart;
@@ -35,6 +44,8 @@ public class PlayerMove : MonoBehaviour
             Transform child = transform.Find("Visual");
             if (child != null) visual = child.GetComponent<SpriteRenderer>();
         }
+        if (animator == null && visual != null)
+            animator = visual.GetComponent<Animator>();
     }
 
     void Update()
@@ -54,6 +65,13 @@ public class PlayerMove : MonoBehaviour
         // Keeps the last direction when standing still.
         if (moveX != 0f && visual != null)
             visual.flipX = artFacesLeft ? moveX > 0f : moveX < 0f;
+    }
+
+    void LateUpdate()
+    {
+        if (animator == null) return;
+        animator.SetBool(IsWalkingHash, moveX != 0f);
+        animator.SetFloat(WalkAnimSpeedHash, running ? runAnimSpeed : 1f);
     }
 
     void ReadPointer()
