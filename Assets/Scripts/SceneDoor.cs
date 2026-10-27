@@ -3,10 +3,11 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere (not a drag) loads the destination scene.
+// When several interactables are in range, the InteractionCue picks the nearest and only that one takes the tap.
 // Uses CircleTransition when one exists (it persists across scenes); otherwise loads the scene directly.
 public class SceneDoor : MonoBehaviour
 {
-    [Tooltip("Can be one cue shared by every interactable, such as a cue above the player's head.")]
+    [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
     [Tooltip("Scene to load. Must be in the Build Profile scene list.")]
     [SerializeField] private string destinationScene = "SchoolMap";
@@ -20,10 +21,13 @@ public class SceneDoor : MonoBehaviour
     private bool tracking;
     private bool leaving;
     private bool cueShown;
+    // The cue field when it is this object's own cue, not the shared InteractionCue.
+    private GameObject ownCue;
 
     private void Awake()
     {
-        SharedCue.Init(cue);
+        ownCue = InteractionCue.IsSharedCue(cue) ? null : cue;
+        SharedCue.Init(ownCue);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -45,8 +49,10 @@ public class SceneDoor : MonoBehaviour
     private void Update()
     {
         if (leaving) return;
-        SharedCue.Set(cue, ref cueShown, nearbyPlayer != null);
-        if (nearbyPlayer == null)
+        InteractionCue.Request(this, nearbyPlayer != null, ownCue != null);
+        bool isTarget = InteractionCue.IsTarget(this);
+        SharedCue.Set(ownCue, ref cueShown, nearbyPlayer != null && isTarget);
+        if (nearbyPlayer == null || !isTarget)
         {
             tracking = false;
             return;
@@ -88,7 +94,8 @@ public class SceneDoor : MonoBehaviour
 
         leaving = true;
         tracking = false;
-        SharedCue.Set(cue, ref cueShown, false);
+        InteractionCue.Request(this, false, ownCue != null);
+        SharedCue.Set(ownCue, ref cueShown, false);
         // Stops the player in place until the new scene replaces this one.
         nearbyPlayer.InteractionMenuOpen = true;
 
@@ -103,6 +110,7 @@ public class SceneDoor : MonoBehaviour
         tracking = false;
         if (leaving) return;
         nearbyPlayer = null;
-        SharedCue.Set(cue, ref cueShown, false);
+        InteractionCue.Request(this, false, ownCue != null);
+        SharedCue.Set(ownCue, ref cueShown, false);
     }
 }

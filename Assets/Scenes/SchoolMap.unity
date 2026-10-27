@@ -1237,7 +1237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: Cafetaria
+  destinationScene: Cafeteria
   buildingCollider: {fileID: 412458432}
   entryPoint: {fileID: 1976238116}
 --- !u!61 &412458432

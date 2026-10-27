@@ -11,6 +11,21 @@ public class PlayerMove : MonoBehaviour
     [Range(0f, 0.2f)] public float deadZone = 0.02f;      // ignore tiny wiggles
     [Range(0f, 0.5f)] public float runThreshold = 0.12f;  // beyond this = run
 
+    [Header("Facing")]
+    [Tooltip("Sprite to flip when walking. Left empty, the SpriteRenderer on the child named \"Visual\" is used.")]
+    public SpriteRenderer visual;
+    [Tooltip("Tick if the art is drawn looking left, untick if it looks right.")]
+    public bool artFacesLeft = true;
+
+    [Header("Animation")]
+    [Tooltip("Animator with an IsWalking bool and a WalkAnimSpeed float. Left empty, the Animator on the Visual sprite is used.")]
+    public Animator animator;
+    [Tooltip("Walk animation playback speed while running (1 = normal walk speed).")]
+    [Min(0.1f)] public float runAnimSpeed = 1.6f;
+
+    static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
+    static readonly int WalkAnimSpeedHash = Animator.StringToHash("WalkAnimSpeed");
+
     Rigidbody2D rb;
     bool dragging;
     Vector2 dragStart;
@@ -21,7 +36,17 @@ public class PlayerMove : MonoBehaviour
     public float MoveX => moveX;
     public bool InteractionMenuOpen { get; set; }
 
-    void Awake() => rb = GetComponent<Rigidbody2D>();
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (visual == null)
+        {
+            Transform child = transform.Find("Visual");
+            if (child != null) visual = child.GetComponent<SpriteRenderer>();
+        }
+        if (animator == null && visual != null)
+            animator = visual.GetComponent<Animator>();
+    }
 
     void Update()
     {
@@ -36,6 +61,17 @@ public class PlayerMove : MonoBehaviour
 
         ReadPointer();
         if (moveX == 0f) ReadKeyboard(); // editor fallback
+
+        // Keeps the last direction when standing still.
+        if (moveX != 0f && visual != null)
+            visual.flipX = artFacesLeft ? moveX > 0f : moveX < 0f;
+    }
+
+    void LateUpdate()
+    {
+        if (animator == null) return;
+        animator.SetBool(IsWalkingHash, moveX != 0f);
+        animator.SetFloat(WalkAnimSpeedHash, running ? runAnimSpeed : 1f);
     }
 
     void ReadPointer()

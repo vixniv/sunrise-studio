@@ -62,7 +62,7 @@ public class DialogBubble : MonoBehaviour
             return;
         }
         speaker = talker;
-        speakerRenderer = talker.GetComponent<Renderer>();
+        speakerRenderer = FindSpriteRenderer(talker);
         offset = talkerOffset;
         lines = dialogLines;
         onFinished = finished;
@@ -85,7 +85,7 @@ public class DialogBubble : MonoBehaviour
             return;
         }
         speaker = talker;
-        speakerRenderer = talker.GetComponent<Renderer>();
+        speakerRenderer = FindSpriteRenderer(talker);
         offset = talkerOffset;
         lines = new[] { line };
         onFinished = advanced;
@@ -219,6 +219,14 @@ public class DialogBubble : MonoBehaviour
         boxHeight = height;
         box.size = new Vector2(width, height) / pixelsPerUnit;
         text.transform.localPosition = new Vector3(-width / 2 + padding.x, height / 2 - padding.y, 0f) / pixelsPerUnit;
+    }
+
+    // The talker's own renderer, or its "Visual" child when the sprite sits on a child so the root can keep scale 1.
+    private static Renderer FindSpriteRenderer(Transform talker)
+    {
+        if (talker.TryGetComponent(out Renderer own)) return own;
+        Transform visual = talker.Find("Visual");
+        return visual != null ? visual.GetComponent<Renderer>() : null;
     }
 
     // Keeps the box's bottom edge just above the top of the speaker's sprite.
