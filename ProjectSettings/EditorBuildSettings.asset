@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MusicRoom.unity
     guid: 8c82ba566999243f9929e1c573e5cd3e
   - enabled: 1
-    path: Assets/Scenes/Cafetaria.unity
+    path: Assets/Scenes/Cafeteria.unity
     guid: d37ac78da428345ddaa9671c5f09319c
   - enabled: 1
     path: Assets/Scenes/SchoolPark.unity

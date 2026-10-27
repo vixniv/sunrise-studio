@@ -357,7 +357,7 @@ MonoBehaviour:
   - {fileID: 1319071891}
   - {fileID: 1828507076}
   pixelsPerUnit: 16
-  headOffset: {x: 0, y: 4.5}
+  headOffset: {x: 0, y: 6.875}
   labelBox: {fileID: 1906878410}
   label: {fileID: 1803527430}
   labelPadding: 6

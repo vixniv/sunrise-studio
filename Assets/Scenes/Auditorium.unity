@@ -357,7 +357,7 @@ MonoBehaviour:
   - {fileID: 1319071891}
   - {fileID: 1828507076}
   pixelsPerUnit: 16
-  headOffset: {x: 0, y: 4.5}
+  headOffset: {x: 0, y: 6.875}
   labelBox: {fileID: 1906878410}
   label: {fileID: 1803527430}
   labelPadding: 6
@@ -908,10 +908,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 2.447099
+    x: 0.78156996
     y: 0
-    width: 0.26666665
-    height: 0.26666665
+    width: 2.385185
+    height: 2.3851852
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
