@@ -816,10 +816,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.24814814
-    width: 2.976109
-    height: 2.9761093
+    x: 0.78156996
+    y: 0
+    width: 2.385185
+    height: 2.3851852
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -849,7 +849,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.4366198, z: -10}
+  m_LocalPosition: {x: 0, y: 2.4365, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1966,6 +1966,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3389131182923258579, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: surface
+      value: 
+      objectReference: {fileID: 11400000, guid: 6eed5c69c90a347d39aec49d73fc43a7, type: 2}
     - target: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_Name
       value: Player

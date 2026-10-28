@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6547f4f49559f4e45859239b72d64ada, type: 3}
+  m_Name: Wood
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepSurface
+  clips:
+  - {fileID: 8300000, guid: cbb106aa833454bd3826dfbd3ef439dd, type: 3}
+  - {fileID: 8300000, guid: 37bdb86e65fd34e84a4a61d0a71b544a, type: 3}
+  - {fileID: 8300000, guid: c02d0156758054b6aa12922fef8b830d, type: 3}
+  - {fileID: 8300000, guid: 396c44be5c3d143bea31375467fc2c93, type: 3}
+  - {fileID: 8300000, guid: 45a106a45b4e74d319260528f6b20481, type: 3}
+  - {fileID: 8300000, guid: 184f35c18a30744bdb7f36a5e5ed2e3e, type: 3}
+  minVolume: 0.8
+  maxVolume: 1
+  minPitch: 0.92
+  maxPitch: 1.08
