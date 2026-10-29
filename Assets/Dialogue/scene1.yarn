@@ -1,0 +1,312 @@
+// =====================================================================
+// SCENE 1 · PROLOGUE (Dec 10)
+// Anin talks with Dira, Lila, and Kirana, has lunch with the group, and
+// promises to tutor Fal after school. While she waits for him in the
+// locker room, Fal falls from the top floor. Anin doesn't panic.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - Custom commands used below (rename to match your Dialogue Runner):
+//     <<enable_control>>              give the player movement + interact
+//     <<quest_start "id" "Title">>    start / show a quest
+//     <<quest_update "id" "Title">>   update the quest objective
+//     <<scene_transition "Location">> fade + load a location
+//     <<advance_time "slot">>         morning / lunch / after_school
+//     <<cutscene "id">>               play a non-dialogue cutscene
+//     <<hard_reset>>                  white flash, loop back to the wish
+//     <<fade>>                        short fade out and in, same scene
+//     <<show "Name">> / <<hide "Name">>  a character enters / exits
+// - Interactable nodes (Dorm_*, Classroom_*, Lockers_*) are started by
+//   the object's interact trigger. Node names match the object.
+// =====================================================================
+
+
+title: Scene1_Declarations
+tags: setup
+---
+// Never run this node. It only holds the variable declarations.
+<<declare $anin_dressed = false>>
+<<declare $lockers_clock = false>>
+<<declare $lockers_fal = false>>
+<<declare $lockers_hook = false>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — MORNING
+// ---------------------------------------------------------------------
+
+title: Dorm_Start
+tags: scene1 dorm
+---
+// Anin wakes up in her dorm room. Kirana (roommate) is not there.
+Anin: Looks like Kirana left early. Not really her thing.
+<<enable_control>>
+<<quest_start "scene1_morning" "Get ready for school">>
+// First time the player controls Anin. Optional tutorial here.
+// Interactables: Dorm_Bed, Dorm_Poster, Dorm_Desk, Dorm_Door
+===
+
+title: Dorm_Bed
+tags: scene1 dorm interactable
+---
+Anin: No time to lie around, Anin...
+===
+
+title: Dorm_Poster
+tags: scene1 dorm interactable
+---
+Anin: Kirana's favorite band. I don't really listen to this kind of music.
+===
+
+title: Dorm_Desk
+tags: scene1 dorm interactable
+---
+Anin: I should hurry.
+-> Get dressed
+    <<set $anin_dressed to true>>
+    <<fade>>
+    // Anin showers, rushes through her makeup, puts on her uniform.
+    // Play a short fade or outfit swap here.
+-> Do nothing
+===
+
+title: Dorm_Door
+tags: scene1 dorm interactable
+---
+<<if $anin_dressed is false>>
+    Anin: I can't go out like this.
+<<else>>
+    Anin: Leave the room?
+    -> Yes
+        <<scene_transition "Classroom">>
+        <<jump Classroom_Start>>
+    -> Later
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// CLASSROOM — MORNING
+// ---------------------------------------------------------------------
+
+title: Classroom_Start
+tags: scene1 classroom
+---
+// Morning class hasn't started. Students chatting, finishing homework.
+// Kirana, Dira, Lila sit at the table next to Anin's, by the window.
+// Player explores. Interactables: Classroom_Students,
+// Classroom_AninDesk, Classroom_Friends (required to continue).
+<<quest_update "scene1_morning" "Talk to your friends">>
+===
+
+title: Classroom_Students
+tags: scene1 classroom interactable
+---
+Anin: Oh, they're talking about the new K-drama episode. Wait, why did they suddenly switch to theology??
+===
+
+title: Classroom_AninDesk
+tags: scene1 classroom interactable
+---
+Anin: Good old desk. I'll miss you after graduation... or not. :p
+===
+
+title: Classroom_Friends
+tags: scene1 classroom interactable required
+---
+Kirana: Hi Anin, where have you been?
+-> Why didn't you wake me up?
+    Kirana: You sleep like a dead body. I tried to wake you up for ten minutes straight.
+-> Thanks for leaving me this morning.
+    Kirana: I didn't want to disturb Sleeping Beauty.
+
+Dira: Did you guys do the homework for today's classes?
+Lila: Oh shiii, I forgot. Dira, pleaseeeee, can I copy yours?
+Dira: Classic Lila. What about you two?
+Kirana: Ummmm, can I copy yours too?? Pretty please?
+-> I've done it many times.
+-> I already knew there'd be homework.
+Lila: Weird flex.
+
+// Classes start. Fade, fast forward to lunch.
+<<advance_time "lunch">>
+<<jump Classroom_LunchBreak>>
+===
+
+title: Classroom_LunchBreak
+tags: scene1 classroom
+---
+Kirana: Finally, lunch break. Imagine what would happen to us without Dira.
+Lila: Dira is today's MVP. Thank you so muchhhh! I'll buy you bakwan at Warmus as a thank-you.
+Dira: You don't have to go that far, but I'm not complaining.
+Lila: Let's go to Warmus! See you guys there!
+Dira: Careful, Lila— waaaaahhh!
+
+// Lila grabs Dira's hand and drags her out toward the cafeteria.
+// Both NPCs exit the classroom.
+<<hide "Lila">>
+<<hide "Dira">>
+
+Kirana: So, Warmus?
+-> Yeah, I'll see you guys there.
+-> I don't know yet.
+    Kirana: Anyway, see you there if you decide to come.
+Anin: Alright, see you there.
+
+// Kirana exits.
+<<hide "Kirana">>
+Anin: Now what should I do?
+<<quest_start "scene1_explore" "Explore the school">>
+// Player can explore the school. Events that advance time:
+//   - Lunch_Warmus (required): trigger by interacting with the
+//     friends at the Warmus stall in the Cafeteria.
+===
+
+
+// ---------------------------------------------------------------------
+// CAFETERIA — LUNCH AT WARMUS (event, advances time)
+// ---------------------------------------------------------------------
+
+title: Lunch_Warmus
+tags: scene1 cafeteria event
+---
+Kirana: No, but it's weird how we've been li—
+Anin: Sup. Have you guys ordered yet?
+Kirana: Oh, Anin! We've been waiting for you. Yeah, we all got nasi goreng. You should order now, look at the queue.
+Anin: Why is everyone suddenly eating at Warmus?
+
+// Anin waits in line until it's her turn (short fade or walk-up).
+<<fade>>
+Anin: Hi Ma'am, can I have white rice with...
+-> Fried tempeh
+    Warmus Ma'am: Plain Anin and her tempeh. You really love tempeh, don't you?
+-> Tahu and sambal
+    Warmus Ma'am: Trying something new, eh? Careful with the sambal, the chilies are very hot today.
+-> Gudeg
+    Warmus Ma'am: This is the signature dish from my hometown in Jogja. Hope you like it.
+Anin: Thanks, Ma'am.
+
+<<cutscene "anin_joins_table">>
+// Anin sits down with the group.
+<<jump Lunch_Table>>
+===
+
+title: Lunch_Table
+tags: scene1 cafeteria event
+---
+Anin: What are you guys talking about?
+Kirana: Not much. Just ranking the guys in school by attractiveness.
+Dira: Anin, have you been feeling weird lately?
+-> Like what?
+Dira: I feel like I've been doing the same thing over and over. Every time I open a new page, it feels like I already know what's written there.
+-> That's what happens when you read too many books. Look at Kirana, she's fine.
+    Kirana: Fine?? Now that Dira mentions it, I do feel like something weird is going on. There's no way everyone gets déjà vu this often.
+-> Lila, what are you doing there?
+    Lila: Nooo, it's not done! It's for after graduation. You'll see.
+
+Kirana: So, your plan to study art at university, that's still on, right, Lila? You've changed hobbies like ten times in the past three years.
+Lila: No, it's settled. I'm going to be the greatest artist the world has ever known, bigger than the guy who conquered half of Eur—
+Kirana: Let's stop right there. Dira's continuing her studies too, obviously, that's a no-brainer. What about you, Anin?
+Anin: Ummm, I don't have anything in mind yet. Let's just enjoy high school while it lasts.
+
+// Fal walks up to the table.
+<<show "Fal">>
+Fal: Anin, got a sec?
+Kirana: Ooooooh.
+Fal: Shut up, Kirana. Um. Math finals. I'm kind of... dying. Could you teach me? Just the integrals.
+-> Lockers after school, then the library?
+    Fal: Sounds good. See you there, Anin.
+-> Only if you pay for my lunch.
+    Fal: Deal. Lockers after school?
+Fal: And after we study... there's something I want to tell you.
+
+// Fal leaves.
+<<hide "Fal">>
+Kirana: HE WANTS TO TELL YOU SOMETHING.
+Anin: ...He always says that.
+Kirana: Always?? How many times have you two—
+Anin: Figure of speech.
+
+<<advance_time "after_school">>
+<<quest_update "scene1_explore" "Meet Fal at the lockers">>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — AFTER SCHOOL (required, advances time)
+// Trigger: player enters the Locker Room after the bell.
+// Interactables: Lockers_Clock, Lockers_FalLocker, Lockers_KeyHook.
+// The ROOFTOP key hook must be EMPTY in this scene.
+// After all three are examined, run Lockers_FriendsArrive.
+// ---------------------------------------------------------------------
+
+title: Lockers_Start
+tags: scene1 lockers
+---
+// Hallway empties. Late sunlight through the high window.
+// Anin leans against the lockers beside Fal's, two math books under her arm.
+<<set $lockers_clock to false>>
+<<set $lockers_fal to false>>
+<<set $lockers_hook to false>>
+===
+
+title: Lockers_Clock
+tags: scene1 lockers interactable
+---
+Anin: Ten minutes late. Come on, Fal. Not today.
+<<set $lockers_clock to true>>
+<<jump Lockers_Check>>
+===
+
+title: Lockers_FalLocker
+tags: scene1 lockers interactable
+---
+Anin: That rocket sticker. He's had it since first year.
+<<set $lockers_fal to true>>
+<<jump Lockers_Check>>
+===
+
+title: Lockers_KeyHook
+tags: scene1 lockers interactable
+---
+// Hook tag reads ROOFTOP. The hook is empty.
+Anin: ...It's always here.
+<<set $lockers_hook to true>>
+<<jump Lockers_Check>>
+===
+
+title: Lockers_Check
+tags: scene1 lockers
+---
+<<if $lockers_clock and $lockers_fal and $lockers_hook>>
+    <<jump Lockers_FriendsArrive>>
+<<endif>>
+===
+
+title: Lockers_FriendsArrive
+tags: scene1 lockers event
+---
+// Footsteps. Kirana, Dira, Lila enter from the hallway, heading to the dorm.
+// Lila stops at her locker and shoves her sketchbook inside.
+<<show "Kirana">>
+<<show "Dira">>
+<<show "Lila">>
+Lila: Anin? You're still here?
+Kirana: She's waiting for her study date.
+-> He's just late.
+-> Don't start.
+Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
+
+<<cutscene "fal_fall_offscreen">>
+// OFFSCREEN ONLY. A sound from above, then screams from across the park.
+// Kirana runs out. Lila's locker is left hanging open. Dira freezes.
+// No visual of the fall.
+<<hide "Kirana">>
+
+// Anin doesn't move. She closes her eyes.
+Anin: ...Again.
+
+<<hard_reset>>
+// TRANSITION → Scene 2: Gap 1
+===

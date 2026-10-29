@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Yarn.Unity;
 
 // Registers the custom <<commands>> used in the Yarn scripts on this scene's Dialogue Runner.
 // Put it on the same GameObject as the Dialogue Runner, in every scene that runs Yarn dialogue.
-// Yarn stops on any command nobody registered, so every command in loop01.yarn is registered here;
+// Yarn stops on any command nobody registered, so every command in scene1.yarn is registered here;
 // the ones without a game system yet only log what they would do.
 public class YarnCommands : MonoBehaviour
 {
@@ -19,33 +21,66 @@ public class YarnCommands : MonoBehaviour
         public AudioClip clip;
     }
 
+    [Serializable]
+    public class Actor
+    {
+        [Tooltip("Name used in <<show \"name\">> and <<hide \"name\">>, such as \"Fal\".")]
+        public string name;
+        public GameObject target;
+    }
+
+    [Serializable]
+    public class Cutscene
+    {
+        [Tooltip("Id used in <<cutscene \"id\">>, such as \"anin_joins_table\".")]
+        public string id;
+        [Tooltip("Timeline to play. Turn off its Play On Awake.")]
+        public PlayableDirector director;
+    }
+
     [SerializeField] private DialogueRunner runner;
-    [Tooltip("Other location names in <<scene_load>> that mean this scene. This scene's own name always counts. Case, spaces, and underscores are ignored.")]
+    [Tooltip("Other location names in <<scene_transition>> that mean this scene. This scene's own name always counts. Case, spaces, and underscores are ignored.")]
     [SerializeField] private List<string> locationsInThisScene = new List<string>();
     [Tooltip("Plays <<sfx>> sounds. Leave empty to use an Audio Source on this object.")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private List<Sound> sounds = new List<Sound>();
-    [Tooltip("Plays <<freeze_frame>>. Only needed in scenes whose dialogue uses it.")]
+    [Tooltip("Characters that <<show>> and <<hide>> during dialogue. Enabled DialogSpeakers can be hidden without being listed.")]
+    [SerializeField] private List<Actor> actors = new List<Actor>();
+    [Tooltip("Timelines that <<cutscene>> plays. An id missing here is skipped with a log message.")]
+    [SerializeField] private List<Cutscene> cutscenes = new List<Cutscene>();
+    [Tooltip("Plays the white flash of <<hard_reset>> and <<freeze_frame>>. Only needed in scenes whose dialogue uses them.")]
     [SerializeField] private FreezeFrame freezeFrame;
-    [Tooltip("Scene <<loop_end>> loads. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
-    [SerializeField] private string sceneAfterLoopEnd = "";
+    [Tooltip("Scene <<hard_reset>> loads. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
+    [FormerlySerializedAs("sceneAfterLoopEnd")]
+    [SerializeField] private string sceneAfterHardReset = "";
+    [Tooltip("Seconds the screen stays covered during <<advance_time>> and <<fade>>.")]
+    [SerializeField, Min(0f)] private float fadeHoldSeconds = 0.5f;
+
+    public const string DefaultTimeOfDay = "morning";
 
     private bool leaving;
     private bool pausedAudio;
 
-    // Last time of day passed to <<scene_load>>; it carries over to the next scene.
-    public static string TimeOfDay { get; private set; } = "";
+    // Time slot set by <<advance_time>> (morning, lunch, after_school). It carries over to the next scene.
+    public static string TimeOfDay { get; private set; } = DefaultTimeOfDay;
 
-    // Highest loop number passed to <<loop_end>>; 0 until the first loop ends.
+    // Number of <<hard_reset>>s so far; 0 until the first loop ends.
     public static int LoopsCompleted { get; private set; }
+
+    // Runs after TimeOfDay changes. During <<advance_time>> it runs while the screen is covered.
+    public static event Action TimeOfDayChanged;
 
     // Clears the static values when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetOnPlay()
     {
-        TimeOfDay = "";
+        TimeOfDay = DefaultTimeOfDay;
         LoopsCompleted = 0;
+        TimeOfDayChanged = null;
     }
+
+    // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
+    public static bool IsTimeOfDay(string slot) => Key(slot) == Key(TimeOfDay);
 
     private void Awake()
     {
@@ -59,45 +94,40 @@ public class YarnCommands : MonoBehaviour
         if (!(runner.VariableStorage is PersistentVariableStorage))
             Debug.LogWarning($"{runner.name}'s Variable Storage is not a PersistentVariableStorage, so Yarn variables start over in this scene.", runner);
 
-        runner.AddCommandHandler("scene_load", (Func<string, string, YarnTask>)SceneLoad);
-        runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
         // The player gets control back when the node ends, so there is nothing to do here.
-        runner.AddCommandHandler("give_control", (Action)(() => { }));
+        runner.AddCommandHandler("enable_control", (Action)(() => { }));
+        runner.AddCommandHandler("scene_transition", (Func<string, YarnTask>)SceneTransition);
+        runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
+        runner.AddCommandHandler("fade", (Func<YarnTask>)(() => Fade(null)));
+        runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
+        runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
+        runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
+        runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
+        runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
         runner.AddCommandHandler("sound_cut", (Action)(() => SetAudioPaused(true)));
         runner.AddCommandHandler("sound_resume", (Action)(() => SetAudioPaused(false)));
         runner.AddCommandHandler("freeze_frame", (Func<YarnTask>)PlayFreezeFrame);
-        runner.AddCommandHandler("loop_end", (Func<int, YarnTask>)LoopEnd);
 
         // Not built yet.
-        runner.AddCommandHandler("title_card", (Action)(() => Pending("title_card")));
         runner.AddCommandHandler("quest_start", (Action<string, string>)((id, text) => Pending($"quest_start {id}: {text}")));
         runner.AddCommandHandler("quest_update", (Action<string, string>)((id, text) => Pending($"quest_update {id}: {text}")));
-        runner.AddCommandHandler("quest_check", (Action<string, string>)((id, item) => Pending($"quest_check {id}: {item}")));
-        runner.AddCommandHandler("quest_strike", (Action<string>)(id => Pending($"quest_strike {id}")));
         runner.AddCommandHandler("quest_complete", (Action<string>)(id => Pending($"quest_complete {id}")));
-        runner.AddCommandHandler("minimap_show", (Action)(() => Pending("minimap_show")));
-        runner.AddCommandHandler("minimap_set_marker", (Action<string>)(place => Pending($"minimap_set_marker {place}")));
-        runner.AddCommandHandler("minimap_set_event_marker", (Action<string>)(place => Pending($"minimap_set_event_marker {place}")));
-        runner.AddCommandHandler("companion_join", (Action<string>)(who => Pending($"companion_join {who}")));
-        runner.AddCommandHandler("search_mode_start", (Action<string>)(id => Pending($"search_mode_start {id}")));
-        runner.AddCommandHandler("search_mode_end", (Action<string>)(id => Pending($"search_mode_end {id}")));
     }
 
-    // <<scene_load "Dorm" "Morning">>: does nothing when the location is this scene, so a node can open with the
+    // <<scene_transition "Classroom">>: does nothing when the location is this scene, so a node can open with the
     // scene it belongs to. Otherwise it loads that scene and the dialogue never continues here: the rest of the node
-    // (such as a <<jump>>) is left to the next scene, which plays its own start node.
+    // (such as a <<jump>>) is left to the next scene, which plays its own start node with YarnCutscene.
     // Location names ignore case, spaces, and underscores, so "music_room" loads the MusicRoom scene.
-    private YarnTask SceneLoad(string location, string timeOfDay)
+    private YarnTask SceneTransition(string location)
     {
-        TimeOfDay = timeOfDay;
-        string key = LocationKey(location);
-        if (key == LocationKey(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => LocationKey(l) == key))
+        string key = Key(location);
+        if (key == Key(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => Key(l) == key))
             return YarnTask.CompletedTask;
 
         string scene = FindBuildScene(key);
         if (scene == null)
         {
-            Debug.LogError($"<<scene_load>>: no scene in the Build Profile scene list matches \"{location.Trim()}\". Ending the dialogue.", this);
+            Debug.LogError($"<<scene_transition>>: no scene in the Build Profile scene list matches \"{location.Trim()}\". Ending the dialogue.", this);
             runner.Stop().Forget();
             return YarnTask.CompletedTask;
         }
@@ -114,17 +144,71 @@ public class YarnCommands : MonoBehaviour
         return YarnTask.WaitUntil(() => this == null);
     }
 
-    private static string LocationKey(string name) => name.Trim().Replace("_", "").Replace(" ", "").ToLowerInvariant();
+    private static string Key(string name) => (name ?? "").Trim().Replace("_", "").Replace(" ", "").ToLowerInvariant();
 
-    // Name of the Build Profile scene whose LocationKey is key, or null when none is.
+    // Name of the Build Profile scene whose Key is key, or null when none is.
     private static string FindBuildScene(string key)
     {
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
         {
             string scene = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
-            if (LocationKey(scene) == key) return scene;
+            if (Key(scene) == key) return scene;
         }
         return null;
+    }
+
+    // <<advance_time "lunch">>: covers the screen, switches the time slot (ActiveDuringTime objects follow), uncovers it.
+    private YarnTask AdvanceTime(string slot)
+    {
+        return Fade(() =>
+        {
+            TimeOfDay = slot.Trim();
+            Debug.Log($"<<advance_time>>: it is now {TimeOfDay}.", this);
+            TimeOfDayChanged?.Invoke();
+        });
+    }
+
+    // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
+    private YarnTask Fade(Action whileCovered)
+    {
+        CircleTransition transition = CircleTransition.Instance;
+        if (transition == null || !transition.Cover(whileCovered, fadeHoldSeconds))
+        {
+            whileCovered?.Invoke();
+            return YarnTask.CompletedTask;
+        }
+        return YarnTask.WaitUntil(() => transition == null || !transition.IsTransitioning);
+    }
+
+    // <<show "Fal">> / <<hide "Fal">>: turns the character's GameObject on or off.
+    private void SetActorVisible(string actorName, bool visible)
+    {
+        string key = actorName.Trim();
+        Actor actor = actors.Find(a => a.name.Trim() == key);
+        GameObject target = actor?.target;
+        if (target == null && !visible && DialogSpeaker.TryFind(key, out DialogSpeaker speaker))
+            target = speaker.gameObject;
+        if (target == null)
+        {
+            Debug.LogWarning($"<<{(visible ? "show" : "hide")}>>: no actor named \"{key}\" in {name}'s Actors list.", this);
+            return;
+        }
+        target.SetActive(visible);
+    }
+
+    // <<cutscene "anin_joins_table">>: plays the matching Timeline and waits for it to finish.
+    private YarnTask PlayCutscene(string id)
+    {
+        Cutscene cutscene = cutscenes.Find(c => c.id.Trim() == id.Trim());
+        if (cutscene == null || cutscene.director == null)
+        {
+            Pending($"cutscene {id}");
+            return YarnTask.CompletedTask;
+        }
+        PlayableDirector director = cutscene.director;
+        director.time = 0;
+        director.Play();
+        return YarnTask.WaitUntil(() => director == null || director.state != PlayState.Playing);
     }
 
     private YarnTask PlayFreezeFrame()
@@ -137,14 +221,25 @@ public class YarnCommands : MonoBehaviour
         return freezeFrame.Play();
     }
 
-    // <<loop_end 1>>: records the finished loop, starts the frozen world again, and loads Scene After Loop End.
-    private YarnTask LoopEnd(int loop)
+    // <<hard_reset>>: white flash, then the day starts over: morning again, start nodes play again,
+    // and Scene After Hard Reset loads. Yarn variables are kept.
+    private async YarnTask HardReset()
     {
-        LoopsCompleted = Mathf.Max(LoopsCompleted, loop);
-        if (freezeFrame != null) freezeFrame.Release();
-        Debug.Log($"<<loop_end {loop}>>", this);
-        if (string.IsNullOrWhiteSpace(sceneAfterLoopEnd)) return YarnTask.CompletedTask;
-        return SceneLoad(sceneAfterLoopEnd, "Morning");
+        if (freezeFrame != null) await freezeFrame.Play();
+        else Debug.LogWarning($"<<hard_reset>>: {name} has no Freeze Frame assigned, so there is no white flash.", this);
+
+        LoopsCompleted++;
+        TimeOfDay = DefaultTimeOfDay;
+        TimeOfDayChanged?.Invoke();
+        YarnCutscene.ForgetPlayed();
+        Debug.Log($"<<hard_reset>>: loop {LoopsCompleted} ended.", this);
+        // A frozen world stays frozen until the scene unloads (FreezeFrame releases it then).
+        if (string.IsNullOrWhiteSpace(sceneAfterHardReset))
+        {
+            if (freezeFrame != null) freezeFrame.Release();
+            return;
+        }
+        await SceneTransition(sceneAfterHardReset);
     }
 
     private void PlaySound(string soundName)

@@ -4644,7 +4644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: LockerRoom
   buildingCollider: {fileID: 1762930409}
   entryPoint: {fileID: 1137304721}
 --- !u!61 &1762930409
@@ -5288,7 +5288,7 @@ Transform:
   m_GameObject: {fileID: 1970477063}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.93, y: 0.4, z: 0}
+  m_LocalPosition: {x: -13.93, y: -1.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
