@@ -19,6 +19,8 @@ public class CircleTransition : MonoBehaviour
 
     bool transitioning;
 
+    public bool IsTransitioning => transitioning;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -63,6 +65,47 @@ public class CircleTransition : MonoBehaviour
         }
 
         StartCoroutine(TransitionRoutine(sceneName));
+    }
+
+    // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
+    // Returns false when a transition is already running or there is no circle.
+    public bool Cover(System.Action whileCovered, float holdSeconds)
+    {
+        if (transitioning || circle == null)
+            return false;
+
+        StartCoroutine(CoverRoutine(whileCovered, holdSeconds));
+        return true;
+    }
+
+    IEnumerator CoverRoutine(System.Action whileCovered, float holdSeconds)
+    {
+        transitioning = true;
+
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        float coverScale = CalculateCoverScale();
+
+        yield return AnimateCircle(
+            0f,
+            coverScale,
+            closeDuration);
+
+        whileCovered?.Invoke();
+
+        if (holdSeconds > 0f)
+            yield return new WaitForSecondsRealtime(holdSeconds);
+
+        yield return AnimateCircle(
+            coverScale,
+            0f,
+            openDuration);
+
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+
+        transitioning = false;
     }
 
     IEnumerator TransitionRoutine(string sceneName)

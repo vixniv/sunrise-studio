@@ -472,8 +472,11 @@ MonoBehaviour:
   locationsInThisScene: []
   sfxSource: {fileID: 0}
   sounds: []
+  actors: []
+  cutscenes: []
   freezeFrame: {fileID: 0}
-  sceneAfterLoopEnd: 
+  sceneAfterHardReset: 
+  fadeHoldSeconds: 0.5
 --- !u!114 &40070005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -908,10 +911,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.78156996
-    y: 0
-    width: 2.385185
-    height: 2.3851852
+    x: 0
+    y: 0.24814814
+    width: 2.976109
+    height: 2.9761093
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1629,7 +1632,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 799165874}
-  - component: {fileID: 799165873}
   m_Layer: 0
   m_Name: Intro
   m_TagString: Untagged
@@ -1637,25 +1639,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &799165873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 799165872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9bebd7a6e317444d89efcad1547dea2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
-  yarnDialog: {fileID: 40070001}
-  startNode: Auditorium_Arrival
-  narrator: {fileID: 1801916994}
-  dialogOffset: {x: 0, y: 0.25}
-  startDelay: 0.5
-  player: {fileID: 0}
-  nextScene: 
 --- !u!4 &799165874
 Transform:
   m_ObjectHideFlags: 0

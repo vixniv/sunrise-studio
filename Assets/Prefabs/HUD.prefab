@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 4521839303071749369}
   - component: {fileID: 4374570485366163414}
   - component: {fileID: 7581791027207185671}
+  - component: {fileID: 1005839594033204821}
   m_Layer: 5
   m_Name: LoopText
   m_TagString: Untagged
@@ -407,3 +408,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1005839594033204821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8414091691567628421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9651e550f804b4d34bcb725f31910c52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeOfDayLabel
+  label: {fileID: 0}
