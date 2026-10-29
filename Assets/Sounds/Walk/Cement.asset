@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6547f4f49559f4e45859239b72d64ada, type: 3}
+  m_Name: Cement
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepSurface
+  clips:
+  - {fileID: 8300000, guid: 8acbc496fe04341719b78f7231a23170, type: 3}
+  - {fileID: 8300000, guid: a36e74d1ecd774d73b3df3d37c0ec2b7, type: 3}
+  - {fileID: 8300000, guid: ac7a96eadf43b4467b189b9f41b26eea, type: 3}
+  - {fileID: 8300000, guid: 89eb2b763f2424ffdbf89042d528aae6, type: 3}
+  - {fileID: 8300000, guid: f3b0dfe984fa149ba9f0261922cd5593, type: 3}
+  - {fileID: 8300000, guid: d11f935e015c64f628996f1618759017, type: 3}
+  minVolume: 0.8
+  maxVolume: 1
+  minPitch: 0.92
+  maxPitch: 1.08
