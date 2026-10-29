@@ -923,8 +923,8 @@ Transform:
   m_GameObject: {fileID: 299217964}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.7, y: -2.7328, z: 0}
-  m_LocalScale: {x: 6.220225, y: 2.0846953, z: 1}
+  m_LocalPosition: {x: -8.607, y: -2.7328, z: 0}
+  m_LocalScale: {x: 4.4064074, y: 2.0846953, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1019,7 +1019,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.4100013, y: 2.4366202, z: -10}
+  m_LocalPosition: {x: 0.03125, y: 2.4375, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1539,6 +1539,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TransitionCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4186522725043985381, guid: fd77a56edfc904276ad7000fd9f9fdf5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1715,7 +1719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
   yarnDialog: {fileID: 40070001}
   startNode: Dorm_Start
-  narrator: {fileID: 1801916994}
+  narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 1452229122}
@@ -3109,52 +3113,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!1 &1801916993
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1801916994}
-  - component: {fileID: 1801916995}
-  m_Layer: 0
-  m_Name: Narrator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1801916994
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1801916993}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1801916995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1801916993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
-  characterName: Narrator
-  dialogOffset: {x: 0, y: 0.25}
 --- !u!1 &1803527429
 GameObject:
   m_ObjectHideFlags: 0
@@ -4656,8 +4614,8 @@ Transform:
   m_GameObject: {fileID: 244974681915686901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.55, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 8, z: 1}
+  m_LocalPosition: {x: 11.2715, y: 0, z: 0}
+  m_LocalScale: {x: 1.4430001, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4889,7 +4847,6 @@ SceneRoots:
   - {fileID: 1114854205}
   - {fileID: 2130792104}
   - {fileID: 594298869}
-  - {fileID: 1801916994}
   - {fileID: 799165874}
   - {fileID: 1453213593}
   - {fileID: 805562964}
