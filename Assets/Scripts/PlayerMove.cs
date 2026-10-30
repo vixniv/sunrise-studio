@@ -18,13 +18,11 @@ public class PlayerMove : MonoBehaviour
     public bool artFacesLeft = true;
 
     [Header("Animation")]
-    [Tooltip("Animator with an IsWalking bool and a WalkAnimSpeed float. Left empty, the Animator on the Visual sprite is used.")]
+    [Tooltip("Animator with IsWalking and IsRunning bools. Left empty, the Animator on the Visual sprite is used.")]
     public Animator animator;
-    [Tooltip("Walk animation playback speed while running (1 = normal walk speed).")]
-    [Min(0.1f)] public float runAnimSpeed = 1.6f;
 
     static readonly int IsWalkingHash = Animator.StringToHash("IsWalking");
-    static readonly int WalkAnimSpeedHash = Animator.StringToHash("WalkAnimSpeed");
+    static readonly int IsRunningHash = Animator.StringToHash("IsRunning");
 
     Rigidbody2D rb;
     bool dragging;
@@ -71,7 +69,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (animator == null) return;
         animator.SetBool(IsWalkingHash, moveX != 0f);
-        animator.SetFloat(WalkAnimSpeedHash, running ? runAnimSpeed : 1f);
+        animator.SetBool(IsRunningHash, running);
     }
 
     void ReadPointer()

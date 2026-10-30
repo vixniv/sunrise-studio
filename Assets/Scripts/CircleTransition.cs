@@ -17,6 +17,11 @@ public class CircleTransition : MonoBehaviour
     [Min(0.05f)]
     public float openDuration = 0.35f;
 
+    [Header("Audio")]
+    [Tooltip("Plays sounds passed to LoadScene, such as a door. Left empty, one is added at runtime. " +
+             "It lives on this persistent object, so the sound is not cut off when the scene unloads.")]
+    public AudioSource audioSource;
+
     bool transitioning;
 
     public bool IsTransitioning => transitioning;
@@ -40,9 +45,23 @@ public class CircleTransition : MonoBehaviour
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D
+        }
     }
 
-    public void LoadScene(string sceneName)
+    // sound, when given, plays as the circle starts closing.
+    public void LoadScene(
+        string sceneName,
+        AudioClip sound = null,
+        float volume = 1f)
     {
         if (transitioning)
             return;
@@ -63,6 +82,9 @@ public class CircleTransition : MonoBehaviour
                 this);
             return;
         }
+
+        if (sound != null)
+            audioSource.PlayOneShot(sound, volume);
 
         StartCoroutine(TransitionRoutine(sceneName));
     }

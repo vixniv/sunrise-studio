@@ -49,6 +49,10 @@ public class ChoiceInteractable : MonoBehaviour
     {
         ownCue = InteractionCue.IsSharedCue(cue) ? null : cue;
         SharedCue.Init(ownCue);
+        // Empty references are found in the scene, so this works from a prefab without per-scene setup.
+        if (wheel == null) wheel = FindAnyObjectByType<ChoiceWheel>();
+        if (dialog == null) dialog = FindAnyObjectByType<DialogBubble>();
+        if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)

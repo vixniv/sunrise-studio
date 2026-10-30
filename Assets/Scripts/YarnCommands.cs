@@ -58,6 +58,10 @@ public class YarnCommands : MonoBehaviour
 
     public const string DefaultTimeOfDay = "morning";
 
+    // While true, SceneDoors with a Story Node run that node instead of leaving freely.
+    // Turned off every time a scene loads, so a start node turns it on only for the scene whose story needs the door.
+    public const string StoryExitVariable = "$story_exit";
+
     private bool leaving;
     private bool pausedAudio;
 
@@ -93,10 +97,12 @@ public class YarnCommands : MonoBehaviour
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
         if (!(runner.VariableStorage is PersistentVariableStorage))
             Debug.LogWarning($"{runner.name}'s Variable Storage is not a PersistentVariableStorage, so Yarn variables start over in this scene.", runner);
+        if (runner.VariableStorage != null)
+            runner.VariableStorage.SetValue(StoryExitVariable, false);
 
         // The player gets control back when the node ends, so there is nothing to do here.
         runner.AddCommandHandler("enable_control", (Action)(() => { }));
-        runner.AddCommandHandler("scene_transition", (Func<string, YarnTask>)SceneTransition);
+        runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
         runner.AddCommandHandler("fade", (Func<YarnTask>)(() => Fade(null)));
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
@@ -118,7 +124,9 @@ public class YarnCommands : MonoBehaviour
     // scene it belongs to. Otherwise it loads that scene and the dialogue never continues here: the rest of the node
     // (such as a <<jump>>) is left to the next scene, which plays its own start node with YarnCutscene.
     // Location names ignore case, spaces, and underscores, so "music_room" loads the MusicRoom scene.
-    private YarnTask SceneTransition(string location)
+    // <<scene_transition "Classroom" "door">> also plays the Sounds entry "door" as the transition starts closing.
+    // It plays on the CircleTransition, so the sound is not cut off when this scene unloads.
+    private YarnTask SceneTransition(string location, string sound = "")
     {
         string key = Key(location);
         if (key == Key(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => Key(l) == key))
@@ -135,8 +143,9 @@ public class YarnCommands : MonoBehaviour
         if (!leaving)
         {
             leaving = true;
+            AudioClip clip = string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(scene);
+                CircleTransition.Instance.LoadScene(scene, clip);
             else
                 SceneManager.LoadScene(scene);
         }
@@ -239,23 +248,31 @@ public class YarnCommands : MonoBehaviour
             if (freezeFrame != null) freezeFrame.Release();
             return;
         }
-        await SceneTransition(sceneAfterHardReset);
+        await SceneTransition(sceneAfterHardReset, "");
     }
 
-    private void PlaySound(string soundName)
+    // Clip of the Sounds entry named soundName, or null (with a warning naming command) when there is none.
+    private AudioClip FindClip(string soundName, string command)
     {
         Sound sound = sounds.Find(s => s.name == soundName);
         if (sound == null || sound.clip == null)
         {
-            Debug.LogWarning($"<<sfx>>: no clip named \"{soundName}\" in {name}'s Sounds list.", this);
-            return;
+            Debug.LogWarning($"<<{command}>>: no clip named \"{soundName}\" in {name}'s Sounds list.", this);
+            return null;
         }
+        return sound.clip;
+    }
+
+    private void PlaySound(string soundName)
+    {
+        AudioClip clip = FindClip(soundName, "sfx");
+        if (clip == null) return;
         if (sfxSource == null)
         {
             Debug.LogWarning($"<<sfx>>: {name} has no Audio Source.", this);
             return;
         }
-        sfxSource.PlayOneShot(sound.clip);
+        sfxSource.PlayOneShot(clip);
     }
 
     // Pauses every Audio Source in the game. AudioListener.pause outlives the scene, so it is undone on unload.
