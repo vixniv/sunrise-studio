@@ -153,7 +153,9 @@ public class MapDoorInteractor : MonoBehaviour
         if (CircleTransition.Instance != null)
         {
             CircleTransition.Instance.LoadScene(
-                door.destinationScene);
+                door.destinationScene,
+                door.enterSound,
+                door.enterVolume);
         }
         else
         {
