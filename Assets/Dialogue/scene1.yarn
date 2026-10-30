@@ -26,6 +26,9 @@ tags: setup
 ---
 // Never run this node. It only holds the variable declarations.
 <<declare $anin_dressed = false>>
+// While true, a SceneDoor with a Story Node runs that node (such as Dorm_Door) instead of leaving freely.
+// The game turns it off every time a scene loads; a start node turns it on when that scene's story needs the door.
+<<declare $story_exit = false>>
 <<declare $lockers_clock = false>>
 <<declare $lockers_fal = false>>
 <<declare $lockers_hook = false>>
@@ -41,6 +44,7 @@ tags: scene1 dorm
 ---
 // Anin wakes up in her dorm room. Kirana (roommate) is not there.
 Anin: Looks like Kirana left early. Not really her thing.
+<<set $story_exit to true>>
 <<enable_control>>
 <<quest_start "scene1_morning" "Get ready for school">>
 // First time the player controls Anin. Optional tutorial here.
@@ -74,12 +78,14 @@ Anin: I should hurry.
 title: Dorm_Door
 tags: scene1 dorm interactable
 ---
+// Story Node of the Dorm's SceneDoor: runs only while $story_exit is true.
+// Otherwise the door leaves freely to its Destination Scene.
 <<if $anin_dressed is false>>
     Anin: I can't go out like this.
 <<else>>
     Anin: Leave the room?
     -> Yes
-        <<scene_transition "Classroom">>
+        <<scene_transition "Classroom" "door">>
         <<jump Classroom_Start>>
     -> Later
 <<endif>>

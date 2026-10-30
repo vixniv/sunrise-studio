@@ -14,6 +14,14 @@ public class YarnDialogPresenter : DialoguePresenterBase
     [SerializeField] private DialogBubble bubble;
     [SerializeField] private ChoiceWheel wheel;
 
+    // Empty references are found in the scene, so this works from a prefab without per-scene setup.
+    private void Awake()
+    {
+        if (runner == null) runner = GetComponent<DialogueRunner>();
+        if (bubble == null) bubble = FindAnyObjectByType<DialogBubble>();
+        if (wheel == null) wheel = FindAnyObjectByType<ChoiceWheel>();
+    }
+
     private bool playing;
     private PlayerMove listener;
     private Transform defaultTalker;
