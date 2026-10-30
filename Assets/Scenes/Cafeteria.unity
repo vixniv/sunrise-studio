@@ -821,10 +821,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.24814814
-    width: 2.976109
-    height: 2.9761093
+    x: 0.5151042
+    y: 0
+    width: 1.019622
+    height: 0.83518517
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -883,7 +883,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -2690,6 +2690,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1269122922
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1672925194099205502, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_Name
+      value: LightingRig
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.80774
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.84901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
 --- !u!1 &1319071890
 GameObject:
   m_ObjectHideFlags: 0
@@ -5188,3 +5245,4 @@ SceneRoots:
   - {fileID: 677713830}
   - {fileID: 1001237017}
   - {fileID: 883469726}
+  - {fileID: 1269122922}
