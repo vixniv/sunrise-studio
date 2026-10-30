@@ -54,9 +54,9 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _Frequency: 5.76
-    - _Speed: 5.94
-    - _Strength: 0.005
+    - _Frequency: 30
+    - _Speed: 2
+    - _Strength: 0
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
