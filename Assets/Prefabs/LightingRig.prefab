@@ -53,6 +53,11 @@ MonoBehaviour:
   afternoonVolume: {fileID: 2004619671792891620}
   nightVolume: {fileID: 4954844735585777664}
   dreamVolume: {fileID: 5964925334937905635}
+  globalLight: {fileID: 6218955904402205923}
+  dayIntensity: 0.8
+  afternoonIntensity: 0.6
+  nightIntensity: 0.1
+  dreamIntensity: 0.1
   dreamWiggleMaterial: {fileID: 2100000, guid: 584d029225401481884fce7855aa58a1, type: 2}
   dreamWiggleStrength: 0.003
 --- !u!1 &2398848182910138064

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Applies the current Yarn time slot to this scene's lighting Volumes.
@@ -13,6 +14,14 @@ public class SceneLightingCycle2D : MonoBehaviour
     [SerializeField] private Volume afternoonVolume;
     [SerializeField] private Volume nightVolume;
     [SerializeField] private Volume dreamVolume;
+
+    [Header("Global Light")]
+    [Tooltip("The scene's Global Light 2D. Its intensity is set for the active time slot.")]
+    [SerializeField] private Light2D globalLight;
+    [SerializeField, Min(0f)] private float dayIntensity = 0.8f;
+    [SerializeField, Min(0f)] private float afternoonIntensity = 0.6f;
+    [SerializeField, Min(0f)] private float nightIntensity = 0.1f;
+    [SerializeField, Min(0f)] private float dreamIntensity = 0.1f;
 
     [Header("Dream effect")]
     [Tooltip("The DreamWiggle material used by the 2D Renderer Full Screen Pass.")]
@@ -37,34 +46,43 @@ public class SceneLightingCycle2D : MonoBehaviour
         string slot = Normalize(YarnCommands.TimeOfDay);
         bool isDreamSequence = slot == "dream" || slot == "dreamsequence";
         Volume activeVolume;
+        float activeLightIntensity;
 
         switch (slot)
         {
             case "day":
             case "morning":
                 activeVolume = dayVolume;
+                activeLightIntensity = dayIntensity;
                 break;
 
             case "afternoon":
             case "lunch":
                 activeVolume = afternoonVolume;
+                activeLightIntensity = afternoonIntensity;
                 break;
 
             case "night":
             case "afterschool":
                 activeVolume = nightVolume;
+                activeLightIntensity = nightIntensity;
                 break;
 
             case "dream":
             case "dreamsequence":
                 activeVolume = dreamVolume;
+                activeLightIntensity = dreamIntensity;
                 break;
 
             default:
                 Debug.LogWarning($"{name}: unknown time slot '{YarnCommands.TimeOfDay}'. Using the Day look.", this);
                 activeVolume = dayVolume;
+                activeLightIntensity = dayIntensity;
                 break;
         }
+
+        if (globalLight != null)
+            globalLight.intensity = activeLightIntensity;
 
         SetWeight(dayVolume, activeVolume == dayVolume ? 1f : 0f);
         SetWeight(afternoonVolume, activeVolume == afternoonVolume ? 1f : 0f);
