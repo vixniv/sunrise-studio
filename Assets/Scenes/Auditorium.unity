@@ -587,6 +587,7 @@ MonoBehaviour:
   player: {fileID: 840653991}
   nextScene: 
   playOnce: 1
+  keepPlayerPosition: 1
 --- !u!1 &151681765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,7 +1043,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000014169142, y: 2.4366188, z: -10}
+  m_LocalPosition: {x: 30.521032, y: 2.4366188, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2357,7 +2358,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 45.3
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2543,7 +2544,7 @@ Transform:
   m_GameObject: {fileID: 851998795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4.875, z: -10}
+  m_LocalPosition: {x: 45.3, y: -4.875, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4258,6 +4259,7 @@ MonoBehaviour:
   player: {fileID: 840653991}
   nextScene: 
   playOnce: 1
+  keepPlayerPosition: 1
 --- !u!1 &1642460116
 GameObject:
   m_ObjectHideFlags: 0
@@ -5850,6 +5852,7 @@ MonoBehaviour:
   player: {fileID: 840653991}
   nextScene: 
   playOnce: 1
+  keepPlayerPosition: 1
 --- !u!1 &1983836183
 GameObject:
   m_ObjectHideFlags: 0
@@ -6489,6 +6492,7 @@ MonoBehaviour:
   player: {fileID: 840653991}
   nextScene: 
   playOnce: 1
+  keepPlayerPosition: 1
 --- !u!1 &244974681915686901
 GameObject:
   m_ObjectHideFlags: 0
@@ -6578,8 +6582,8 @@ Transform:
   m_GameObject: {fileID: 244974681915686901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 44.5, y: -0.875, z: 0}
-  m_LocalScale: {x: 6, y: 8, z: 1}
+  m_LocalPosition: {x: 46.4, y: -0.875, z: 0}
+  m_LocalScale: {x: 2, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -6802,6 +6806,7 @@ MonoBehaviour:
   destinationScene: SchoolMap
   enterSound: {fileID: 0}
   enterVolume: 1
+  spawnPoint: {fileID: 0}
   storyNode: 
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
