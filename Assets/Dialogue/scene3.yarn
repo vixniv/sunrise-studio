@@ -1,0 +1,306 @@
+// =====================================================================
+// SCENE 3 · DAY 2: MAKING SURE HE READS THEM
+// Anin finds out the notes are real and makes sure Fal reads them,
+// believing they'll help. He goes quiet, and he dies again in the
+// evening. "But I... I helped him."
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - First day with full player agency: the player can explore anywhere.
+//   Event triggers show as an exclamation mark on the minimap, and a
+//   small pop-up appears before an event starts.
+// - Commands used (same as earlier scenes, plus a few new ones):
+//     <<enable_control>>              give the player movement + interact
+//     <<quest_start "id" "Title">>    start / show a quest
+//     <<quest_update "id" "Title">>   update the quest objective
+//     <<scene_transition "Location">> fade + load a location
+//     <<advance_time "slot">>         morning / after_school
+//     <<event_marker "id" true/false>> show/hide minimap "!" for an event
+//     <<npc_enter "Name">>            NPC walks into the current room
+//     <<npc_exit "Name">>             NPC walks out
+//     <<cutscene "id">>               play a non-dialogue cutscene
+//     <<hard_reset>>                  white flash, loop back to the wish
+// - World state from Gap 1: the notes are inside Fal's math textbook.
+//   The ROOFTOP key is ON its hook in the morning, EMPTY after school.
+// - The note text must NEVER be visible in this scene. The player only
+//   sees the back of the paper, and later only the torn fragment.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — MORNING
+// ---------------------------------------------------------------------
+
+title: Day2_Start
+tags: scene3 day2 dorm
+---
+// Lets the Dorm door run Day2_Dorm_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<set $d2_dressed to false>>
+<<set $d2_morning_examined to 0>>
+<<set $d2_seen_locker to false>>
+<<set $d2_seen_hook to false>>
+<<set $d2_seen_cabinet to false>>
+<<set $d2_fal_arrived to false>>
+<<set $d2_eve_clock to false>>
+<<set $d2_eve_hook to false>>
+<<set $d2_found_paper to false>>
+<<set $d2_paper_dropped to false>>
+
+// Anin wakes up. This time Kirana IS there, still asleep.
+// Anin tries to remember last night's "dream": wandering an empty
+// school. The memory is faint. Only a few moments come back.
+Anin: Wha— was it all just a dream?
+Anin: Or did I actually get up and sleepwalk around school last night?
+Anin: Why did it feel so real?
+Anin: Did I really go to Fal's locker and find out all of that?
+Anin: I dreamt I wrote him something. Something kind... I think. In his math book.
+<<enable_control>>
+<<quest_start "day2" "Get ready for school">>
+// Interactables: Day2_Dorm_Bed, Day2_Dorm_Poster, Day2_Dorm_Desk,
+// Day2_Dorm_KiranaBed, Day2_Dorm_Door
+===
+
+title: Day2_Dorm_Bed
+tags: scene3 day2 dorm interactable
+---
+Anin: No time to lie around, Anin...
+===
+
+title: Day2_Dorm_Poster
+tags: scene3 day2 dorm interactable
+---
+Anin: Kirana's favorite band. I don't really listen to this kind of music.
+===
+
+title: Day2_Dorm_Desk
+tags: scene3 day2 dorm interactable
+---
+Anin: I should hurry.
+-> Get dressed
+    <<set $d2_dressed to true>>
+    // Short fade or outfit swap.
+-> Do nothing
+===
+
+title: Day2_Dorm_KiranaBed
+tags: scene3 day2 dorm interactable
+---
+Anin: Wake her up?
+-> Yes
+    Kirana: Ummmm... just five more minutes.
+    Anin: Bruh. Is this what she went through yesterday?
+-> Do nothing
+===
+
+title: Day2_Dorm_Door
+tags: scene3 day2 dorm interactable
+---
+<<if $d2_dressed is false>>
+    Anin: I can't go out like this.
+<<else>>
+    Anin: Leave the room?
+    -> Yes
+        <<jump Day2_FreeRoam>>
+    -> Later
+<<endif>>
+===
+
+title: Day2_FreeRoam
+tags: scene3 day2
+---
+// Free exploration starts. Show the event marker on the minimap.
+// These run BEFORE the transition: nothing after <<scene_transition>> runs.
+<<quest_update "day2" "Explore the school">>
+<<event_marker "day2_fal_notes" true>>
+// Event: Day2_Lockers_Morning (trigger: enter the Locker Room).
+// Optional day events will be added later.
+<<scene_transition "LockerRoom">>
+===
+
+
+// ---------------------------------------------------------------------
+// EVENT: FINDING OUT WHETHER FAL READS THE NOTES
+// Trigger: enter the Locker Room (morning). Show the event pop-up first.
+// Interactables: Day2_Morning_FalLocker, Day2_Morning_KeyHook,
+// Day2_Morning_Cabinet. Fal arrives after the player examines ANY TWO.
+// ---------------------------------------------------------------------
+
+title: Day2_Lockers_Morning
+tags: scene3 day2 lockers event
+---
+<<event_marker "day2_fal_notes" false>>
+Anin: It looks exactly the same as in my dream. So... it wasn't a dream?
+===
+
+title: Day2_Morning_FalLocker
+tags: scene3 day2 lockers interactable
+---
+Anin: Locked. Of course it is. But last night it was open... I opened it.
+<<if $d2_seen_locker is false>>
+    <<set $d2_seen_locker to true>>
+    <<set $d2_morning_examined to $d2_morning_examined + 1>>
+<<endif>>
+<<jump Day2_Morning_Check>>
+===
+
+title: Day2_Morning_KeyHook
+tags: scene3 day2 lockers interactable
+---
+// Hook tag: ROOFTOP. The key IS on the hook this morning.
+Anin: The rooftop key's still here. Just like in my dream.
+<<if $d2_seen_hook is false>>
+    <<set $d2_seen_hook to true>>
+    <<set $d2_morning_examined to $d2_morning_examined + 1>>
+<<endif>>
+<<jump Day2_Morning_Check>>
+===
+
+title: Day2_Morning_Cabinet
+tags: scene3 day2 lockers interactable
+---
+Anin: I said sorry to him. In the dream, I said sorry.
+<<if $d2_seen_cabinet is false>>
+    <<set $d2_seen_cabinet to true>>
+    <<set $d2_morning_examined to $d2_morning_examined + 1>>
+<<endif>>
+<<jump Day2_Morning_Check>>
+===
+
+title: Day2_Morning_Check
+tags: scene3 day2 lockers
+---
+<<if $d2_morning_examined >= 2 and $d2_fal_arrived is false>>
+    <<set $d2_fal_arrived to true>>
+    <<jump Day2_FalReads>>
+<<endif>>
+===
+
+title: Day2_FalReads
+tags: scene3 day2 lockers event
+---
+// Footsteps. Fal comes in, bag over one shoulder, opens his locker.
+<<npc_enter "Fal">>
+Fal: Oh. Anin. You're early for once.
+-> Did you bring your math book?
+-> Let's start studying now, before class.
+Fal: Now? Okay, okay, teacher.
+
+<<cutscene "fal_reads_notes">>
+// Fal pulls out his math textbook. Folded papers slip out and land at
+// his feet. He picks them up and turns AWAY to read. Camera shows only
+// the back of the paper. A long pause. His shoulders drop.
+// NO MUSIC. Hold the silence for a few seconds before the next line.
+
+Fal: What's...
+Fal: ...Who wrote these?
+-> Someone who believes in you.
+-> Does it matter?
+// Keep both options exactly as written. They pay off at the Day 3 midpoint.
+
+// Fal folds the notes into his blazer pocket.
+Fal: ...Right.
+Fal: Thanks.
+Fal: Let's just do the integrals after school. Lockers, like we said.
+// He leaves without looking back.
+<<npc_exit "Fal">>
+
+Anin: He went quiet. That's good, right? It means it reached him.
+<<quest_update "day2" "Meet Fal at the lockers after school">>
+<<advance_time "after_school">>
+// Optional day events will go here later. For now, time advances
+// straight to after school once this event ends.
+// Anin is still in the Locker Room, and a start node only plays when a
+// room loads, so the evening starts here directly.
+<<jump Day2_Lockers_Evening>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — AFTER SCHOOL (required)
+// Trigger: enter the Locker Room after the bell.
+// Interactables: Day2_Eve_Clock, Day2_Eve_KeyHook.
+// The ROOFTOP key hook is EMPTY now.
+// Friends arrive after BOTH are examined.
+// ---------------------------------------------------------------------
+
+title: Day2_Lockers_Evening
+tags: scene3 day2 lockers
+---
+// Late sunlight through the high window. Anin waits beside Fal's
+// locker, two math books under her arm.
+Anin: Today's different. He read them. Today's different.
+===
+
+title: Day2_Eve_Clock
+tags: scene3 day2 lockers interactable
+---
+Anin: Ten minutes late. ...Ten minutes, again.
+<<set $d2_eve_clock to true>>
+<<jump Day2_Eve_Check>>
+===
+
+title: Day2_Eve_KeyHook
+tags: scene3 day2 lockers interactable
+---
+// Hook tag: ROOFTOP. The hook is EMPTY.
+Anin: ...No. No, no, no.
+<<set $d2_eve_hook to true>>
+<<jump Day2_Eve_Check>>
+===
+
+title: Day2_Eve_Check
+tags: scene3 day2 lockers
+---
+<<if $d2_eve_clock and $d2_eve_hook>>
+    <<jump Day2_FriendsArrive>>
+<<endif>>
+===
+
+title: Day2_FriendsArrive
+tags: scene3 day2 lockers event
+---
+// Footsteps. Kirana, Dira and Lila come in from the hallway.
+// Lila shoves her sketchbook into her locker.
+<<npc_enter "Kirana">>
+<<npc_enter "Dira">>
+<<npc_enter "Lila">>
+Lila: Anin? You're still here?
+Kirana: She's waiting for her study date.
+Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up—
+// Anin says "twice" AT THE SAME TIME as Kirana would. Show both
+// speakers or overlap the boxes if your dialogue UI allows it.
+// PAYOFF in Scene 7 lunch: Kirana says "You finish my sentences too."
+Anin: —twice.
+Kirana: ...Creepy. Okay. Bye.
+<<npc_exit "Kirana">>
+<<npc_exit "Dira">>
+<<npc_exit "Lila">>
+
+// Anin is alone.
+<<cutscene "fal_fall_offscreen_2">>
+// OFFSCREEN ONLY. Same sounds as the prologue, held a beat longer.
+// A sound from above, then screams from across the park.
+// This time Anin's books hit the floor. She grips the locker door.
+
+Anin: But I... I helped him.
+
+// A crumpled sheet of paper is now on the floor beneath the key hook.
+// Make it interactable: Day2_CrumpledPaper (required to end the scene).
+// Shows the paper (ActiveIfYarnVariable with Follow Changes).
+<<set $d2_paper_dropped to true>>
+===
+
+title: Day2_CrumpledPaper
+tags: scene3 day2 lockers interactable required
+---
+// Fal dropped this on his way to take the rooftop key.
+// Only the torn end is readable. Do not show the rest anywhere.
+Anin: It's torn. I can only read the end.
+Anin: "...not enough."
+Anin: His dad's words. Even now.
+<<set $d2_found_paper to true>>
+<<set $chapter_scene to 4>>
+<<hard_reset>>
+// TRANSITION → Scene 4: Gap 2
+===

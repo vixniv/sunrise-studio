@@ -348,9 +348,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb9b8af4fc4c4c5ba4cabf422fd7be7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
-  destinationScene: SceneTemplate
+  destinationScene: Library
   buildingCollider: {fileID: 201267533}
   entryPoint: {fileID: 1968478115}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &201267533
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1240,6 +1242,8 @@ MonoBehaviour:
   destinationScene: Cafeteria
   buildingCollider: {fileID: 412458432}
   entryPoint: {fileID: 1976238116}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &412458432
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2060,6 +2064,8 @@ MonoBehaviour:
   destinationScene: Classroom
   buildingCollider: {fileID: 803574060}
   entryPoint: {fileID: 326704158}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &803574060
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2433,6 +2439,8 @@ MonoBehaviour:
   destinationScene: PhotographyClub
   buildingCollider: {fileID: 834272650}
   entryPoint: {fileID: 852905518}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &834272650
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2961,6 +2969,8 @@ MonoBehaviour:
   destinationScene: Auditorium
   buildingCollider: {fileID: 988513711}
   entryPoint: {fileID: 1227743371}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &988513711
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4647,6 +4657,8 @@ MonoBehaviour:
   destinationScene: LockerRoom
   buildingCollider: {fileID: 1762930409}
   entryPoint: {fileID: 1137304721}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &1762930409
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5310,6 +5322,8 @@ MonoBehaviour:
   destinationScene: MusicRoom
   buildingCollider: {fileID: 1970477066}
   entryPoint: {fileID: 1037595205}
+  enterSound: {fileID: 0}
+  enterVolume: 1
 --- !u!61 &1970477066
 BoxCollider2D:
   m_ObjectHideFlags: 0

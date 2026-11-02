@@ -18,6 +18,9 @@ public class SceneDoor : MonoBehaviour
     [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
     [SerializeField] private AudioClip enterSound;
     [SerializeField, Range(0f, 1f)] private float enterVolume = 1f;
+    [Tooltip("Optional. Where the player appears when the room loads without a cutscene (see DoorSpawn). " +
+             "Leave empty to use this door's X and the player's own height.")]
+    [SerializeField] private Transform spawnPoint;
 
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
@@ -52,6 +55,13 @@ public class SceneDoor : MonoBehaviour
                 Debug.LogError($"{name} has a Story Node but there is no YarnDialogPresenter in the scene, so it always leaves freely.", this);
         }
     }
+
+    public bool LeadsTo(string scene) =>
+        !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);
+
+    // Where DoorSpawn puts the player; playerPosition supplies the height when there is no Spawn Point.
+    public Vector2 SpawnPosition(Vector2 playerPosition) =>
+        spawnPoint != null ? (Vector2)spawnPoint.position : new Vector2(transform.position.x, playerPosition.y);
 
     private void OnTriggerEnter2D(Collider2D other)
     {

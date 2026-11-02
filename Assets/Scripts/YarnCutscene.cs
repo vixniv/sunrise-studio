@@ -27,8 +27,15 @@ public class YarnCutscene : MonoBehaviour
     [SerializeField] private string nextScene = "Dorm";
     [Tooltip("Plays the node only the first time this scene opens, until <<hard_reset>> starts the day over.")]
     [SerializeField] private bool playOnce = true;
+    [Tooltip("On: when this cutscene plays, the player stays where they are placed in the scene. " +
+             "Off: the player still starts at the door (see DoorSpawn).")]
+    [SerializeField] private bool keepPlayerPosition = true;
 
     private bool leaving;
+
+    // True when this cutscene is about to play and keeps the player where the scene places them. Checked before Start.
+    public bool KeepsPlayerInPlace =>
+        keepPlayerPosition && isActiveAndEnabled && yarnDialog != null && !(playOnce && played.Contains(startNode.Trim()));
 
     // Clears the played nodes when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

@@ -1,0 +1,311 @@
+// =====================================================================
+// SCENE 2 · GAP 1: THE NOTES (00:00)
+// Midnight, empty school. In a "dream", Anin reads Fal's locker and
+// learns he is the only child who must be "great". She writes notes and
+// hides them in his math textbook. In the dream the words blur as she
+// writes: the player NEVER sees what the notes say in this scene.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - WRITING RULE: every line night Anin says is true. She withholds,
+//   she never lies. Please don't add lines without checking with N.
+// - Commands used (rename to match your Dialogue Runner):
+//     <<gap_mode true/false>>         gap visuals: colour grade, near
+//                                     silence, all clocks frozen at 00:00
+//     <<quest_start "id" "Title">>    start / show a quest
+//     <<quest_update "id" "Title">>   update the quest objective
+//     <<scene_transition "Location">> fade + load a location
+//     <<give_item "id">>              add item to inventory
+//     <<remove_item "id">>            remove item from inventory
+//     <<open_locker "id">>            locker open animation; enables the
+//                                     locker-content interactables
+//     <<close_locker "id">>           locker close animation
+//     <<blur_writing "id">>           writing animation: pen moves, the
+//                                     words smear and stay unreadable
+//     <<end_gap>>                     second hand moves, fade to Dec 10
+// - <<scene_transition>> loads the room and ends the node there. A <<jump X>> after
+//   it never runs: node X must be the start node (YarnCutscene) of that room instead.
+// - NO NPCs exist in the gap. Kirana's bed is empty, blanket flat.
+// - The ROOFTOP key IS on its hook in this scene (it was empty in Scene 1).
+// - The notes' real text is cruel (e.g. "You are not good enough",
+//   "You're a disgrace to your family"). It is ONLY revealed in Scene 5
+//   (Day 3 midpoint), as a flashback in Anin's handwriting. Do not show
+//   it anywhere in this scene, including UI, item names or tooltips.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00
+// ---------------------------------------------------------------------
+
+title: Gap1_Start
+tags: scene2 gap1 dorm
+---
+<<gap_mode true>>
+// Lets the Dorm door run Gap1_Dorm_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<set $gap1_master_key to false>>
+<<set $gap1_locker_open to false>>
+<<set $gap1_seen_photo to false>>
+<<set $gap1_seen_report to false>>
+<<set $gap1_seen_letter to false>>
+<<set $gap1_seen_rocket to false>>
+<<set $gap1_seen_note to false>>
+<<set $gap1_notes_written to false>>
+<<set $gap1_notes_placed to false>>
+<<set $gap1_locker_closed to false>>
+<<set $gap1_key_returned to false>>
+
+// Anin opens her eyes. The room is wrong: too quiet, too still.
+// Kirana's bed is empty, the blanket flat as if no one was ever there.
+// Double reading: first play = tired deja vu. Replay = night Anin's
+// weary "again", the same word she ends Chapter 1 on (Scene 8).
+Anin: ...Again.
+<<quest_start "gap1" "Something's wrong with Fal">>
+// Interactables: Gap1_Dorm_Clock, Gap1_Dorm_KiranaBed,
+// Gap1_Dorm_Window, Gap1_Dorm_Door
+===
+
+title: Gap1_Dorm_Clock
+tags: scene2 gap1 dorm interactable
+---
+Anin: Midnight. It's not moving.
+===
+
+title: Gap1_Dorm_KiranaBed
+tags: scene2 gap1 dorm interactable
+---
+Anin: Gone again.
+===
+
+title: Gap1_Dorm_Window
+tags: scene2 gap1 dorm interactable
+---
+Anin: The whole school is dark. Like it's holding its breath.
+===
+
+title: Gap1_Dorm_Door
+tags: scene2 gap1 dorm interactable
+---
+<<if $gap1_key_returned is false>>
+    // First visit: leaving for the school.
+    // Double reading: the player hears "end his death"; on replay, "end the loop".
+    Anin: If I understand him, I can end this.
+    <<quest_update "gap1" "Find out why">>
+    <<scene_transition "LockerRoom">>
+    <<jump Gap1_Lockers_Start>>
+<<else>>
+    Anin: I should sleep.
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — 00:00
+// Same room where she waited in Scene 1. Moonlight through the high
+// window. Her footsteps are the only sound.
+// Interactables: Gap1_KeyHook, Gap1_JanitorCabinet, Gap1_FalLocker
+// ---------------------------------------------------------------------
+
+title: Gap1_Lockers_Start
+tags: scene2 gap1 lockers
+---
+// No dialogue on entry. Let the silence play.
+===
+
+title: Gap1_KeyHook
+tags: scene2 gap1 lockers interactable
+---
+// Hook tag: ROOFTOP. The key is back on the hook.
+Anin: Back on its hook. Like nothing happened.
+===
+
+title: Gap1_JanitorCabinet
+tags: scene2 gap1 lockers interactable
+---
+<<if $gap1_master_key is false and $gap1_key_returned is false>>
+    Anin: The master key. Sorry, Pak.
+    <<give_item "master_key">>
+    <<set $gap1_master_key to true>>
+<<elseif $gap1_master_key is true and $gap1_locker_closed is true>>
+    <<jump Gap1_ReturnKey>>
+<<else>>
+    Anin: I still need it.
+<<endif>>
+===
+
+title: Gap1_FalLocker
+tags: scene2 gap1 lockers interactable
+---
+// Fal's locker, rocket sticker on the door.
+<<if $gap1_master_key is false>>
+    Anin: Locked.
+<<elseif $gap1_notes_placed is true>>
+    // Checked before $gap1_locker_open, so closing it never opens it again.
+    Anin: Close it. Put the key back. Like I was never here.
+    <<if $gap1_locker_closed is false>>
+        <<close_locker "fal">>
+        // Hides the locker contents (ActiveIfYarnVariable with Follow Changes).
+        <<set $gap1_locker_open to false>>
+        <<set $gap1_locker_closed to true>>
+        <<quest_update "gap1" "Return the master key">>
+    <<endif>>
+<<elseif $gap1_locker_open is false>>
+    Anin: I'm sorry, Fal. I need to know.
+    <<open_locker "fal">>
+    // Shows the locker contents (ActiveIfYarnVariable with Follow Changes).
+    <<set $gap1_locker_open to true>>
+    <<quest_update "gap1" "Look through Fal's locker">>
+    // Locker contents are now interactable. All five must be examined:
+    // Gap1_Photo, Gap1_ReportCard, Gap1_Letter, Gap1_Rocket, Gap1_SealedNote
+<<else>>
+    Anin: There's more in here.
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER CONTENTS — all must be examined before writing the notes
+// ---------------------------------------------------------------------
+
+title: Gap1_Photo
+tags: scene2 gap1 lockers interactable
+---
+// Text only for now, no close-up art.
+Anin: A family photo. Fal and his parents, in front of a hospital.
+Anin: They're all smiling. Except his eyes.
+Anin: Just the three of them. He's all they've got.
+<<set $gap1_seen_photo to true>>
+<<jump Gap1_CheckContents>>
+===
+
+title: Gap1_ReportCard
+tags: scene2 gap1 lockers interactable
+---
+// Text only for now, no close-up art.
+Anin: His report card. Math, sixty-one. Class rank, seven.
+Anin: Someone wrote on it in red pen. "Not enough."
+Anin: That's his dad's writing.
+<<set $gap1_seen_report to true>>
+<<jump Gap1_CheckContents>>
+===
+
+title: Gap1_Letter
+tags: scene2 gap1 lockers interactable
+---
+// Text only for now, no close-up art. Sets up the pressure Fal is under.
+Anin: A letter from home.
+Anin: "Fal, we've given everything so you can be great. Top three. Medicine. Don't waste it. Don't let us down."
+Anin: "Don't let us down."
+<<set $gap1_seen_letter to true>>
+<<jump Gap1_CheckContents>>
+===
+
+title: Gap1_Rocket
+tags: scene2 gap1 lockers interactable
+---
+// Text only for now, no close-up art.
+Anin: Something folded small, tucked behind the letter.
+Anin: A rocket. He drew it so carefully.
+Anin: In the corner, in his handwriting: "someday?"
+Anin: He never told anyone he wanted this.
+<<set $gap1_seen_rocket to true>>
+<<jump Gap1_CheckContents>>
+===
+
+title: Gap1_SealedNote
+tags: scene2 gap1 lockers interactable
+---
+// Text only for now, no close-up art.
+// It must NOT be openable in this scene.
+Anin: A folded note. My name on the front, in his handwriting.
+Anin: It's still sealed.
+Anin: ...Not mine to read. Not yet.
+<<set $gap1_seen_note to true>>
+<<jump Gap1_CheckContents>>
+===
+
+title: Gap1_CheckContents
+tags: scene2 gap1 lockers
+---
+<<if $gap1_seen_photo and $gap1_seen_report and $gap1_seen_letter and $gap1_seen_rocket and $gap1_seen_note>>
+    Anin: He's carrying all of this alone. Someone has to say something to him.
+    <<jump Gap1_WriteNotes>>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// WRITING THE NOTES
+// No choices. The player watches the pen move but the words blur, like
+// trying to read in a dream. Night Anin's lines stay true: she never
+// says the words are kind. The player fills that in.
+// ---------------------------------------------------------------------
+
+title: Gap1_WriteNotes
+tags: scene2 gap1 lockers
+---
+<<quest_update "gap1" "Write something for Fal">>
+Anin: Something he'll read when he needs it most.
+<<blur_writing "notes_for_fal">>
+Anin: No name. It'll mean more that way.
+<<set $gap1_notes_written to true>>
+<<give_item "notes_for_fal">>
+<<quest_update "gap1" "Leave the notes for Fal">>
+// Next interactable: Gap1_MathBook (inside Fal's locker)
+===
+
+
+// ---------------------------------------------------------------------
+// PLACING THE NOTES
+// ---------------------------------------------------------------------
+
+title: Gap1_MathBook
+tags: scene2 gap1 lockers interactable
+---
+// Fal's math textbook, the one he brought for tutoring.
+<<if $gap1_notes_written is false>>
+    Anin: His math book. For our session.
+<<elseif $gap1_notes_placed is false>>
+    Anin: He'll open this tomorrow. For our session.
+    <<remove_item "notes_for_fal">>
+    // Show the notes being slipped between the pages.
+    <<set $gap1_notes_placed to true>>
+    // Double reading: "it" = saving him (first play) / the plan (replay).
+    Anin: He has to read these. This time it'll work.
+    <<quest_update "gap1" "Close the locker">>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// RETURNING THE MASTER KEY (required before leaving)
+// ---------------------------------------------------------------------
+
+title: Gap1_ReturnKey
+tags: scene2 gap1 lockers
+---
+<<remove_item "master_key">>
+<<set $gap1_master_key to false>>
+<<set $gap1_key_returned to true>>
+<<quest_update "gap1" "Go back to bed">>
+<<scene_transition "Dorm">>
+<<jump Gap1_Dorm_End>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00 (END)
+// ---------------------------------------------------------------------
+
+title: Gap1_Dorm_End
+tags: scene2 gap1 dorm
+---
+// Anin lies down. The clock still reads 00:00.
+Anin: Please. Let this be the last time.
+// The second hand moves.
+<<gap_mode false>>
+<<set $chapter_scene to 3>>
+<<end_gap>>
+// TRANSITION → Scene 3: Day 2 (Dec 10 morning)
+===

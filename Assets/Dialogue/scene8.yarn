@@ -1,0 +1,179 @@
+// =====================================================================
+// SCENE 8 · GAP 4: THE CONFRONTATION
+// Day Anin is awake in the gap for the first time. She finds the other
+// Anin on the auditorium stage. They argue, and it ends at the festival,
+// seconds after the wish. Anin refuses to take it back, and night Anin
+// is left alone.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - Speakers: "Anin" = day Anin (the player). "Night Anin" = the other
+//   Anin. SAME SPRITE, no visual difference.
+// - NO FINAL CHOICE in Chapter 1. Truth flags from Scene 7 only add
+//   dialogue options. The loop always continues.
+// - Anin only ever wished ONCE (prologue). She does not wish again here;
+//   she refuses to take it back.
+// - Commands used (new ones marked NEW):
+//     <<gap_mode true/false>>, <<enable_control>>, <<quest_start>>,
+//     <<scene_transition>>, <<npc_enter>>  (same as before)
+//     <<gap_begin_awake>>  NEW  gap visuals kick in while the player is
+//                               in control: colour drains, sound stops,
+//                               Kirana vanishes from her bed
+//     <<fade "out"/"in">>  NEW
+//     <<ticking_clock>>    NEW  every clock frozen at 00:00 EXCEPT the
+//                               one above night Anin, which ticks
+//     <<end_card "text">>  NEW
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00
+// ---------------------------------------------------------------------
+
+title: Gap4_Start
+tags: scene8 gap4 dorm
+---
+<<set $ending_started to false>>
+// Lets the Dorm door run Gap4_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<gap_begin_awake>>
+<<gap_mode true>>
+Anin: Kirana?
+Anin: ...This is the dream. I'm awake, and it's the dream.
+<<enable_control>>
+// Interactables: Gap4_Calendar, Gap4_Door
+===
+
+title: Gap4_Calendar
+tags: scene8 gap4 dorm interactable
+---
+Anin: Every day, the tenth.
+===
+
+title: Gap4_Door
+tags: scene8 gap4 dorm interactable
+---
+Anin: Where would I go?
+Anin: ...Where it started.
+<<quest_start "gap4" "Find her">>
+<<scene_transition "Auditorium">>
+<<jump Gap4_Auditorium>>
+===
+
+
+// ---------------------------------------------------------------------
+// AUDITORIUM — 00:00
+// Empty. Dark. Someone stands on the stage beside the flagpole, back
+// turned.
+// ---------------------------------------------------------------------
+
+title: Gap4_Auditorium
+tags: scene8 gap4 auditorium event
+---
+Anin: Hey.
+<<npc_enter "Night Anin">>
+// The figure turns. It's Anin. Same uniform, same face. The shock is
+// that she is real and standing there.
+Night Anin: You stayed awake. I never managed that.
+Anin: You're... me.
+Night Anin: I'm what you are after a few hundred more of these.
+Anin: You killed him. Again and again.
+Night Anin: So did you. The first time I wrote those notes, I was standing exactly where you are.
+Anin: Why?
+Night Anin: Because I thought if you felt what I felt, you'd stop. It didn't work on me either.
+Night Anin: This isn't right. The loop keeps everyone from becoming who they want to be. From seeing tomorrow. They don't suffer. They just stop.
+Anin: But we both know this is what we want. We don't want to leave high school. We don't want to leave Dira, Lila and Kirana. They're still with us. Everyone's still with us.
+Night Anin: Are they?
+// Options appear only for truths found in Scene 7. The last option is
+// always available.
+-> Dira's letter. She's scared to open it... because then she'd have to leave. <<if $truth_dira>>
+    Night Anin: And you'd keep them like that. Forever. Scared of a tomorrow that never comes.
+-> Lila can't finish her drawing. There's no "after" to draw. <<if $truth_lila>>
+    Night Anin: And you'd keep them like that. Forever. Scared of a tomorrow that never comes.
+-> Kirana's ferry. She's scared she'll forget what we sound like. <<if $truth_kirana>>
+    Night Anin: And you'd keep them like that. Forever. Scared of a tomorrow that never comes.
+-> Fal said it's like being stuck. <<if $truth_fal>>
+    Night Anin: And you'd keep them like that. Forever. Scared of a tomorrow that never comes.
+-> I saved him. I can keep saving him.
+    Night Anin: Every day? Forever? I did too. Until I forgot what Dira's laugh sounds like.
+Night Anin: Can I ask you something I never asked myself?
+Night Anin: Why did you make the wish?
+Anin: ...Because tomorrow everyone leaves. And I'm the only one with nowhere to go.
+Anin: Then what do you want?
+Night Anin: The same thing you do. Just with a tomorrow.
+<<jump Gap4_Festival>>
+===
+
+
+// ---------------------------------------------------------------------
+// FESTIVAL — the afternoon of the wish (memory)
+// The stage dissolves into the prologue's festival afternoon, a few
+// seconds after the wish. Her friends walk ahead. Night Anin stands
+// beside her in the crowd; no one notices her.
+// ---------------------------------------------------------------------
+
+title: Gap4_Festival
+tags: scene8 gap4 festival cutscene
+---
+// The festival is a cutscene, not a playable room, and its scene doesn't
+// exist yet. Until it does, these lines play on the auditorium stage.
+// Nothing after a <<scene_transition>> runs, so when the festival scene is
+// added, move the lines below into its start node.
+// <<scene_transition "SchoolPark_Festival">>
+Night Anin: It's your wish. It always was. You only made it once. You could take it back.
+Anin: ...I know.
+Anin: I still want it.
+// She doesn't take it back. She leaves night Anin standing in the crowd
+// and hurries after her friends.
+<<fade "out">>
+<<gap_mode false>>
+<<jump Ending_LoopContinues>>
+===
+
+
+// ---------------------------------------------------------------------
+// ENDING — THE LOOP CONTINUES
+// Nothing after a <<scene_transition>> runs, so the ending is one node per
+// room: each room plays its part as its start node while
+// $ending_started is true.
+// ---------------------------------------------------------------------
+
+title: Ending_LoopContinues
+tags: scene8 ending
+---
+<<set $ending_started to true>>
+<<scene_transition "Dorm">>
+===
+
+title: Ending_Dorm
+tags: scene8 ending dorm
+---
+<<fade "in">>
+// Dec 10 morning. Kirana's bed is empty. Mirrors the first line of the game.
+Anin: Looks like Kirana left early. Not really her thing.
+<<scene_transition "Classroom">>
+===
+
+title: Ending_Classroom
+tags: scene8 ending classroom
+---
+Kirana: Hi Anin, where have you been?
+// Hold on the group laughing at the window table. Warm, peaceful,
+// unchanged. This is what Anin chose, and it should feel good.
+<<fade "out">>
+<<scene_transition "Auditorium">>
+===
+
+title: Ending_Auditorium
+tags: scene8 ending auditorium
+---
+<<gap_mode true>>
+<<ticking_clock>>
+// The hall is empty and silent. Every clock is frozen at 00:00.
+// Night Anin sits alone on the edge of the stage, beside the flagpole.
+// The clock on the wall above her is still ticking.
+Night Anin: ...Again.
+<<end_card "Chapter 1">>
+// Bittersweet: day Anin got what she wanted; night Anin is left alone in
+// time that only moves for her. Hook for Chapter 2.
+===

@@ -1,0 +1,191 @@
+// =====================================================================
+// SCENE 7 · DAY 4: CORNERED
+// Anin's friends start noticing the loop, and every sign points back to
+// her. Fal asks if she ever feels like they keep missing tomorrow. That
+// night, she stays awake.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - Commands used (same as before, plus):
+//     <<cutscene "id">>, <<npc_enter>>, <<npc_exit>>, <<advance_time>>,
+//     <<event_marker>>, <<scene_transition>>, <<quest_start>>,
+//     <<quest_update>>, <<enable_control>>
+//     <<stay_awake "success">>  screen dims and recovers twice, the
+//                               clock reaches 23:59, Anin is still awake
+// - TRUTH FLAGS: $truth_dira, $truth_lila, $truth_kirana, $truth_fal.
+//   Dira/Lila/Kirana are OPTIONAL talks after lunch, before the bell.
+//   Fal's is set in the required library scene. They only change
+//   Anin's dialogue options in Scene 8. Chapter 1 always ends with the
+//   loop continuing.
+// - World state from Gap 3: Kirana's calendar shows "10" on every date
+//   except the circled 12th ("Ferry, 06:00"). Dira's book has a margin
+//   note. Lila's sketchbook is full of Warmus lunches.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — MORNING
+// Kirana is standing by the calendar.
+// ---------------------------------------------------------------------
+
+title: Day4_Start
+tags: scene7 day4 dorm
+---
+<<set $truth_dira to false>>
+<<set $truth_lila to false>>
+<<set $truth_kirana to false>>
+<<set $truth_fal to false>>
+<<npc_enter "Kirana">>
+Kirana: Anin. Did you do this?
+-> Do what?
+-> ...
+Kirana: Every day. Every single day says ten. Even the weekends.
+<<enable_control>>
+<<quest_start "day4" "Look at the calendar">>
+// Interactable: Day4_Calendar (required)
+===
+
+title: Day4_Calendar
+tags: scene7 day4 dorm interactable required
+---
+Anin: Every date is the tenth. Except one. The twelfth is circled. "Ferry, 06:00."
+Anin: Kirana... you're leaving?
+Kirana: ...I was going to tell you after graduation. My parents found work back home. Three islands away.
+Kirana: Don't look at me like that. It's not like I'm dying.
+Kirana: Whatever. Someone's being weird. Let's just go.
+<<npc_exit "Kirana">>
+<<quest_update "day4" "Go to class">>
+<<scene_transition "Classroom">>
+<<jump Day4_Classroom>>
+===
+
+
+// ---------------------------------------------------------------------
+// CLASSROOM — MORNING
+// ---------------------------------------------------------------------
+
+title: Day4_Classroom
+tags: scene7 day4 classroom event
+---
+// Dira is staring at her open book.
+Dira: Anin. Come here.
+Dira: Someone wrote in my book. "You've read this before."
+Dira: This is your handwriting.
+-> It's not—
+-> I don't remember writing it.
+Dira: That's not a no.
+<<npc_enter "Lila">>
+// Lila bursts in, sketchbook in hand.
+Lila: Guys. Guys. Look.
+Lila: I didn't draw these. I don't remember drawing these. But it's my sketchbook, and it's... us. At Warmus.
+// Interactable: Day4_Sketchbook (required)
+===
+
+title: Day4_Sketchbook
+tags: scene7 day4 classroom interactable required
+---
+Anin: Page after page. The same lunch. Same table.
+// First time day Anin says "she". She's starting to suspect it isn't
+// just sleepwalking.
+Anin: I didn't draw these. She did.
+Kirana: Okay. This is a prank. Right? Anin?
+<<advance_time "lunch">>
+<<scene_transition "Cafeteria">>
+<<jump Day4_Lunch>>
+===
+
+
+// ---------------------------------------------------------------------
+// CAFETERIA — LUNCH (required)
+// ---------------------------------------------------------------------
+
+title: Day4_Lunch
+tags: scene7 day4 cafeteria event
+---
+<<cutscene "day4_lunch_matches">>
+// The lunch from Lila's drawings plays out exactly as drawn: same seats,
+// same nasi goreng. Lila holds the sketchbook up beside the real table.
+// They match.
+Lila: ...It's the same.
+Dira: Anin, you always know what we're going to say. You always know what's coming. You know what I'm reading. You're not even surprised right now.
+Kirana: You finish my sentences too. Like you already heard them.
+Kirana: Why does it feel like we've had this exact conversation before?
+-> Because we have.
+    Anin: ...Forget it. I didn't mean that.
+-> I don't know.
+Dira: What's happening to us?
+// Anin is cornered. No choice gets her out of it cleanly.
+<<quest_update "day4" "Meet Fal at the library after school">>
+// OPTIONAL: before the bell, the player can talk to each friend alone.
+// Day4_Talk_Dira, Day4_Talk_Lila, Day4_Talk_Kirana. Each sets a truth
+// flag. Interacting with the library door advances time.
+===
+
+
+// ---------------------------------------------------------------------
+// OPTIONAL TALKS (before the bell)
+// ---------------------------------------------------------------------
+
+title: Day4_Talk_Dira
+tags: scene7 day4 optional
+---
+Dira: The letter's still in my bag. I keep thinking: if I never open it, I never have to find out. And I never have to leave.
+<<set $truth_dira to true>>
+===
+
+title: Day4_Talk_Lila
+tags: scene7 day4 optional
+---
+Lila: The drawing for after graduation? I keep starting it over. It never feels finished. Like there's no "after" to draw.
+<<set $truth_lila to true>>
+===
+
+title: Day4_Talk_Kirana
+tags: scene7 day4 optional
+---
+Kirana: Three islands away. I'm scared I'll forget what you all sound like.
+<<set $truth_kirana to true>>
+===
+
+
+// ---------------------------------------------------------------------
+// LIBRARY — AFTER SCHOOL (required)
+// Fal is already at the table, books open.
+// ---------------------------------------------------------------------
+
+title: Day4_Library
+tags: scene7 day4 library event
+---
+<<advance_time "after_school">>
+<<npc_enter "Fal">>
+Fal: You look worse than me, and I'm the one failing math.
+Fal: Can I ask you something weird?
+Fal: Do you ever feel like we keep missing tomorrow?
+-> Every day.
+-> What do you mean?
+Fal: Like it's always about to happen. Graduation, my dad's plan, whatever comes after. And it just... doesn't come.
+Fal: Sometimes I'm glad. Sometimes it feels like being stuck.
+<<set $truth_fal to true>>
+<<npc_exit "Fal">>
+<<scene_transition "Dorm">>
+<<jump Day4_Dorm_Night>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — NIGHT
+// Kirana is asleep. Anin sits at the window with all the lights on.
+// ---------------------------------------------------------------------
+
+title: Day4_Dorm_Night
+tags: scene7 day4 dorm
+---
+Anin: Not tonight. Whoever she is, I'm going to see her.
+<<stay_awake "success">>
+// MIDNIGHT: the gap begins with Anin AWAKE.
+// TRANSITION → Scene 8 (do NOT play the normal gap intro)
+// No white flash. The Dorm reloads at midnight with Gap4_Start as its
+// start node, and Gap4_Start plays the awake gap intro.
+<<set $chapter_scene to 8>>
+<<soft_reset>>
+===

@@ -9,7 +9,7 @@ using Yarn.Unity;
 
 // Registers the custom <<commands>> used in the Yarn scripts on this scene's Dialogue Runner.
 // Put it on the same GameObject as the Dialogue Runner, in every scene that runs Yarn dialogue.
-// Yarn stops on any command nobody registered, so every command in scene1.yarn is registered here;
+// Yarn stops on any command nobody registered, so every command in scene1.yarn to scene8.yarn is registered here;
 // the ones without a game system yet only log what they would do.
 public class YarnCommands : MonoBehaviour
 {
@@ -53,10 +53,14 @@ public class YarnCommands : MonoBehaviour
     [Tooltip("Scene <<hard_reset>> loads. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
     [FormerlySerializedAs("sceneAfterLoopEnd")]
     [SerializeField] private string sceneAfterHardReset = "";
+    [Tooltip("Scene <<end_gap>> and <<soft_reset>> load: the room where every day and every gap starts. Must be in the Build Profile scene list.")]
+    [SerializeField] private string dormScene = "Dorm";
     [Tooltip("Seconds the screen stays covered during <<advance_time>> and <<fade>>.")]
     [SerializeField, Min(0f)] private float fadeHoldSeconds = 0.5f;
 
     public const string DefaultTimeOfDay = "morning";
+    // Time slot of the gaps, set by <<hard_reset>> and <<soft_reset>>; <<end_gap>> goes back to morning.
+    public const string GapTimeOfDay = "midnight";
 
     // While true, SceneDoors with a Story Node run that node instead of leaving freely.
     // Turned off every time a scene loads, so a start node turns it on only for the scene whose story needs the door.
@@ -65,10 +69,10 @@ public class YarnCommands : MonoBehaviour
     private bool leaving;
     private bool pausedAudio;
 
-    // Time slot set by <<advance_time>> (morning, lunch, after_school). It carries over to the next scene.
+    // Time slot set by <<advance_time>> (morning, lunch, after_school) or a reset (midnight). It carries over to the next scene.
     public static string TimeOfDay { get; private set; } = DefaultTimeOfDay;
 
-    // Number of <<hard_reset>>s so far; 0 until the first loop ends.
+    // Number of <<hard_reset>>s and <<soft_reset>>s so far; 0 until the first loop ends.
     public static int LoopsCompleted { get; private set; }
 
     // Runs after TimeOfDay changes. During <<advance_time>> it runs while the screen is covered.
@@ -85,6 +89,13 @@ public class YarnCommands : MonoBehaviour
 
     // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
     public static bool IsTimeOfDay(string slot) => Key(slot) == Key(TimeOfDay);
+
+    // Playtesting only (Tools > Playtest Start): jumps to a time slot without <<advance_time>> or its fade.
+    public static void SetTimeOfDayForTesting(string slot)
+    {
+        TimeOfDay = slot.Trim();
+        TimeOfDayChanged?.Invoke();
+    }
 
     private void Awake()
     {
@@ -104,11 +115,16 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("enable_control", (Action)(() => { }));
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
-        runner.AddCommandHandler("fade", (Func<YarnTask>)(() => Fade(null)));
+        runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
+        // Same as show and hide; the later scenes use these names.
+        runner.AddCommandHandler("npc_enter", (Action<string>)(actor => SetActorVisible(actor, true)));
+        runner.AddCommandHandler("npc_exit", (Action<string>)(actor => SetActorVisible(actor, false)));
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
+        runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
+        runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
         runner.AddCommandHandler("sound_cut", (Action)(() => SetAudioPaused(true)));
         runner.AddCommandHandler("sound_resume", (Action)(() => SetAudioPaused(false)));
@@ -118,6 +134,21 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("quest_start", (Action<string, string>)((id, text) => Pending($"quest_start {id}: {text}")));
         runner.AddCommandHandler("quest_update", (Action<string, string>)((id, text) => Pending($"quest_update {id}: {text}")));
         runner.AddCommandHandler("quest_complete", (Action<string>)(id => Pending($"quest_complete {id}")));
+        runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) => Pending($"event_marker {id} {visible}")));
+        runner.AddCommandHandler("give_item", (Action<string>)(id => Pending($"give_item {id}")));
+        runner.AddCommandHandler("remove_item", (Action<string>)(id => Pending($"remove_item {id}")));
+        runner.AddCommandHandler("open_locker", (Action<string>)(id => Pending($"open_locker {id}")));
+        runner.AddCommandHandler("close_locker", (Action<string>)(id => Pending($"close_locker {id}")));
+        runner.AddCommandHandler("blur_writing", (Action<string>)(id => Pending($"blur_writing {id}")));
+        runner.AddCommandHandler("blur_action", (Action<string>)(id => Pending($"blur_action {id}")));
+        runner.AddCommandHandler("gap_mode", (Action<bool>)(on => Pending($"gap_mode {on}")));
+        runner.AddCommandHandler("gap_begin_awake", (Action)(() => Pending("gap_begin_awake")));
+        runner.AddCommandHandler("memory_montage", (Action<bool>)(on => Pending($"memory_montage {on}")));
+        runner.AddCommandHandler("stay_awake", (Action<string>)(result => Pending($"stay_awake {result}")));
+        runner.AddCommandHandler("edit_calendar", (Action)(() => Pending("edit_calendar")));
+        runner.AddCommandHandler("draw_sketchbook", (Action)(() => Pending("draw_sketchbook")));
+        runner.AddCommandHandler("ticking_clock", (Action)(() => Pending("ticking_clock")));
+        runner.AddCommandHandler("end_card", (Action<string>)(text => Pending($"end_card {text}")));
     }
 
     // <<scene_transition "Classroom">>: does nothing when the location is this scene, so a node can open with the
@@ -131,8 +162,13 @@ public class YarnCommands : MonoBehaviour
         string key = Key(location);
         if (key == Key(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => Key(l) == key))
             return YarnTask.CompletedTask;
+        return LoadLocation(location, sound);
+    }
 
-        string scene = FindBuildScene(key);
+    // Loads location even when it is this scene, so a reset reloads the room with the objects of the new $chapter_scene.
+    private YarnTask LoadLocation(string location, string sound)
+    {
+        string scene = FindBuildScene(Key(location));
         if (scene == null)
         {
             Debug.LogError($"<<scene_transition>>: no scene in the Build Profile scene list matches \"{location.Trim()}\". Ending the dialogue.", this);
@@ -177,6 +213,15 @@ public class YarnCommands : MonoBehaviour
         });
     }
 
+    // <<fade>>: covers and uncovers the screen. <<fade "out">> and <<fade "in">> only log for now:
+    // the scene transitions next to them already cover and uncover the screen.
+    private YarnTask FadeCommand(string direction = "")
+    {
+        if (string.IsNullOrWhiteSpace(direction)) return Fade(null);
+        Pending($"fade {direction.Trim()}");
+        return YarnTask.CompletedTask;
+    }
+
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
     private YarnTask Fade(Action whileCovered)
     {
@@ -190,13 +235,16 @@ public class YarnCommands : MonoBehaviour
     }
 
     // <<show "Fal">> / <<hide "Fal">>: turns the character's GameObject on or off.
+    // Hiding prefers the enabled DialogSpeaker of that name, so a character placed in a story group
+    // can leave even when the Actors entry points to a hidden copy that walks in on other days.
     private void SetActorVisible(string actorName, bool visible)
     {
         string key = actorName.Trim();
-        Actor actor = actors.Find(a => a.name.Trim() == key);
-        GameObject target = actor?.target;
-        if (target == null && !visible && DialogSpeaker.TryFind(key, out DialogSpeaker speaker))
+        GameObject target = null;
+        if (!visible && DialogSpeaker.TryFind(key, out DialogSpeaker speaker))
             target = speaker.gameObject;
+        if (target == null)
+            target = actors.Find(a => a.name.Trim() == key)?.target;
         if (target == null)
         {
             Debug.LogWarning($"<<{(visible ? "show" : "hide")}>>: no actor named \"{key}\" in {name}'s Actors list.", this);
@@ -230,25 +278,46 @@ public class YarnCommands : MonoBehaviour
         return freezeFrame.Play();
     }
 
-    // <<hard_reset>>: white flash, then the day starts over: morning again, start nodes play again,
-    // and Scene After Hard Reset loads. Yarn variables are kept.
+    // <<hard_reset>>: white flash, then the loop starts over at midnight (the gap): start nodes play again,
+    // and Scene After Hard Reset loads, even when it is this scene. Yarn variables are kept.
     private async YarnTask HardReset()
     {
         if (freezeFrame != null) await freezeFrame.Play();
         else Debug.LogWarning($"<<hard_reset>>: {name} has no Freeze Frame assigned, so there is no white flash.", this);
 
-        LoopsCompleted++;
-        TimeOfDay = DefaultTimeOfDay;
-        TimeOfDayChanged?.Invoke();
-        YarnCutscene.ForgetPlayed();
-        Debug.Log($"<<hard_reset>>: loop {LoopsCompleted} ended.", this);
+        StartOver(GapTimeOfDay, true);
         // A frozen world stays frozen until the scene unloads (FreezeFrame releases it then).
         if (string.IsNullOrWhiteSpace(sceneAfterHardReset))
         {
             if (freezeFrame != null) freezeFrame.Release();
             return;
         }
-        await SceneTransition(sceneAfterHardReset, "");
+        await LoadLocation(sceneAfterHardReset, "");
+    }
+
+    // <<soft_reset>>: midnight comes without a death, so there is no white flash. The loop starts over in the Dorm at midnight.
+    private YarnTask SoftReset()
+    {
+        StartOver(GapTimeOfDay, true);
+        return LoadLocation(dormScene, "");
+    }
+
+    // <<end_gap>>: the gap is over and Dec 10 starts again in the Dorm, in the morning.
+    private YarnTask EndGap()
+    {
+        StartOver(DefaultTimeOfDay, false);
+        return LoadLocation(dormScene, "");
+    }
+
+    // Sets the time slot and lets every start node play again. Set $chapter_scene before the reset so the
+    // reloaded room shows the next scene's objects.
+    private void StartOver(string slot, bool loopEnded)
+    {
+        if (loopEnded) LoopsCompleted++;
+        TimeOfDay = slot;
+        TimeOfDayChanged?.Invoke();
+        YarnCutscene.ForgetPlayed();
+        Debug.Log(loopEnded ? $"Loop {LoopsCompleted} ended; it is now {slot}." : $"The gap ended; it is now {slot}.", this);
     }
 
     // Clip of the Sounds entry named soundName, or null (with a warning naming command) when there is none.
