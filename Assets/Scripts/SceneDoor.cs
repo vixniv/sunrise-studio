@@ -18,9 +18,12 @@ public class SceneDoor : MonoBehaviour
     [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
     [SerializeField] private AudioClip enterSound;
     [SerializeField, Range(0f, 1f)] private float enterVolume = 1f;
-    [Tooltip("Optional. Where the player appears when the room loads without a cutscene (see DoorSpawn). " +
-             "Leave empty to use this door's X and the player's own height.")]
+    [Tooltip("Optional. Its X is where the player appears when the room loads without a cutscene (see DoorSpawn); " +
+             "the player keeps their own height. Leave empty to use this door's X.")]
     [SerializeField] private Transform spawnPoint;
+    [Tooltip("In a room with several doors: the player starts here when no door leads back to the previous scene, " +
+             "such as when you press Play in this scene.")]
+    [SerializeField] private bool defaultEntrance;
 
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
@@ -56,12 +59,15 @@ public class SceneDoor : MonoBehaviour
         }
     }
 
+    public bool DefaultEntrance => defaultEntrance;
+
     public bool LeadsTo(string scene) =>
         !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);
 
-    // Where DoorSpawn puts the player; playerPosition supplies the height when there is no Spawn Point.
+    // Where DoorSpawn puts the player: only X moves; the player keeps the height they are placed at in the scene,
+    // so they land standing on the floor instead of dropping from the door's height.
     public Vector2 SpawnPosition(Vector2 playerPosition) =>
-        spawnPoint != null ? (Vector2)spawnPoint.position : new Vector2(transform.position.x, playerPosition.y);
+        new Vector2(spawnPoint != null ? spawnPoint.position.x : transform.position.x, playerPosition.y);
 
     private void OnTriggerEnter2D(Collider2D other)
     {
