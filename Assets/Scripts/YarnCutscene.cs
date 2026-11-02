@@ -21,7 +21,8 @@ public class YarnCutscene : MonoBehaviour
     [SerializeField] private Vector2 dialogOffset = new Vector2(0f, 0.25f);
     [Tooltip("Seconds before the first line, so the scene can fade in first.")]
     [SerializeField, Min(0f)] private float startDelay = 0.5f;
-    [Tooltip("Optional. Frozen until the node ends. Needed when the node has options: the ChoiceWheel shows above this player.")]
+    [Tooltip("Frozen from the moment the scene opens until the node ends; the ChoiceWheel shows above this player. " +
+             "Leave empty to use the PlayerMove in the scene.")]
     [SerializeField] private PlayerMove player;
     [Tooltip("Scene to load when the cutscene ends. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
     [SerializeField] private string nextScene = "Dorm";
@@ -52,8 +53,15 @@ public class YarnCutscene : MonoBehaviour
         }
         string node = startNode.Trim();
         if (playOnce && !played.Add(node)) yield break;
+
+        if (player == null) player = FindAnyObjectByType<PlayerMove>();
+        // Frozen during Start Delay too, so the player cannot walk before the first line shows.
+        if (player != null) player.InteractionMenuOpen = true;
         if (startDelay > 0f) yield return new WaitForSecondsRealtime(startDelay);
         yarnDialog.Play(node, narrator != null ? narrator : transform, dialogOffset, player, LoadNextScene);
+        // Play refuses while other dialogue runs. When that is not the presenter's own dialogue (which unfreezes
+        // the player when it ends), nothing else would unfreeze the player, so do it here.
+        if (player != null && !yarnDialog.IsPlaying) player.InteractionMenuOpen = false;
     }
 
     private void LoadNextScene()
