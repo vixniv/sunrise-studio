@@ -17,8 +17,7 @@
 //     <<scene_transition "Location">> fade + load a location
 //     <<give_item "id">>              add item to inventory
 //     <<remove_item "id">>            remove item from inventory
-//     <<open_locker "id">>            locker open animation; enables the
-//                                     locker-content interactables
+//     <<open_locker "id">>            locker open animation
 //     <<close_locker "id">>           locker close animation
 //     <<blur_writing "id">>           writing animation: pen moves, the
 //                                     words smear and stay unreadable
@@ -51,7 +50,6 @@ tags: scene2 gap1 dorm
 <<set $gap1_seen_letter to false>>
 <<set $gap1_seen_rocket to false>>
 <<set $gap1_seen_note to false>>
-<<set $gap1_notes_written to false>>
 <<set $gap1_notes_placed to false>>
 <<set $gap1_locker_closed to false>>
 <<set $gap1_key_returned to false>>
@@ -156,53 +154,70 @@ tags: scene2 gap1 lockers interactable
     // Shows the locker contents (ActiveIfYarnVariable with Follow Changes).
     <<set $gap1_locker_open to true>>
     <<quest_update "gap1" "Look through Fal's locker">>
-    // Locker contents are now interactable. All five must be examined:
-    // Gap1_Photo, Gap1_ReportCard, Gap1_Letter, Gap1_Rocket, Gap1_SealedNote
-<<else>>
-    Anin: There's more in here.
+    <<jump Gap1_LockerContents>>
 <<endif>>
 ===
 
 
 // ---------------------------------------------------------------------
-// LOCKER CONTENTS — all must be examined before writing the notes
+// LOCKER CONTENTS — dialogue options, all five must be chosen before
+// writing the notes. Each item node jumps back to the menu; a chosen
+// option is hidden (Options Presenter: Show Unavailable Options off).
 // ---------------------------------------------------------------------
 
+title: Gap1_LockerContents
+tags: scene2 gap1 lockers
+---
+<<if $gap1_seen_photo and $gap1_seen_report and $gap1_seen_letter and $gap1_seen_rocket and $gap1_seen_note>>
+    <<jump Gap1_CheckContents>>
+<<endif>>
+-> The photo <<if $gap1_seen_photo is false>>
+    <<jump Gap1_Photo>>
+-> The report card <<if $gap1_seen_report is false>>
+    <<jump Gap1_ReportCard>>
+-> The letter <<if $gap1_seen_letter is false>>
+    <<jump Gap1_Letter>>
+-> Something folded <<if $gap1_seen_rocket is false>>
+    <<jump Gap1_Rocket>>
+-> The sealed note <<if $gap1_seen_note is false>>
+    <<jump Gap1_SealedNote>>
+===
+
 title: Gap1_Photo
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Text only for now, no close-up art.
 Anin: A family photo. Fal and his parents, in front of a hospital.
 Anin: They're all smiling. Except his eyes.
 Anin: Just the three of them. He's all they've got.
 <<set $gap1_seen_photo to true>>
-<<jump Gap1_CheckContents>>
+<<jump Gap1_LockerContents>>
 ===
 
 title: Gap1_ReportCard
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Text only for now, no close-up art.
 Anin: His report card. Math, sixty-one. Class rank, seven.
 Anin: Someone wrote on it in red pen. "Not enough."
 Anin: That's his dad's writing.
 <<set $gap1_seen_report to true>>
-<<jump Gap1_CheckContents>>
+<<jump Gap1_LockerContents>>
 ===
 
 title: Gap1_Letter
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Text only for now, no close-up art. Sets up the pressure Fal is under.
 Anin: A letter from home.
 Anin: "Fal, we've given everything so you can be great. Top three. Medicine. Don't waste it. Don't let us down."
 Anin: "Don't let us down."
 <<set $gap1_seen_letter to true>>
-<<jump Gap1_CheckContents>>
+<<jump Gap1_LockerContents>>
 ===
 
 title: Gap1_Rocket
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Text only for now, no close-up art.
 Anin: Something folded small, tucked behind the letter.
@@ -210,11 +225,11 @@ Anin: A rocket. He drew it so carefully.
 Anin: In the corner, in his handwriting: "someday?"
 Anin: He never told anyone he wanted this.
 <<set $gap1_seen_rocket to true>>
-<<jump Gap1_CheckContents>>
+<<jump Gap1_LockerContents>>
 ===
 
 title: Gap1_SealedNote
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Text only for now, no close-up art.
 // It must NOT be openable in this scene.
@@ -222,16 +237,14 @@ Anin: A folded note. My name on the front, in his handwriting.
 Anin: It's still sealed.
 Anin: ...Not mine to read. Not yet.
 <<set $gap1_seen_note to true>>
-<<jump Gap1_CheckContents>>
+<<jump Gap1_LockerContents>>
 ===
 
 title: Gap1_CheckContents
 tags: scene2 gap1 lockers
 ---
-<<if $gap1_seen_photo and $gap1_seen_report and $gap1_seen_letter and $gap1_seen_rocket and $gap1_seen_note>>
-    Anin: He's carrying all of this alone. Someone has to say something to him.
-    <<jump Gap1_WriteNotes>>
-<<endif>>
+Anin: He's carrying all of this alone. Someone has to say something to him.
+<<jump Gap1_WriteNotes>>
 ===
 
 
@@ -249,10 +262,7 @@ tags: scene2 gap1 lockers
 Anin: Something he'll read when he needs it most.
 <<blur_writing "notes_for_fal">>
 Anin: No name. It'll mean more that way.
-<<set $gap1_notes_written to true>>
-<<give_item "notes_for_fal">>
-<<quest_update "gap1" "Leave the notes for Fal">>
-// Next interactable: Gap1_MathBook (inside Fal's locker)
+<<jump Gap1_MathBook>>
 ===
 
 
@@ -261,20 +271,16 @@ Anin: No name. It'll mean more that way.
 // ---------------------------------------------------------------------
 
 title: Gap1_MathBook
-tags: scene2 gap1 lockers interactable
+tags: scene2 gap1 lockers
 ---
 // Fal's math textbook, the one he brought for tutoring.
-<<if $gap1_notes_written is false>>
-    Anin: His math book. For our session.
-<<elseif $gap1_notes_placed is false>>
-    Anin: He'll open this tomorrow. For our session.
-    <<remove_item "notes_for_fal">>
-    // Show the notes being slipped between the pages.
-    <<set $gap1_notes_placed to true>>
-    // Double reading: "it" = saving him (first play) / the plan (replay).
-    Anin: He has to read these. This time it'll work.
-    <<quest_update "gap1" "Close the locker">>
-<<endif>>
+Anin: He'll open this tomorrow. For our session.
+// Show the notes being slipped between the pages.
+<<set $gap1_notes_placed to true>>
+// Double reading: "it" = saving him (first play) / the plan (replay).
+Anin: He has to read these. This time it'll work.
+<<quest_update "gap1" "Close the locker">>
+// Next interactable: Gap1_FalLocker (closes the locker)
 ===
 
 
