@@ -632,6 +632,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1571593568}
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: defaultEntrance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: destinationScene
       value: Dorm
       objectReference: {fileID: 0}
@@ -1395,8 +1399,8 @@ Transform:
   m_GameObject: {fileID: 319793920}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.4, y: -0.5, z: 0}
-  m_LocalScale: {x: 2, y: 3, z: 1}
+  m_LocalPosition: {x: 15.85, y: -0.7504, z: 0}
+  m_LocalScale: {x: 2, y: 4.0008, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1776789833}
@@ -1562,7 +1566,7 @@ Transform:
   m_GameObject: {fileID: 321840360}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.4, y: -0.5, z: 0}
+  m_LocalPosition: {x: 18, y: -1.75, z: 0}
   m_LocalScale: {x: 1, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

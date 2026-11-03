@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 // Keep Player Position is about to play: then the player stays where they are placed in the scene,
 // such as Anin waking up in bed. Nothing to attach: it runs on its own in every scene with a PlayerMove and a SceneDoor.
 // With several doors, the player comes in through the one that leads back to the previous scene;
-// when none does (such as pressing Play in this scene), through the one marked Default Entrance.
+// when none does (such as pressing Play in this scene), through the one marked Default Entrance, else the leftmost door.
 // Logs which door it picked and why.
 public static class DoorSpawn
 {
@@ -65,14 +65,22 @@ public static class DoorSpawn
                 }
             }
         }
-        if (door == null)
+        if (door == null && doors.Length == 1)
         {
             door = doors[0];
-            reason = doors.Length > 1
-                ? "no door leads back to the previous scene and none is the Default Entrance, so any door"
-                : "it is the only door";
+            reason = "it is the only door";
         }
-        Debug.Log($"DoorSpawn: player starts at {door.name} because {reason}.", door);
+        if (door == null)
+        {
+            // FindObjectsByType returns the doors in no fixed order, so pick the leftmost: the same door every time.
+            door = doors[0];
+            foreach (SceneDoor candidate in doors)
+                if (candidate.transform.position.x < door.transform.position.x) door = candidate;
+            Debug.LogWarning($"DoorSpawn: in {scene.name}, no door leads back to \"{previousScene}\" and none is the Default Entrance, " +
+                             $"so the player starts at the leftmost door, {door.name}. Tick Default Entrance on the door the player should use.", door);
+            reason = "it is the leftmost door";
+        }
+        Debug.Log($"DoorSpawn: player starts at {door.name} in {scene.name} (came from \"{previousScene}\") because {reason}.", door);
 
         Vector2 position = door.SpawnPosition(player.transform.position);
         player.transform.position = new Vector3(position.x, position.y, player.transform.position.z);
