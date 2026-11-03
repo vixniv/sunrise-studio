@@ -24,6 +24,9 @@ public class SceneDoor : MonoBehaviour
     [Tooltip("In a room with several doors: the player starts here when no door leads back to the previous scene, " +
              "such as when you press Play in this scene.")]
     [SerializeField] private bool defaultEntrance;
+    [Tooltip("Which way the player looks after coming in through this door. Auto faces the side of the room " +
+             "with more space (the camera confiner's wider side); pick Left or Right when Auto guesses wrong.")]
+    [SerializeField] private SpawnFacing spawnFacing = SpawnFacing.Auto;
 
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
@@ -66,7 +69,10 @@ public class SceneDoor : MonoBehaviour
         }
     }
 
+    public enum SpawnFacing { Auto, Left, Right }
+
     public bool DefaultEntrance => defaultEntrance;
+    public SpawnFacing Facing => spawnFacing;
 
     public bool LeadsTo(string scene) =>
         !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);

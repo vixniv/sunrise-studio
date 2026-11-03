@@ -1095,7 +1095,7 @@ MonoBehaviour:
   player: {fileID: 556314118}
   nextScene: 
   playOnce: 1
-  keepPlayerPosition: 1
+  keepPlayerPosition: 0
 --- !u!1 &219622628
 GameObject:
   m_ObjectHideFlags: 0
@@ -2533,7 +2533,7 @@ MonoBehaviour:
   player: {fileID: 556314118}
   nextScene: 
   playOnce: 1
-  keepPlayerPosition: 1
+  keepPlayerPosition: 0
 --- !u!1 &735187774
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,7 +2754,7 @@ MonoBehaviour:
   player: {fileID: 556314118}
   nextScene: 
   playOnce: 1
-  keepPlayerPosition: 1
+  keepPlayerPosition: 0
 --- !u!4 &799165874
 Transform:
   m_ObjectHideFlags: 0
