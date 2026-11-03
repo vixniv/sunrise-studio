@@ -76,11 +76,18 @@ Anin: Kirana's favorite band. I don't really listen to this kind of music.
 title: Day2_Dorm_Desk
 tags: scene3 day2 dorm interactable
 ---
-Anin: I should hurry.
--> Get dressed
-    <<set $d2_dressed to true>>
-    // Short fade or outfit swap.
--> Do nothing
+<<if $d2_dressed>>
+    // Already dressed: the choice is gone, only this line plays.
+    Anin: I'm already dressed. Time to go.
+<<else>>
+    Anin: I should hurry.
+    -> Get dressed
+        <<set $d2_dressed to true>>
+        <<fade>>
+        // Anin showers, rushes through her makeup, puts on her uniform.
+        // Play a short fade or outfit swap here.
+    -> Do nothing
+<<endif>>
 ===
 
 title: Day2_Dorm_KiranaBed
