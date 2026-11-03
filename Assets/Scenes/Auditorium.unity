@@ -396,8 +396,8 @@ Transform:
   m_GameObject: {fileID: 25859622}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 46.6, y: 1.5, z: 0}
-  m_LocalScale: {x: 2, y: 4, z: 1}
+  m_LocalPosition: {x: 45.4682, y: 2.6055, z: 0}
+  m_LocalScale: {x: 4.2636976, y: 6.2112, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1984970636}
@@ -1414,8 +1414,8 @@ Transform:
   m_GameObject: {fileID: 499175430}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -50.6, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 4, z: 1}
+  m_LocalPosition: {x: -52.4805, y: -0.08, z: 0}
+  m_LocalScale: {x: 3.3389, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1984970636}
@@ -3514,8 +3514,8 @@ Transform:
   m_GameObject: {fileID: 1309297547}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -48, y: -3.5, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalPosition: {x: -1.6188, y: -4.881, z: 0}
+  m_LocalScale: {x: 1.23756, y: 2.17788, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1830672143}
@@ -4519,8 +4519,8 @@ Transform:
   m_GameObject: {fileID: 1780162208}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -49.2, y: 1, z: 0}
-  m_LocalScale: {x: 2, y: 3, z: 1}
+  m_LocalPosition: {x: -1.57, y: 3.9327, z: 0}
+  m_LocalScale: {x: 2, y: 8.685074, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1984970636}
@@ -6807,6 +6807,7 @@ MonoBehaviour:
   enterSound: {fileID: 0}
   enterVolume: 1
   spawnPoint: {fileID: 0}
+  defaultEntrance: 0
   storyNode: 
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
