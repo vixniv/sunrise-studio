@@ -61,8 +61,14 @@ public class PlayerMove : MonoBehaviour
         if (moveX == 0f) ReadKeyboard(); // editor fallback
 
         // Keeps the last direction when standing still.
-        if (moveX != 0f && visual != null)
-            visual.flipX = artFacesLeft ? moveX > 0f : moveX < 0f;
+        Face(moveX);
+    }
+
+    // Turns the sprite to look right (direction > 0) or left (direction < 0); 0 keeps the current facing.
+    public void Face(float direction)
+    {
+        if (direction == 0f || visual == null) return;
+        visual.flipX = artFacesLeft ? direction > 0f : direction < 0f;
     }
 
     void LateUpdate()

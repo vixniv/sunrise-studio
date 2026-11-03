@@ -17,6 +17,14 @@ public class PersistentVariableStorage : VariableStorageBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetOnPlay() => variables.Clear();
 
+    // Playtesting only (Tools > Playtest Start): sets a value before any Dialogue Runner exists, such as $chapter_scene = 3.
+    // value is a bool, float, or string, matching the variable's type in its <<declare>>.
+    public static void SetValueForTesting(string variableName, object value)
+    {
+        Validate(variableName);
+        variables[variableName] = value;
+    }
+
     public override void SetValue(string variableName, string stringValue) => Store(variableName, stringValue);
     public override void SetValue(string variableName, float floatValue) => Store(variableName, floatValue);
     public override void SetValue(string variableName, bool boolValue) => Store(variableName, boolValue);
