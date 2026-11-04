@@ -7,7 +7,7 @@ using Yarn.Unity;
 // options go to the ChoiceWheel above the player. Add it to the Dialogue Runner's Dialogue Presenters list.
 // A line with a character name ("Kirana: Hi.") shows above the matching DialogSpeaker;
 // a line without one shows above the object the dialogue was started from.
-// Cutscenes pass no player: nobody is frozen, and taps still advance the lines.
+// With no player (a scene without one, such as the Prologue), nobody is frozen, and taps still advance the lines.
 public class YarnDialogPresenter : DialoguePresenterBase
 {
     [SerializeField] private DialogueRunner runner;

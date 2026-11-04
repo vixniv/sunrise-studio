@@ -18,6 +18,15 @@ public class SceneDoor : MonoBehaviour
     [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
     [SerializeField] private AudioClip enterSound;
     [SerializeField, Range(0f, 1f)] private float enterVolume = 1f;
+    [Tooltip("Optional. Its X is where the player appears when the room loads without a cutscene (see DoorSpawn); " +
+             "the player keeps their own height. Leave empty to use this door's X.")]
+    [SerializeField] private Transform spawnPoint;
+    [Tooltip("In a room with several doors: the player starts here when no door leads back to the previous scene, " +
+             "such as when you press Play in this scene.")]
+    [SerializeField] private bool defaultEntrance;
+    [Tooltip("Which way the player looks after coming in through this door. Auto faces the side of the room " +
+             "with more space (the camera confiner's wider side); pick Left or Right when Auto guesses wrong.")]
+    [SerializeField] private SpawnFacing spawnFacing = SpawnFacing.Auto;
 
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
@@ -39,19 +48,39 @@ public class SceneDoor : MonoBehaviour
     // The cue field when it is this object's own cue, not the shared InteractionCue.
     private GameObject ownCue;
     private DialogueRunner runner;
+    private DialogBubble bubble;
+    private ChoiceWheel wheel;
+    // Last frame the player was busy with dialogue or a menu, so the tap that closes it cannot also open this door.
+    private int lastBusyFrame = -1;
 
     private void Awake()
     {
         ownCue = InteractionCue.IsSharedCue(cue) ? null : cue;
         SharedCue.Init(ownCue);
+        // Found even without a Story Node, so taps on any dialogue in the room never count as door taps.
+        if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
+        bubble = FindAnyObjectByType<DialogBubble>();
+        wheel = FindAnyObjectByType<ChoiceWheel>();
         if (!string.IsNullOrWhiteSpace(storyNode))
         {
             runner = FindAnyObjectByType<DialogueRunner>();
-            if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
             if (yarnDialog == null)
                 Debug.LogError($"{name} has a Story Node but there is no YarnDialogPresenter in the scene, so it always leaves freely.", this);
         }
     }
+
+    public enum SpawnFacing { Auto, Left, Right }
+
+    public bool DefaultEntrance => defaultEntrance;
+    public SpawnFacing Facing => spawnFacing;
+
+    public bool LeadsTo(string scene) =>
+        !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);
+
+    // Where DoorSpawn puts the player: only X moves; the player keeps the height they are placed at in the scene,
+    // so they land standing on the floor instead of dropping from the door's height.
+    public Vector2 SpawnPosition(Vector2 playerPosition) =>
+        new Vector2(spawnPoint != null ? spawnPoint.position.x : transform.position.x, playerPosition.y);
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -72,12 +101,17 @@ public class SceneDoor : MonoBehaviour
     private void Update()
     {
         if (leaving) return;
-        // While the story node plays, presses belong to the dialog.
-        bool want = nearbyPlayer != null && !(yarnDialog != null && yarnDialog.IsPlaying);
+        // While any dialogue, the ChoiceWheel or a cutscene freeze is up, presses belong to it.
+        bool busy = (yarnDialog != null && yarnDialog.IsPlaying) || (bubble != null && bubble.IsOpen) ||
+                    (wheel != null && wheel.IsOpen) || (nearbyPlayer != null && nearbyPlayer.InteractionMenuOpen);
+        if (busy) lastBusyFrame = Time.frameCount;
+        bool want = nearbyPlayer != null && !busy;
         InteractionCue.Request(this, want, ownCue != null);
         bool isTarget = InteractionCue.IsTarget(this);
         SharedCue.Set(ownCue, ref cueShown, want && isTarget);
-        if (!want || !isTarget)
+        // The frame right after the dialogue closes is skipped too: a quick tap can press and release in one frame,
+        // and the dialog may have handled that release earlier this frame.
+        if (!want || !isTarget || Time.frameCount <= lastBusyFrame + 1)
         {
             tracking = false;
             return;

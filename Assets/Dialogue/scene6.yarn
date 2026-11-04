@@ -1,0 +1,152 @@
+// =====================================================================
+// SCENE 6 · GAP 3: HINTS FOR THE FRIENDS (00:00)
+// Fal lived. Night Anin stops targeting him and turns to Anin's
+// friends, so they start to see the loop.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - FROM THIS SCENE ON, night Anin's lines use the speaker "Night Anin"
+//   (different name tag / text colour). Before this scene she was
+//   plain "Anin" on purpose, to hide the twist.
+// - Same sprite as day Anin. No visual difference.
+// - Same gap rules: no NPCs, clocks frozen at 00:00, gap colour grade.
+// - Commands used (new ones marked NEW):
+//     <<gap_mode true/false>>, <<quest_start>>, <<quest_update>>,
+//     <<scene_transition>>, <<end_gap>>  (same as before)
+//     <<edit_calendar>>     NEW  every December date becomes "10";
+//                                the circled 12th stays untouched
+//     <<draw_sketchbook>>   NEW  drawing animation, NOT blurred
+// - Speaker "Note" = text shown on screen in Anin's handwriting.
+// - Order (linear, no fail state): calendar -> Dira's book (classroom)
+//   -> Lila's sketchbook (locker room) -> back to dorm.
+// - World state for Day 4: calendar all 10s, margin note in Dira's
+//   book, Lila's sketchbook full of Warmus lunches.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00
+// Interactables: Gap3_KiranaBed, Gap3_Calendar, Gap3_Door
+// ---------------------------------------------------------------------
+
+title: Gap3_Start
+tags: scene6 gap3 dorm
+---
+<<gap_mode true>>
+// Lets the Dorm door run Gap3_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<set $gap3_calendar to false>>
+<<set $gap3_dira to false>>
+<<set $gap3_lila to false>>
+Night Anin: He lived.
+Night Anin: She learned how to save him. Of course she did. So did I, once.
+Night Anin: Killing him only teaches her to save him. Fine.
+Night Anin: If she won't let go for him, maybe she'll let go for them.
+<<quest_start "gap3" "Make them see it">>
+===
+
+title: Gap3_KiranaBed
+tags: scene6 gap3 dorm interactable
+---
+Night Anin: Empty. Like always, in here.
+===
+
+title: Gap3_Calendar
+tags: scene6 gap3 dorm interactable required
+---
+// Kirana's calendar.
+<<if $gap3_calendar is false>>
+    Night Anin: December. One day circled. The twelfth. "Ferry, 06:00."
+    Night Anin: She's leaving. She never told us.
+    <<edit_calendar>>
+    Night Anin: Every day is the tenth. Let her see it.
+    <<set $gap3_calendar to true>>
+    <<quest_update "gap3" "Go to the classroom">>
+<<else>>
+    Night Anin: Every day is the tenth.
+<<endif>>
+===
+
+title: Gap3_Door
+tags: scene6 gap3 dorm interactable
+---
+<<if $gap3_calendar is false>>
+    Night Anin: Not yet.
+<<elseif $gap3_lila is false>>
+    <<scene_transition "LockerRoom">>
+<<else>>
+    <<jump Gap3_Dorm_End>>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// CLASSROOM — 00:00
+// Interactable: Gap3_DiraBook (Dira's desk, book left open)
+// ---------------------------------------------------------------------
+
+title: Gap3_DiraBook
+tags: scene6 gap3 classroom interactable required
+---
+<<if $gap3_dira is false>>
+    Night Anin: She always reads the same page. Every morning, the same page.
+    Night Anin: She told us she already knows what's written there. She does.
+    // Underline a line on the page and write in the margin.
+    Note: "You've read this before."
+    <<set $gap3_dira to true>>
+    <<quest_update "gap3" "Go to the locker room">>
+<<else>>
+    Night Anin: She'll know the handwriting.
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — 00:00
+// Interactables: Gap3_LilaLocker, Gap3_LilaSketchbook
+// ---------------------------------------------------------------------
+
+title: Gap3_LilaLocker
+tags: scene6 gap3 lockers interactable
+---
+Night Anin: She leaves her sketchbook here every night. Every single night.
+===
+
+title: Gap3_LilaSketchbook
+tags: scene6 gap3 lockers interactable required
+---
+<<if $gap3_dira is false>>
+    Night Anin: Dira first.
+<<elseif $gap3_lila is false>>
+    Night Anin: The drawing of the four of them. Still not finished.
+    Night Anin: She'll never finish it. Not here.
+    // No blur this time. Night Anin hides nothing anymore.
+    <<draw_sketchbook>>
+    Night Anin: Lunch at Warmus. The four of them. Same table, same food. Again. And again. And again.
+    <<set $gap3_lila to true>>
+    <<quest_update "gap3" "Go back to the dorm">>
+    // Same as Gap 1: back to the Dorm, where Gap3_Dorm_End is the start
+    // node while $gap3_lila is true.
+    <<scene_transition "Dorm">>
+<<else>>
+    Night Anin: Again. And again.
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00 (END)
+// ---------------------------------------------------------------------
+
+title: Gap3_Dorm_End
+tags: scene6 gap3 dorm
+---
+Night Anin: She's lost count of how many times she's watched him die.
+Night Anin: I stopped counting long before she did.
+Night Anin: I don't even remember what Dira's laugh sounds like anymore.
+// The second hand moves.
+<<gap_mode false>>
+<<set $chapter_scene to 7>>
+<<end_gap>>
+// TRANSITION → Scene 7: Day 4
+===

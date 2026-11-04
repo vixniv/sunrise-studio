@@ -25,6 +25,10 @@ title: Scene1_Declarations
 tags: setup
 ---
 // Never run this node. It only holds the variable declarations.
+// Which scene of the story is playing (1 = Prologue ... 8 = Gap 4). Every room shows only the
+// objects of its "Story_N" group, so the same rooms are reused by every scene.
+// The last node of each scene sets the next number right before its reset.
+<<declare $chapter_scene = 1>>
 <<declare $anin_dressed = false>>
 // While true, a SceneDoor with a Story Node runs that node (such as Dorm_Door) instead of leaving freely.
 // The game turns it off every time a scene loads; a start node turns it on when that scene's story needs the door.
@@ -66,13 +70,18 @@ Anin: Kirana's favorite band. I don't really listen to this kind of music.
 title: Dorm_Desk
 tags: scene1 dorm interactable
 ---
-Anin: I should hurry.
--> Get dressed
-    <<set $anin_dressed to true>>
-    <<fade>>
-    // Anin showers, rushes through her makeup, puts on her uniform.
-    // Play a short fade or outfit swap here.
--> Do nothing
+<<if $anin_dressed>>
+    // Already dressed: the choice is gone, only this line plays.
+    Anin: I'm already dressed. Time to go.
+<<else>>
+    Anin: I should hurry.
+    -> Get dressed
+        <<set $anin_dressed to true>>
+        <<fade>>
+        // Anin showers, rushes through her makeup, puts on her uniform.
+        // Play a short fade or outfit swap here.
+    -> Do nothing
+<<endif>>
 ===
 
 title: Dorm_Door
@@ -313,6 +322,7 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
 // Anin doesn't move. She closes her eyes.
 Anin: ...Again.
 
+<<set $chapter_scene to 2>>
 <<hard_reset>>
 // TRANSITION → Scene 2: Gap 1
 ===

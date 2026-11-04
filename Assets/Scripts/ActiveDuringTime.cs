@@ -8,7 +8,7 @@ using UnityEngine;
 // Keep this object active in the scene when Targets is filled: an inactive object never runs the check.
 public class ActiveDuringTime : MonoBehaviour
 {
-    [Tooltip("Times of day the targets are shown: morning, lunch, after_school.")]
+    [Tooltip("Times of day the targets are shown: morning, lunch, after_school, midnight (the gaps).")]
     [SerializeField] private List<string> times = new List<string> { "morning" };
     [Tooltip("Objects to show or hide. Leave empty to show or hide this object.")]
     [SerializeField] private List<GameObject> targets = new List<GameObject>();
