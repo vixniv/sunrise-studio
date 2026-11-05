@@ -698,10 +698,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 2.447099
+    x: 0.30416667
     y: 0
-    width: 0.26666665
-    height: 0.26666665
+    width: 0.6025039
+    height: 0.4935185
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -731,7 +731,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.8, y: 2.4362898, z: -10}
+  m_LocalPosition: {x: 7.940366, y: 2.43618, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4287,6 +4287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1859040592}
   - component: {fileID: 1859040591}
+  - component: {fileID: 1859040593}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -5825,3 +5826,18 @@ SceneRoots:
   - {fileID: 724974069}
   - {fileID: 1255555872}
   - {fileID: 823952958}
+--- !u!114 &1859040593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859040590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
+  backgroundRenderer: {fileID: 1859040591}
+  dayBackground: {fileID: 21300000, guid: 5ddbc2d1f67b04f45be855bbedc3e903, type: 3}
+  nightBackground: {fileID: 21300000, guid: baa300e5664ff46f69ea44d8ed8322f7, type: 3}

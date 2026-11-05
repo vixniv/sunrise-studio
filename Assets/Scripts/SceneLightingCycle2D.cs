@@ -44,7 +44,7 @@ public class SceneLightingCycle2D : MonoBehaviour
     private void ApplyCurrentTime()
     {
         string slot = Normalize(YarnCommands.TimeOfDay);
-        bool isDreamSequence = slot == "dream" || slot == "dreamsequence";
+        bool isDreamSequence = slot == "dream" || slot == "dreamsequence" || slot == "midnight";
         Volume activeVolume;
         float activeLightIntensity;
 
@@ -70,6 +70,7 @@ public class SceneLightingCycle2D : MonoBehaviour
 
             case "dream":
             case "dreamsequence":
+            case "midnight":
                 activeVolume = dreamVolume;
                 activeLightIntensity = dreamIntensity;
                 break;
