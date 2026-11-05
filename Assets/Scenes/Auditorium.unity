@@ -1814,7 +1814,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -8788,3 +8788,5 @@ SceneRoots:
   - {fileID: 1984970636}
   - {fileID: 465817826}
   - {fileID: 992315417}
+  - {fileID: 1065525050}
+  - {fileID: 1361346472}
