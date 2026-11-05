@@ -1301,10 +1301,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.30416667
-    y: 0
-    width: 0.6025039
-    height: 0.4935185
+    x: 0
+    y: 0.19166666
+    width: 0.88437504
+    height: 0.7244027
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1466,6 +1466,7 @@ GameObject:
   m_Component:
   - component: {fileID: 413000636}
   - component: {fileID: 413000635}
+  - component: {fileID: 413000637}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -1548,6 +1549,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &413000637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413000634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
+  backgroundRenderer: {fileID: 413000635}
+  dayBackground: {fileID: 21300000, guid: 3cac3bccf356b4edfb757633a0742756, type: 3}
+  nightBackground: {fileID: 21300000, guid: 1c7ba8f51630840e1819d0abd014b62e, type: 3}
 --- !u!1 &521476652
 GameObject:
   m_ObjectHideFlags: 0

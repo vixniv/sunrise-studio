@@ -1726,6 +1726,7 @@ GameObject:
   m_Component:
   - component: {fileID: 846411556}
   - component: {fileID: 846411555}
+  - component: {fileID: 846411557}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -1808,6 +1809,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &846411557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846411554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
+  backgroundRenderer: {fileID: 846411555}
+  dayBackground: {fileID: 21300000, guid: 77f4c9d0adea54c5f9063bce3099fc69, type: 3}
+  nightBackground: {fileID: 21300000, guid: fbb6bf493f2cd47dbba6afe8fb0be367, type: 3}
 --- !u!1 &851998795
 GameObject:
   m_ObjectHideFlags: 0
