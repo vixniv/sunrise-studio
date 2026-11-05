@@ -1,0 +1,321 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34cf58353089040afa4c78337d03b361, type: 3}
+  m_Name: SunriseAudioLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SunriseAudioLibrary
+  cues:
+  - key: dialogue_blip
+    clips:
+    - {fileID: 8300000, guid: 6932716f63f5740aebd58694177f1f07, type: 3}
+    - {fileID: 8300000, guid: df72ac00e6a974620a32f9cb0ef45401, type: 3}
+    - {fileID: 8300000, guid: b979d2a29c50f4fb38fa002176bd1126, type: 3}
+    volume: 0.55
+  - key: dialogue_advance
+    clips:
+    - {fileID: 8300000, guid: c564f8489601e4251ba7314b7512631e, type: 3}
+    volume: 0.8
+  - key: dialogue_choice
+    clips:
+    - {fileID: 8300000, guid: 60adc974859c549608d54bbc31934126, type: 3}
+    volume: 0.9
+  - key: ui_click
+    clips:
+    - {fileID: 8300000, guid: 651f3f45377c74809a94aca725622ced, type: 3}
+    volume: 0.8
+  - key: ui_click_short
+    clips:
+    - {fileID: 8300000, guid: e67898f98ef9c40afb6688623e877dac, type: 3}
+    volume: 0.8
+  - key: ui_confirm
+    clips:
+    - {fileID: 8300000, guid: 7a5b37d2af52248b9be90f44f6a2bd9c, type: 3}
+    volume: 0.9
+  - key: ui_error
+    clips:
+    - {fileID: 8300000, guid: a9e61be40b6d74e308770d8e788d19e4, type: 3}
+    volume: 0.9
+  - key: ui_interact
+    clips:
+    - {fileID: 8300000, guid: 9aa18ce39b3bb4fd0947a71fff06a13d, type: 3}
+    volume: 0.85
+  - key: ui_item_pickup
+    clips:
+    - {fileID: 8300000, guid: 927e02ad4e3154532a925d4c3081ebe9, type: 3}
+    - {fileID: 8300000, guid: 4e661174bd1434434992704250b14303, type: 3}
+    volume: 0.9
+  - key: ui_quest_popup
+    clips:
+    - {fileID: 8300000, guid: 4375d77c04f334e6e81d1d3b4b8afc04, type: 3}
+    volume: 0.9
+  - key: ui_quest_complete
+    clips:
+    - {fileID: 8300000, guid: 3862ff5d77550420a955beef1ad0ea52, type: 3}
+    volume: 0.95
+  - key: ui_achievement
+    clips:
+    - {fileID: 8300000, guid: b03870c5fa7e84b48b95e270a43bf5b9, type: 3}
+    volume: 0.95
+  - key: door_open
+    clips:
+    - {fileID: 8300000, guid: 1aee1635eeb374055a9c34b5e7baafc8, type: 3}
+    volume: 0.9
+  - key: door_close
+    clips:
+    - {fileID: 8300000, guid: 0d0d918cb0dee444dbbdb71a5b0a3ef7, type: 3}
+    volume: 0.9
+  - key: locker_open
+    clips:
+    - {fileID: 8300000, guid: 2131f1f10aa9b49fdab964144644dbe9, type: 3}
+    volume: 0.9
+  - key: locker_close
+    clips:
+    - {fileID: 8300000, guid: c174d47290e334a8bad14aeb738360b9, type: 3}
+    volume: 0.9
+  - key: day_transition
+    clips:
+    - {fileID: 8300000, guid: 23f4a30a0603d45adb1dc59a8e6da99c, type: 3}
+    volume: 0.9
+  - key: night_transition
+    clips:
+    - {fileID: 8300000, guid: 178bc0538a7f846cdb88ea89895368b4, type: 3}
+    volume: 0.9
+  - key: soft_reset
+    clips:
+    - {fileID: 8300000, guid: 2ee4a9bf134d144a58b85cf3d32c4a39, type: 3}
+    volume: 1
+  - key: hard_reset
+    clips:
+    - {fileID: 8300000, guid: 6c8d9ed728e4a4095890e0126e21b1fb, type: 3}
+    volume: 1
+  - key: fall_impact
+    clips:
+    - {fileID: 8300000, guid: f679cc0c88ad54b43a4cef2ba8c1e68d, type: 3}
+    volume: 1
+  - key: distant_scream
+    clips:
+    - {fileID: 8300000, guid: 4ab26dcdc3df54bbca22fe58788151d9, type: 3}
+    volume: 0.9
+  - key: running_to_fal
+    clips:
+    - {fileID: 8300000, guid: 8b7f62ff31a9940b58e7d8732a071b79, type: 3}
+    - {fileID: 8300000, guid: 6b55f0cd1c8d64e148f0a692a7cf0d7e, type: 3}
+    volume: 0.9
+  - key: clock_ticking
+    clips:
+    - {fileID: 8300000, guid: 56c773f9a89bb44a6a9895d89438da75, type: 3}
+    volume: 0.75
+  - key: alarm_clock
+    clips:
+    - {fileID: 8300000, guid: 9a580ae5f11d64ff382f9f7fa3bdf88c, type: 3}
+    volume: 0.9
+  - key: wardrobe_open
+    clips:
+    - {fileID: 8300000, guid: 0ce79cfefeb91468cae237b39d1c66d9, type: 3}
+    volume: 0.9
+  - key: wardrobe_close
+    clips:
+    - {fileID: 8300000, guid: 119971997159d4a2c81e0ceddda66b9d, type: 3}
+    volume: 0.9
+  - key: clothes_rustle
+    clips:
+    - {fileID: 8300000, guid: 04197019d86fa417a838c207a69360e5, type: 3}
+    volume: 0.85
+  - key: chair_move
+    clips:
+    - {fileID: 8300000, guid: 882061bfcb20243259e03f81d5a14004, type: 3}
+    - {fileID: 8300000, guid: 418573d0f32ed452f9367500b741d1bf, type: 3}
+    volume: 0.85
+  - key: food_serving
+    clips:
+    - {fileID: 8300000, guid: 8f00c2698c9fd49bab3864cf3b649724, type: 3}
+    volume: 0.9
+  - key: plate_put_down
+    clips:
+    - {fileID: 8300000, guid: 2cc5e45fd650b44e8b9f93b33d676a52, type: 3}
+    volume: 0.9
+  - key: ambience_drop_after_fal
+    clips:
+    - {fileID: 8300000, guid: 70330dca7023140d8bdcf35a51022232, type: 3}
+    volume: 1
+  - key: sting_before_again
+    clips:
+    - {fileID: 8300000, guid: 235742d4a6929443ca4200348e1328e5, type: 3}
+    volume: 1
+  - key: janitor_cabinet_open
+    clips:
+    - {fileID: 8300000, guid: 046a2d8e330b34256b28a8a50200c2ea, type: 3}
+    - {fileID: 8300000, guid: cd633b24c34fd4d6c893bf739ab09f43, type: 3}
+    volume: 0.9
+  - key: keys_pickup
+    clips:
+    - {fileID: 8300000, guid: 2abbbe89622af4696b3c2e105a9688f7, type: 3}
+    volume: 0.9
+  - key: keys_return
+    clips:
+    - {fileID: 8300000, guid: e0e4e5de9fd174e209c62aeed1fd9828, type: 3}
+    volume: 0.9
+  - key: locker_unlock
+    clips:
+    - {fileID: 8300000, guid: ec28a1454037e423e93ab8a18983e462, type: 3}
+    volume: 0.9
+  - key: paper_pickup
+    clips:
+    - {fileID: 8300000, guid: 9c3fd8e58bf42409aa5eed2ba24f4083, type: 3}
+    volume: 0.9
+  - key: paper_handle
+    clips:
+    - {fileID: 8300000, guid: e36c9d1a68b154a42b7c3e3f7fad608b, type: 3}
+    volume: 0.8
+  - key: paper_placement
+    clips:
+    - {fileID: 8300000, guid: dabd40a9a0a104624a3ea27565ac135e, type: 3}
+    - {fileID: 8300000, guid: 1a6038be7074148b1a202dbf5a35736f, type: 3}
+    volume: 0.85
+  - key: writing_pencil
+    clips:
+    - {fileID: 8300000, guid: 4466082d74ef849c49b5ad620e2d7202, type: 3}
+    volume: 0.75
+  - key: book_pickup
+    clips:
+    - {fileID: 8300000, guid: 74a98253d18a84c42a54211e01b2f70a, type: 3}
+    volume: 0.9
+  - key: book_open
+    clips:
+    - {fileID: 8300000, guid: f5c45a076272e45ea85f55b5dbe88e03, type: 3}
+    volume: 0.85
+  - key: book_page_turn
+    clips:
+    - {fileID: 8300000, guid: 0fb8b3836f6164307aa87d6cdd362b95, type: 3}
+    volume: 0.8
+  - key: paper_drop
+    clips:
+    - {fileID: 8300000, guid: f06b927c49671405dbaed852e43913e9, type: 3}
+    volume: 0.9
+  - key: books_drop
+    clips:
+    - {fileID: 8300000, guid: d486a7a3130044c4abae9a9d5ad64503, type: 3}
+    volume: 1
+  - key: crumpled_note_unfold
+    clips:
+    - {fileID: 8300000, guid: c77a825f6ff854baeb190a8f627fc967, type: 3}
+    volume: 0.85
+  - key: blazer_pocket
+    clips:
+    - {fileID: 8300000, guid: c727efd3d064e484e9473d6b8df8a5b1, type: 3}
+    volume: 0.8
+  - key: locker_grab_rattle
+    clips:
+    - {fileID: 8300000, guid: 4b9c06069a598470ab75848048428b43, type: 3}
+    volume: 0.9
+  - key: bolt_unscrew
+    clips:
+    - {fileID: 8300000, guid: d9c2c9367fd834a3389c13d12f552a9b, type: 3}
+    volume: 0.9
+  - key: flag_cloth
+    clips:
+    - {fileID: 8300000, guid: ce219305af9cf464db7e0a1230f0def6, type: 3}
+    volume: 0.85
+  - key: bolt_tighten
+    clips:
+    - {fileID: 8300000, guid: 7145a67f8f7594319abeda19f6183be7, type: 3}
+    volume: 0.9
+  - key: memory_transition_in
+    clips:
+    - {fileID: 8300000, guid: 03980502afded4522827351ee16b87f1, type: 3}
+    volume: 1
+  - key: memory_transition_back
+    clips:
+    - {fileID: 8300000, guid: 822f37529a3264661bf76e7b5f94677f, type: 3}
+    volume: 1
+  - key: basketball_practice
+    clips:
+    - {fileID: 8300000, guid: d394602c63556418e8cfacfc3e8c5b43, type: 3}
+    volume: 0.8
+  - key: bed_drop
+    clips:
+    - {fileID: 8300000, guid: 4e05865f7f0334ee48c331a93f858901, type: 3}
+    volume: 0.9
+  - key: calendar_paper_handle
+    clips:
+    - {fileID: 8300000, guid: 89607198231264df7a7abfb1f4e3c228, type: 3}
+    volume: 0.85
+  - key: calendar_writing
+    clips:
+    - {fileID: 8300000, guid: f1880865820bd4e6885a5161e7cff8c9, type: 3}
+    volume: 0.8
+  - key: sketchbook_page_turn
+    clips:
+    - {fileID: 8300000, guid: b7e2c910ea8c4469eba93c615caa883a, type: 3}
+    volume: 0.85
+  - key: pencil_sketching
+    clips:
+    - {fileID: 8300000, guid: 99827713201454278974cf302c07e9a2, type: 3}
+    volume: 0.75
+  - key: light_switch
+    clips:
+    - {fileID: 8300000, guid: ade1000ce7f7b440087550ab81263e54, type: 3}
+    volume: 0.9
+  - key: drowsiness
+    clips:
+    - {fileID: 8300000, guid: 9b761bfba2f7b42789902159a48c8e99, type: 3}
+    volume: 0.9
+  - key: snap_awake
+    clips:
+    - {fileID: 8300000, guid: a23eefac3846f4095b61acd838c84aca, type: 3}
+    volume: 0.9
+  - key: reveal_sting
+    clips:
+    - {fileID: 8300000, guid: 03df01cf9a27f40ad987f311897c2b00, type: 3}
+    volume: 1
+  - key: gap_transition
+    clips:
+    - {fileID: 8300000, guid: 864e0053e17fe49ad94515f13ab70c57, type: 3}
+    volume: 1
+  - key: night_anin_reveal
+    clips:
+    - {fileID: 8300000, guid: 5fbda50d0a11a4bb9b986ffe7b43ad52, type: 3}
+    volume: 1
+  - key: festival_transition
+    clips:
+    - {fileID: 8300000, guid: 0b9c3c5370dac4f97a7759367df75ba9, type: 3}
+    volume: 1
+  - key: festival_crowd
+    clips:
+    - {fileID: 8300000, guid: 540b55b745f184b158376481bbcb36ed, type: 3}
+    volume: 0.75
+  - key: separation_transition
+    clips:
+    - {fileID: 8300000, guid: 3ded0cf5b467c4b5ba182313b996a345, type: 3}
+    volume: 1
+  - key: end_chapter_sting
+    clips:
+    - {fileID: 8300000, guid: 80235d7b60207417f8b41d699ce02f1e, type: 3}
+    volume: 1
+  - key: music_main_menu
+    clips:
+    - {fileID: 8300000, guid: 02fa2df3f4fe845d9b1c94a980627a95, type: 3}
+    volume: 1
+  - key: music_daylight
+    clips:
+    - {fileID: 8300000, guid: 8b177f652ed7b41a59da371287a991bb, type: 3}
+    volume: 1
+  - key: music_midnight
+    clips:
+    - {fileID: 8300000, guid: 218eb78c11cdb490a81be2b488246e5d, type: 3}
+    volume: 1
+  sceneSurfaces:
+  - sceneName: Library
+    surface: {fileID: 11400000, guid: 3eca2ed33e7c64108b53155c449993b8, type: 2}
+  - sceneName: Auditorium
+    surface: {fileID: 11400000, guid: 23365347b2f834e4897f9630fa9939d9, type: 2}
+  - sceneName: SchoolPark
+    surface: {fileID: 11400000, guid: e02248bea1a2949cd8a0675b108a5921, type: 2}

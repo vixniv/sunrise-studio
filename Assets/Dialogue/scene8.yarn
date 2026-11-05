@@ -71,6 +71,7 @@ title: Gap4_Auditorium
 tags: scene8 gap4 auditorium event
 ---
 Anin: Hey.
+<<sfx "night_anin_reveal">>
 <<npc_enter "Night Anin">>
 // The figure turns. It's Anin. Same uniform, same face. The shock is
 // that she is real and standing there.
@@ -115,6 +116,7 @@ Night Anin: The same thing you do. Just with a tomorrow.
 title: Gap4_Festival
 tags: scene8 gap4 festival cutscene
 ---
+<<sfx "festival_memory">>
 // The festival is a cutscene, not a playable room, and its scene doesn't
 // exist yet. Until it does, these lines play on the auditorium stage.
 // Nothing after a <<scene_transition>> runs, so when the festival scene is
@@ -126,6 +128,7 @@ Anin: I still want it.
 // She doesn't take it back. She leaves night Anin standing in the crowd
 // and hurries after her friends.
 <<fade "out">>
+<<sfx "separation_transition">>
 <<gap_mode false>>
 <<jump Ending_LoopContinues>>
 ===

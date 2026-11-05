@@ -1,5 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
+public interface IInteractionTarget
+{
+    bool TryInteract();
+}
 
 // The one cue for the scene: put it on the Cue child of the Player prefab.
 // Interactables (ChoiceInteractable, SceneDoor) ask for it while the player is inside their trigger. It shows above the
@@ -46,6 +52,21 @@ public class InteractionCue : MonoBehaviour
 
     // Whether this interactable should show its cue and take taps. With no shared cue in the scene every one does.
     public static bool IsTarget(Component interactable) => instance == null || target == interactable;
+
+    public static bool HasCurrentTarget => target != null;
+
+    public static bool TryInteractCurrent() => target is IInteractionTarget interactable && interactable.TryInteract();
+
+    // World interactions accept taps anywhere, but UI buttons must own taps landing on UI.
+    public static bool PointerOverUi(Vector2 screenPosition)
+    {
+        if (EventSystem.current == null)
+            return false;
+        var eventData = new PointerEventData(EventSystem.current) { position = screenPosition };
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+        return results.Count > 0;
+    }
 
     private void Awake()
     {

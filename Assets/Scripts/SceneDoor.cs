@@ -9,7 +9,7 @@ using Yarn.Unity;
 // Uses CircleTransition when one exists (it persists across scenes); otherwise loads the scene directly.
 // With a Story Node, the tap runs that Yarn node instead while $story_exit is true, so the story decides
 // whether and where the player leaves; the node leaves with <<scene_transition>>.
-public class SceneDoor : MonoBehaviour
+public class SceneDoor : MonoBehaviour, IInteractionTarget
 {
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
@@ -129,6 +129,7 @@ public class SceneDoor : MonoBehaviour
         Vector2 position = pointer.position.ReadValue();
         if (pointer.press.wasPressedThisFrame)
         {
+            if (InteractionCue.PointerOverUi(position)) { tracking = false; return; }
             tracking = true;
             pressPosition = position;
             pressTime = Time.unscaledTime;
@@ -140,7 +141,17 @@ public class SceneDoor : MonoBehaviour
         tracking = false;
         // Drags move the player, so only a short, still press counts as a tap.
         if (maxTravel <= Screen.width * tapMaxTravel && Time.unscaledTime - pressTime <= tapMaxSeconds)
-            Enter();
+            TryInteract();
+    }
+
+    public bool TryInteract()
+    {
+        bool busy = (yarnDialog != null && yarnDialog.IsPlaying) || (bubble != null && bubble.IsOpen) ||
+                    (wheel != null && wheel.IsOpen) || (nearbyPlayer != null && nearbyPlayer.InteractionMenuOpen);
+        if (leaving || nearbyPlayer == null || busy || !InteractionCue.IsTarget(this))
+            return false;
+        Enter();
+        return true;
     }
 
     private void Enter()
@@ -148,12 +159,14 @@ public class SceneDoor : MonoBehaviour
         if (StoryExitActive())
         {
             tracking = false;
+            SunriseAudio.Play("ui_interact");
             yarnDialog.Play(storyNode.Trim(), transform, dialogOffset, nearbyPlayer, null);
             return;
         }
 
         if (string.IsNullOrWhiteSpace(destinationScene))
         {
+            SunriseAudio.Play("ui_error");
             Debug.LogError($"{name} has no Destination Scene assigned.", this);
             return;
         }
@@ -162,13 +175,20 @@ public class SceneDoor : MonoBehaviour
         tracking = false;
         InteractionCue.Request(this, false, ownCue != null);
         SharedCue.Set(ownCue, ref cueShown, false);
-        // Stops the player in place until the new scene replaces this one.
         nearbyPlayer.InteractionMenuOpen = true;
 
+        AudioClip transitionSound = SunriseAudio.GetClip("door_open");
+        if (transitionSound == null)
+            transitionSound = enterSound;
+        SunriseAudio.QueueDoorClose(enterVolume);
+
         if (CircleTransition.Instance != null)
-            CircleTransition.Instance.LoadScene(destinationScene.Trim(), enterSound, enterVolume);
+            CircleTransition.Instance.LoadScene(destinationScene.Trim(), transitionSound, enterVolume);
         else
+        {
+            SunriseAudio.Play("door_open", enterVolume);
             SceneManager.LoadScene(destinationScene.Trim());
+        }
     }
 
     private bool StoryExitActive()

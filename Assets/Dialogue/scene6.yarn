@@ -92,6 +92,7 @@ tags: scene6 gap3 classroom interactable required
     Night Anin: She always reads the same page. Every morning, the same page.
     Night Anin: She told us she already knows what's written there. She does.
     // Underline a line on the page and write in the margin.
+    <<sfx "book_note">>
     Note: "You've read this before."
     <<set $gap3_dira to true>>
     <<quest_update "gap3" "Go to the locker room">>

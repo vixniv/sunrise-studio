@@ -110,6 +110,7 @@ tags: scene4 gap2 lockers interactable
 <<if $gap2_note_placed is true>>
     Anin: He'll find it.
 <<else>>
+    <<sfx "write_and_place_note">>
     Anin: He still meets me here after school. So we'll study somewhere else.
     // Writing animation. Unlike Gap 1, this note is READABLE and NOT
     // blurred. Show the line below in a handwritten-note style if you
@@ -156,6 +157,7 @@ tags: scene4 gap2 auditorium interactable
 <<if $gap2_pole_done is true>>
     Anin: It's done.
 <<else>>
+    <<sfx "flag_cloth">>
     Anin: It's crooked.
     // Double reading: first play = she knows Fal can't leave things
     // imperfect. Replay = this is the trigger she's setting up.
