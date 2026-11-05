@@ -28,7 +28,6 @@ public sealed class SunriseAudio : MonoBehaviour
                 return instance;
 
             var host = new GameObject("Sunrise Audio");
-            host.hideFlags = HideFlags.DontSave;
             DontDestroyOnLoad(host);
             instance = host.AddComponent<SunriseAudio>();
             return instance;
@@ -48,6 +47,23 @@ public sealed class SunriseAudio : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
     {
+        foreach (SunriseAudio stale in Resources.FindObjectsOfTypeAll<SunriseAudio>())
+        {
+            if (stale == null || stale.gameObject.name != "Sunrise Audio")
+                continue;
+
+            foreach (AudioSource source in stale.GetComponents<AudioSource>())
+            {
+                source.Stop();
+                source.clip = null;
+            }
+
+            if (stale.gameObject.scene.IsValid())
+                Destroy(stale.gameObject);
+            else
+                DestroyImmediate(stale.gameObject);
+        }
+
         instance = null;
         library = null;
         pendingDoorClose = false;
@@ -222,10 +238,39 @@ public sealed class SunriseAudio : MonoBehaviour
 
     public static void SetMusicVolume(float volume)
     {
-        SunriseAudio audio = Instance;
-        audio.musicVolumeScale = Mathf.Clamp01(volume);
-        if (audio.musicSource != null)
-            audio.musicSource.volume = audio.musicCueVolume * audio.musicVolumeScale;
+        float clamped = Mathf.Clamp01(volume);
+        foreach (SunriseAudio audio in Resources.FindObjectsOfTypeAll<SunriseAudio>())
+        {
+            if (audio == null)
+                continue;
+
+            audio.musicVolumeScale = clamped;
+            AudioSource source = audio.musicSource;
+            if (source == null)
+            {
+                foreach (AudioSource candidate in audio.GetComponents<AudioSource>())
+                {
+                    if (candidate.clip == null)
+                        continue;
+                    string clipName = candidate.clip.name;
+                    if (clipName == "Sunrise_Main_Menu" ||
+                        clipName == "Sunrise_Happy" ||
+                        clipName == "Sunrise_midnight")
+                    {
+                        source = candidate;
+                        break;
+                    }
+                }
+            }
+
+            if (source == null)
+                continue;
+            source.mute = clamped <= 0.0001f;
+            source.volume = audio.musicCueVolume * clamped;
+        }
+
+        if (instance == null)
+            _ = Instance;
     }
 
     static void RefreshMusicForCurrentScene()
@@ -261,6 +306,7 @@ public sealed class SunriseAudio : MonoBehaviour
         }
 
         musicCueVolume = volume;
+        musicSource.mute = musicVolumeScale <= 0.0001f;
         musicSource.volume = musicCueVolume * musicVolumeScale;
         musicSource.loop = true;
         if (musicSource.isPlaying && musicSource.clip == clip)
