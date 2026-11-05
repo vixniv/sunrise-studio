@@ -32,6 +32,7 @@
 title: Gap3_Start
 tags: scene6 gap3 dorm
 ---
+<<advance_time "dream">>
 <<gap_mode true>>
 // Lets the Dorm door run Gap3_Door instead of leaving freely.
 <<set $story_exit to true>>
