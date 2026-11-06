@@ -34,6 +34,7 @@ title: Gap4_Start
 tags: scene8 gap4 dorm
 ---
 <<set $ending_started to false>>
+<<advance_time "dream">>
 // Lets the Dorm door run Gap4_Door instead of leaving freely.
 <<set $story_exit to true>>
 <<gap_begin_awake>>

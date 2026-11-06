@@ -18,6 +18,8 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
     [SerializeField] private AudioClip enterSound;
     [SerializeField, Range(0f, 1f)] private float enterVolume = 1f;
+    [Tooltip("Play the interact sound (set on the Player's InteractionCue) when this door is tapped.")]
+    [SerializeField] private bool playInteractSound = true;
     [Tooltip("Optional. Its X is where the player appears when the room loads without a cutscene (see DoorSpawn); " +
              "the player keeps their own height. Leave empty to use this door's X.")]
     [SerializeField] private Transform spawnPoint;
@@ -156,6 +158,8 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 
     private void Enter()
     {
+        // Story exits and missing destinations play their own SunriseAudio sound, so the shared interact sound
+        // plays only for a real door transition.
         if (StoryExitActive())
         {
             tracking = false;
@@ -171,6 +175,7 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
             return;
         }
 
+        if (playInteractSound) InteractionCue.PlayInteractSound();
         leaving = true;
         tracking = false;
         InteractionCue.Request(this, false, ownCue != null);

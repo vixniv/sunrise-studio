@@ -36,6 +36,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         new ChoiceWheel.Choice { label = "" },
         new ChoiceWheel.Choice { label = "" },
     };
+    [Tooltip("Play the interact sound (set on the Player's InteractionCue) when this object is tapped.")]
+    [SerializeField] private bool playInteractSound = true;
     [SerializeField, Range(0.001f, 0.1f)] private float tapMaxTravel = 0.02f;
     [SerializeField, Min(0.05f)] private float tapMaxSeconds = 0.35f;
 
@@ -122,6 +124,10 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         BuildVisibleChoices();
         if (visibleChoiceIndices.Count == 0)
             return false;
+        // Several choices need a carousel or a wheel to pick from; bail out before the sound plays if there is neither.
+        if (visibleChoiceIndices.Count > 1 && actionCarousel == null && wheel == null)
+            return false;
+        if (playInteractSound) InteractionCue.PlayInteractSound();
         if (visibleChoiceIndices.Count == 1)
             OnChosen(visibleChoiceIndices[0]);
         else if (actionCarousel != null)
@@ -144,10 +150,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
                 },
                 interactingPlayer.transform);
         }
-        else if (wheel != null)
-            wheel.Open(nearbyPlayer, choices, OnChosen);
         else
-            return false;
+            wheel.Open(nearbyPlayer, choices, OnChosen);
         return true;
     }
 
