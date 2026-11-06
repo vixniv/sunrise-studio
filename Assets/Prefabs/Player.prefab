@@ -661,7 +661,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 721941457
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: ddf8b1dac54854159ad2650e36eaf52b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -790,3 +790,5 @@ MonoBehaviour:
   sortingLayer: Foreground
   sortingOrder: 100
   pixelsPerUnit: 16
+  interactSound: {fileID: 8300000, guid: 696cb5b00ff59478f92c5f45c84861b6, type: 3}
+  interactVolume: 1

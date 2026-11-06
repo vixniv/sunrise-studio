@@ -33,6 +33,8 @@ public class ChoiceInteractable : MonoBehaviour
         new ChoiceWheel.Choice { label = "" },
         new ChoiceWheel.Choice { label = "" },
     };
+    [Tooltip("Play the interact sound (set on the Player's InteractionCue) when this object is tapped.")]
+    [SerializeField] private bool playInteractSound = true;
     [SerializeField, Range(0.001f, 0.1f)] private float tapMaxTravel = 0.02f;
     [SerializeField, Min(0.05f)] private float tapMaxSeconds = 0.35f;
 
@@ -100,6 +102,7 @@ public class ChoiceInteractable : MonoBehaviour
         if (!pointer.press.wasReleasedThisFrame) return;
         tracking = false;
         if (maxTravel > Screen.width * tapMaxTravel || Time.unscaledTime - pressTime > tapMaxSeconds) return;
+        if (playInteractSound) InteractionCue.PlayInteractSound();
         if (choices.Count == 1) OnChosen(0);
         else wheel.Open(nearbyPlayer, choices, OnChosen);
     }

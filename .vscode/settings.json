@@ -56,7 +56,7 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "sunrise-studio.slnx",
+    "dotnet.defaultSolution": "Sunrise Studio.slnx",
     "cSpell.enableFiletypes": ["yarnspinner"],
     "cSpell.languageSettings": [
         {

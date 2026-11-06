@@ -15,7 +15,13 @@ public class InteractionCue : MonoBehaviour
     [SerializeField] private int sortingOrder = 100;
     [SerializeField] private int pixelsPerUnit = 16;
 
+    [Header("Sound")]
+    [Tooltip("Plays when the player taps an interactable (ChoiceInteractable, SceneDoor). One clip for the whole game.")]
+    [SerializeField] private AudioClip interactSound;
+    [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
+
     private static InteractionCue instance;
+    private AudioSource audioSource;
     // Interactables that want the cue now; the value says whether they show their own cue instead of this one.
     private static readonly Dictionary<Component, bool> candidates = new Dictionary<Component, bool>();
     private static readonly List<Component> stale = new List<Component>();
@@ -47,9 +53,23 @@ public class InteractionCue : MonoBehaviour
     // Whether this interactable should show its cue and take taps. With no shared cue in the scene every one does.
     public static bool IsTarget(Component interactable) => instance == null || target == interactable;
 
+    // Plays the shared interact sound. Does nothing when the scene has no InteractionCue or no clip is assigned.
+    public static void PlayInteractSound()
+    {
+        if (instance == null || instance.interactSound == null) return;
+        instance.audioSource.PlayOneShot(instance.interactSound, instance.interactVolume);
+    }
+
     private void Awake()
     {
         instance = this;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D: same volume wherever the camera is.
+        }
         renderers = GetComponentsInChildren<Renderer>(true);
         sprite = GetComponent<SpriteRenderer>();
         foreach (Renderer r in renderers)
