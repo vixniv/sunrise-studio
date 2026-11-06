@@ -698,10 +698,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.30416667
+    x: 0.5432292
     y: 0
-    width: 0.6025039
-    height: 0.4935185
+    width: 0.96310186
+    height: 0.7888889
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -731,7 +731,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.940366, y: 2.43618, z: -10}
+  m_LocalPosition: {x: 17.566233, y: 2.4362297, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1547,6 +1547,7 @@ GameObject:
   - component: {fileID: 773595802}
   - component: {fileID: 773595800}
   - component: {fileID: 773595799}
+  - component: {fileID: 773595803}
   m_Layer: 0
   m_Name: Lila
   m_TagString: Untagged
@@ -1630,6 +1631,30 @@ Transform:
   - {fileID: 2125855997}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &773595803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773595798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 773595800}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &823554261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,6 +1667,7 @@ GameObject:
   - component: {fileID: 823554265}
   - component: {fileID: 823554266}
   - component: {fileID: 823554267}
+  - component: {fileID: 823554268}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -1766,6 +1792,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!114 &823554267
@@ -1782,6 +1809,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Kirana
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &823554268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823554261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 823554265}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &823952956
 GameObject:
   m_ObjectHideFlags: 0
@@ -2731,6 +2782,7 @@ GameObject:
   - component: {fileID: 1581785298}
   - component: {fileID: 1581785296}
   - component: {fileID: 1581785295}
+  - component: {fileID: 1581785299}
   m_Layer: 0
   m_Name: Dira
   m_TagString: Untagged
@@ -2814,6 +2866,30 @@ Transform:
   - {fileID: 1302661732}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1581785299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581785294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1581785296}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &1621232699
 GameObject:
   m_ObjectHideFlags: 0
@@ -4370,6 +4446,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1859040593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859040590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
+  backgroundRenderer: {fileID: 1859040591}
+  dayBackground: {fileID: 21300000, guid: 5ddbc2d1f67b04f45be855bbedc3e903, type: 3}
+  nightBackground: {fileID: 21300000, guid: baa300e5664ff46f69ea44d8ed8322f7, type: 3}
 --- !u!1001 &1863427836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5826,18 +5917,3 @@ SceneRoots:
   - {fileID: 724974069}
   - {fileID: 1255555872}
   - {fileID: 823952958}
---- !u!114 &1859040593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1859040590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
-  backgroundRenderer: {fileID: 1859040591}
-  dayBackground: {fileID: 21300000, guid: 5ddbc2d1f67b04f45be855bbedc3e903, type: 3}
-  nightBackground: {fileID: 21300000, guid: baa300e5664ff46f69ea44d8ed8322f7, type: 3}
