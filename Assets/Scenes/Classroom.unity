@@ -440,6 +440,8 @@ GameObject:
   m_Component:
   - component: {fileID: 36277227}
   - component: {fileID: 36277228}
+  - component: {fileID: 36277230}
+  - component: {fileID: 36277229}
   m_Layer: 0
   m_Name: Dira
   m_TagString: Untagged
@@ -477,6 +479,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Dira
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &36277229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36277226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 36277230}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &36277230
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36277226}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.520258, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &70151566
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +872,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &175076220
 Transform:
   m_ObjectHideFlags: 0
@@ -1026,6 +1098,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &191815715
@@ -1159,6 +1232,8 @@ GameObject:
   m_Component:
   - component: {fileID: 200124693}
   - component: {fileID: 200124694}
+  - component: {fileID: 200124696}
+  - component: {fileID: 200124695}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -1196,6 +1271,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Kirana
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &200124695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200124692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 200124696}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &200124696
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200124692}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.625, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &214532897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1522,6 +1667,11 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &356892018 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8500352598577233789, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
+  m_PrefabInstance: {fileID: 1275148548}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &384795443
 GameObject:
   m_ObjectHideFlags: 0
@@ -1532,6 +1682,8 @@ GameObject:
   m_Component:
   - component: {fileID: 384795444}
   - component: {fileID: 384795445}
+  - component: {fileID: 384795447}
+  - component: {fileID: 384795446}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -1569,6 +1721,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Kirana
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &384795446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384795443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 384795447}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &384795447
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384795443}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.6250019, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1001 &399951145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1624,7 +1846,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4060086071087709858, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 554752642}
   m_SourcePrefab: {fileID: 100100000, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
 --- !u!4 &399951146 stripped
 Transform:
@@ -2199,7 +2424,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &486765975
 Transform:
   m_ObjectHideFlags: 0
@@ -2549,6 +2774,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &543781294
@@ -2657,6 +2883,57 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1 &554752639 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4060086071087709858, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
+  m_PrefabInstance: {fileID: 399951145}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &554752642
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554752639}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.031665564, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.47826087, y: 0}
+    oldSize: {x: 1.4375, y: 5.8125}
+    newSize: {x: 1.4375, y: 5.8125}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.4507432, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1001 &556314115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3212,6 +3489,7 @@ GameObject:
   - component: {fileID: 735187777}
   - component: {fileID: 735187776}
   - component: {fileID: 735187775}
+  - component: {fileID: 735187780}
   m_Layer: 0
   m_Name: GroupStudents
   m_TagString: Untagged
@@ -3263,6 +3541,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &735187777
@@ -3328,6 +3607,34 @@ Transform:
   - {fileID: 1275148549}
   m_Father: {fileID: 527172058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &735187780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735187774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters:
+  - characterCollider: {fileID: 554752642}
+    spriteRenderers: []
+  - characterCollider: {fileID: 1275148552}
+    spriteRenderers: []
+  characterCollider: {fileID: 0}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &799165872
 GameObject:
   m_ObjectHideFlags: 0
@@ -3775,6 +4082,7 @@ GameObject:
   - component: {fileID: 903574248}
   - component: {fileID: 903574247}
   - component: {fileID: 903574246}
+  - component: {fileID: 903574252}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -3828,6 +4136,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!114 &903574248
@@ -3906,6 +4215,30 @@ Transform:
   - {fileID: 1668598368}
   m_Father: {fileID: 527172058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &903574252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903574245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 903574249}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,7 +4573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1073740230
 Transform:
   m_ObjectHideFlags: 0
@@ -4425,6 +4758,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1104637440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104637437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
+  backgroundRenderer: {fileID: 1104637438}
+  dayBackground: {fileID: 21300000, guid: e9ae4207acc5c47e4bd411b418ae7441, type: 3}
+  nightBackground: {fileID: 21300000, guid: 254ebecb86bb1438ba66f02a8a15b099, type: 3}
 --- !u!1 &1114854201
 GameObject:
   m_ObjectHideFlags: 0
@@ -4437,6 +4785,7 @@ GameObject:
   - component: {fileID: 1114854203}
   - component: {fileID: 1114854206}
   - component: {fileID: 1114854207}
+  - component: {fileID: 1114854208}
   m_Layer: 0
   m_Name: Dira
   m_TagString: Untagged
@@ -4536,6 +4885,30 @@ MonoBehaviour:
   - morning
   targets: []
   followTimeChanges: 0
+--- !u!114 &1114854208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114854201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1114854203}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
 --- !u!1 &1138341624
 GameObject:
   m_ObjectHideFlags: 0
@@ -4653,6 +5026,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1163205778
@@ -4777,7 +5151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1166336662
 Transform:
   m_ObjectHideFlags: 0
@@ -4991,6 +5365,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1266545604}
   - component: {fileID: 1266545605}
+  - component: {fileID: 1266545607}
+  - component: {fileID: 1266545606}
   m_Layer: 0
   m_Name: Dira
   m_TagString: Untagged
@@ -5028,6 +5404,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Dira
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &1266545606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266545603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1266545607}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &1266545607
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266545603}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.520256, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1001 &1275148548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5083,13 +5529,62 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8500352598577233789, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1275148552}
   m_SourcePrefab: {fileID: 100100000, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
 --- !u!4 &1275148549 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4768075493843228430, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
   m_PrefabInstance: {fileID: 1275148548}
   m_PrefabAsset: {fileID: 0}
+--- !u!61 &1275148552
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356892018}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.028496265, y: 2.8814776}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.48, y: 0}
+    oldSize: {x: 1.5625, y: 5.75}
+    newSize: {x: 1.5625, y: 5.75}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.5680094, y: 5.762955}
+  m_EdgeRadius: 0
 --- !u!1 &1300685428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5106,7 +5601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1300685429
 Transform:
   m_ObjectHideFlags: 0
@@ -7226,6 +7721,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1967840548}
   - component: {fileID: 1967840549}
+  - component: {fileID: 1967840551}
+  - component: {fileID: 1967840550}
   m_Layer: 0
   m_Name: Lila
   m_TagString: Untagged
@@ -7263,6 +7760,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Lila
   dialogOffset: {x: 0, y: 0.25}
+--- !u!114 &1967840550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967840547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1967840551}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &1967840551
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967840547}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.02984476, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.5799475, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &1992132768
 GameObject:
   m_ObjectHideFlags: 0
@@ -7455,6 +8022,8 @@ GameObject:
   - component: {fileID: 2029213725}
   - component: {fileID: 2029213723}
   - component: {fileID: 2029213726}
+  - component: {fileID: 2029213728}
+  - component: {fileID: 2029213727}
   m_Layer: 0
   m_Name: Lila
   m_TagString: Untagged
@@ -7508,6 +8077,76 @@ MonoBehaviour:
   - morning
   targets: []
   followTimeChanges: 0
+--- !u!114 &2029213727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029213722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 2029213728}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &2029213728
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029213722}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.033667564, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.5726299, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &2100638635
 GameObject:
   m_ObjectHideFlags: 0
@@ -7816,18 +8455,3 @@ SceneRoots:
   - {fileID: 1138341626}
   - {fileID: 117179541}
   - {fileID: 1935363606}
---- !u!114 &1104637440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1104637437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb7a210b8c1c40da9166cdbb401738ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
-  backgroundRenderer: {fileID: 1104637438}
-  dayBackground: {fileID: 21300000, guid: e9ae4207acc5c47e4bd411b418ae7441, type: 3}
-  nightBackground: {fileID: 21300000, guid: 254ebecb86bb1438ba66f02a8a15b099, type: 3}

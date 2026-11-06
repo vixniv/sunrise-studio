@@ -1,102 +1,166 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Drives a Sprite Shader Graph's backlight and rim properties based on how much
-/// of this object's collider overlaps one or more window-light trigger zones.
+/// Drives a Sprite Shader Graph's backlight and rim properties according to
+/// how much each character collider overlaps the window-light zones.
 /// </summary>
 public class WindowBacklightReceiver2D : MonoBehaviour
 {
-    [Tooltip("Assign the layer used by the window-light trigger colliders.")]
+    [Serializable]
+    private class CharacterEntry
+    {
+        [Tooltip("Collider whose area controls this character's backlight.")]
+        public Collider2D characterCollider;
+
+        [Tooltip("Only this character's Sprite Renderers. Leave empty to find renderers below the collider object.")]
+        public List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+
+        [NonSerialized] public List<Collider2D> overlappingZones = new List<Collider2D>();
+        [NonSerialized] public float currentCoverage = -1f;
+    }
+
+    [Tooltip("Assign the layer used by the window-light zone colliders.")]
     [SerializeField] private LayerMask windowLightZoneLayers;
+
+    [Header("Multiple characters")]
+    [Tooltip("Add one entry per character under this object. Each collider controls only its listed Sprite Renderers. When this list is not empty, the single-character fields below are ignored.")]
+    [SerializeField] private List<CharacterEntry> characters = new List<CharacterEntry>();
+
+    [Header("Single character (used when Multiple Characters is empty)")]
     [Tooltip("Main body collider whose covered area controls the effect. If empty, uses a Collider2D on this object.")]
     [SerializeField] private Collider2D characterCollider;
     [Tooltip("Leave empty to find all child Sprite Renderers at runtime.")]
     [SerializeField] private List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+
     [Header("Shader values at no coverage")]
     [SerializeField, Min(0f)] private float backlightStrengthAtNoCoverage = 1f;
     [SerializeField, Min(0f)] private float rimIntensityAtNoCoverage = 0f;
+
     [Header("Shader values at full coverage")]
     [SerializeField, Min(0f)] private float backlightStrengthAtFullCoverage = 1.8f;
     [SerializeField, Min(0f)] private float rimIntensityAtFullCoverage = 0.75f;
+
     [Tooltip("Increase these for a more precise coverage estimate. Sampling runs only while inside a light zone.")]
     [SerializeField, Min(2)] private int coverageSamplesX = 8;
     [SerializeField, Min(2)] private int coverageSamplesY = 16;
 
     private static readonly int BacklightStrengthId = Shader.PropertyToID("_BacklightStrength");
     private static readonly int RimIntensityId = Shader.PropertyToID("_RimIntensity");
-    private readonly HashSet<Collider2D> overlappingZones = new HashSet<Collider2D>();
-    private readonly List<Collider2D> inactiveZones = new List<Collider2D>();
     private MaterialPropertyBlock propertyBlock;
-    private float currentCoverage = -1f;
+    private ContactFilter2D zoneFilter;
 
     private void Awake()
+    {
+        if (characters == null)
+            characters = new List<CharacterEntry>();
+
+        if (characters.Count == 0)
+            CreateSingleCharacterEntry();
+        else
+            PrepareCharacterEntries();
+
+        propertyBlock = new MaterialPropertyBlock();
+        zoneFilter = new ContactFilter2D();
+        zoneFilter.SetLayerMask(windowLightZoneLayers);
+        zoneFilter.useTriggers = true;
+
+        foreach (CharacterEntry character in characters)
+        {
+            if (character == null)
+                continue;
+
+            character.currentCoverage = -1f;
+            ApplyBacklight(character, 0f);
+        }
+    }
+
+    private void CreateSingleCharacterEntry()
     {
         if (characterCollider == null)
             characterCollider = GetComponent<Collider2D>();
 
+        if (spriteRenderers == null)
+            spriteRenderers = new List<SpriteRenderer>();
+
         if (spriteRenderers.Count == 0)
             spriteRenderers.AddRange(GetComponentsInChildren<SpriteRenderer>(true));
 
-        propertyBlock = new MaterialPropertyBlock();
-        ApplyBacklight(0f);
-
-        if (characterCollider == null)
-            Debug.LogWarning($"{name}: no character Collider2D assigned or found. Backlight coverage will remain at 0.", this);
+        characters.Add(new CharacterEntry
+        {
+            characterCollider = characterCollider,
+            spriteRenderers = spriteRenderers
+        });
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void PrepareCharacterEntries()
     {
-        if (IsWindowLightZone(other))
-            overlappingZones.Add(other);
-    }
+        foreach (CharacterEntry character in characters)
+        {
+            if (character == null)
+                continue;
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        overlappingZones.Remove(other);
+            if (character.spriteRenderers == null)
+                character.spriteRenderers = new List<SpriteRenderer>();
+
+            if (character.characterCollider == null)
+            {
+                Debug.LogWarning($"{name}: a character entry has no Collider2D assigned.", this);
+                continue;
+            }
+
+            if (character.spriteRenderers.Count == 0)
+                character.spriteRenderers.AddRange(character.characterCollider.GetComponentsInChildren<SpriteRenderer>(true));
+        }
     }
 
     private void LateUpdate()
     {
-        inactiveZones.Clear();
-        foreach (Collider2D zone in overlappingZones)
+        foreach (CharacterEntry character in characters)
         {
-            if (zone == null || !zone.enabled || !zone.gameObject.activeInHierarchy)
-                inactiveZones.Add(zone);
-        }
+            if (character == null)
+                continue;
 
-        foreach (Collider2D zone in inactiveZones)
-            overlappingZones.Remove(zone);
+            float coverage = 0f;
+            Collider2D collider = character.characterCollider;
+            if (collider != null && collider.enabled && collider.gameObject.activeInHierarchy)
+            {
+                character.overlappingZones.Clear();
+                collider.Overlap(zoneFilter, character.overlappingZones);
 
-        float coverage = overlappingZones.Count == 0 ? 0f : CalculateCoverage();
-        if (!Mathf.Approximately(coverage, currentCoverage))
-        {
-            currentCoverage = coverage;
-            ApplyBacklight(currentCoverage);
+                if (character.overlappingZones.Count > 0)
+                    coverage = CalculateCoverage(character);
+            }
+
+            if (!Mathf.Approximately(coverage, character.currentCoverage))
+            {
+                character.currentCoverage = coverage;
+                ApplyBacklight(character, coverage);
+            }
         }
     }
 
     private void OnDisable()
     {
-        overlappingZones.Clear();
-        if (propertyBlock != null)
+        foreach (CharacterEntry character in characters)
         {
-            currentCoverage = 0f;
-            ApplyBacklight(0f);
+            if (character == null)
+                continue;
+
+            character.overlappingZones.Clear();
+            character.currentCoverage = 0f;
+            ApplyBacklight(character, 0f);
         }
     }
 
-    private bool IsWindowLightZone(Collider2D other)
+    private float CalculateCoverage(CharacterEntry character)
     {
-        return other != null && (windowLightZoneLayers.value & (1 << other.gameObject.layer)) != 0;
-    }
-
-    private float CalculateCoverage()
-    {
-        if (characterCollider == null || !characterCollider.enabled)
+        Collider2D collider = character.characterCollider;
+        if (collider == null || !collider.enabled)
             return 0f;
 
-        Bounds bounds = characterCollider.bounds;
+        Bounds bounds = collider.bounds;
         int columns = Mathf.Max(2, coverageSamplesX);
         int rows = Mathf.Max(2, coverageSamplesY);
         int samplesInsideCharacter = 0;
@@ -111,11 +175,11 @@ public class WindowBacklightReceiver2D : MonoBehaviour
                 float worldX = bounds.min.x + (x + 0.5f) * bounds.size.x / columns;
                 Vector2 point = new Vector2(worldX, worldY);
 
-                if (!characterCollider.OverlapPoint(point))
+                if (!collider.OverlapPoint(point))
                     continue;
 
                 samplesInsideCharacter++;
-                if (IsPointInsideAnyZone(point))
+                if (IsPointInsideAnyZone(character, point))
                     samplesInsideLight++;
             }
         }
@@ -125,9 +189,9 @@ public class WindowBacklightReceiver2D : MonoBehaviour
             : (float)samplesInsideLight / samplesInsideCharacter;
     }
 
-    private bool IsPointInsideAnyZone(Vector2 point)
+    private static bool IsPointInsideAnyZone(CharacterEntry character, Vector2 point)
     {
-        foreach (Collider2D zone in overlappingZones)
+        foreach (Collider2D zone in character.overlappingZones)
         {
             if (zone != null && zone.enabled && zone.gameObject.activeInHierarchy && zone.OverlapPoint(point))
                 return true;
@@ -136,12 +200,12 @@ public class WindowBacklightReceiver2D : MonoBehaviour
         return false;
     }
 
-    private void ApplyBacklight(float coverage)
+    private void ApplyBacklight(CharacterEntry character, float coverage)
     {
         float backlightStrength = Mathf.Lerp(backlightStrengthAtNoCoverage, backlightStrengthAtFullCoverage, coverage);
         float rimIntensity = Mathf.Lerp(rimIntensityAtNoCoverage, rimIntensityAtFullCoverage, coverage);
 
-        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        foreach (SpriteRenderer spriteRenderer in character.spriteRenderers)
         {
             if (spriteRenderer == null)
                 continue;
