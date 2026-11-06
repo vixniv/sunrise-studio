@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Yarn.Unity;
+using SunriseStudio.UI;
 
 // Shows Yarn dialogue with the game's own UI: lines go to the DialogBubble above the speaking character,
 // options go to the ChoiceWheel above the player. Add it to the Dialogue Runner's Dialogue Presenters list.
@@ -13,6 +14,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
     [SerializeField] private DialogueRunner runner;
     [SerializeField] private DialogBubble bubble;
     [SerializeField] private ChoiceWheel wheel;
+    [SerializeField] private DialogueHudView hud;
 
     // Empty references are found in the scene, so this works from a prefab without per-scene setup.
     private void Awake()
@@ -20,6 +22,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
         if (runner == null) runner = GetComponent<DialogueRunner>();
         if (bubble == null) bubble = FindAnyObjectByType<DialogBubble>();
         if (wheel == null) wheel = FindAnyObjectByType<ChoiceWheel>();
+        hud = ResolveActiveHud();
     }
 
     private bool playing;
@@ -45,6 +48,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
         defaultTalker = talker;
         defaultOffset = talkerOffset;
         onFinished = finished;
+        hud = ResolveActiveHud();
         RunNode(node);
     }
 
@@ -72,7 +76,8 @@ public class YarnDialogPresenter : DialoguePresenterBase
 
     public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
     {
-        if (bubble == null || !IsPlaying) return;
+        if (!IsPlaying) return;
+        hud = ResolveActiveHud();
         Transform talker = defaultTalker;
         Vector2 offset = defaultOffset;
         if (DialogSpeaker.TryFind(line.CharacterName, out DialogSpeaker speaker))
@@ -85,6 +90,15 @@ public class YarnDialogPresenter : DialoguePresenterBase
             Debug.LogWarning($"No enabled DialogSpeaker named \"{line.CharacterName}\"; showing the line above {(talker != null ? talker.name : "nothing")}.", this);
         }
 
+        if (hud != null)
+        {
+            bool hudAdvanced = false;
+            hud.ShowLine(line.CharacterName, line.TextWithoutCharacterName.Text, talker, offset, () => hudAdvanced = true);
+            await YarnTask.WaitUntil(() => hudAdvanced || !hud.IsVisible, token.NextContentToken).SuppressCancellationThrow();
+            return;
+        }
+        if (bubble == null) return;
+
         bool advanced = false;
         bubble.Say(talker, offset, line.TextWithoutCharacterName.Text, listener, () => advanced = true);
         await YarnTask.WaitUntil(() => advanced || !bubble.IsOpen, token.NextContentToken).SuppressCancellationThrow();
@@ -92,8 +106,9 @@ public class YarnDialogPresenter : DialoguePresenterBase
 
     public override async YarnTask<DialogueOption> RunOptionsAsync(DialogueOption[] dialogueOptions, LineCancellationToken token)
     {
-        if (wheel == null || !IsPlaying) return null;
-        if (listener == null)
+        if (!IsPlaying) return null;
+        if (hud == null && wheel == null) return null;
+        if (hud == null && listener == null)
         {
             Debug.LogWarning("Yarn options need a player to show the ChoiceWheel above; skipping them.", this);
             return null;
@@ -108,6 +123,18 @@ public class YarnDialogPresenter : DialoguePresenterBase
             choices.Add(new ChoiceWheel.Choice { label = option.Line.TextWithoutCharacterName.Text });
         }
         if (available.Count == 0) return null;
+
+        if (hud != null)
+        {
+            int hudPicked = -1;
+            var labels = new List<string>();
+            foreach (DialogueOption option in available)
+                labels.Add(option.Line.TextWithoutCharacterName.Text);
+            hud.ShowChoices(labels, index => hudPicked = index);
+            await YarnTask.WaitUntil(() => hudPicked >= 0 || !hud.IsVisible, token.NextContentToken).SuppressCancellationThrow();
+            hud.ClearChoices();
+            return hudPicked >= 0 ? available[hudPicked] : null;
+        }
 
         // The question bubble would overlap the wheel when the speaker stands next to the player.
         // The next line reopens it.
@@ -137,6 +164,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
         if (!IsPlaying) return;
         if (wheel != null && wheel.IsOpen) wheel.Close();
         if (bubble != null) bubble.Close();
+        if (hud != null) hud.Hide();
         if (listener != null) listener.InteractionMenuOpen = false;
         Action finished = onFinished;
         playing = false;
@@ -147,4 +175,35 @@ public class YarnDialogPresenter : DialoguePresenterBase
     }
 
     private void OnDisable() => Finish();
+
+    // FindAnyObjectByType may return a hidden HUD from another loaded scene. Prefer the active HUD
+    // that belongs to this Dialogue Runner's scene, then any active HUD, then an inactive fallback.
+    private DialogueHudView ResolveActiveHud()
+    {
+        DialogueHudView[] candidates = FindObjectsByType<DialogueHudView>(FindObjectsInactive.Include);
+        DialogueHudView activeFallback = null;
+        DialogueHudView sameSceneInactive = null;
+        DialogueHudView inactiveFallback = null;
+
+        foreach (DialogueHudView candidate in candidates)
+        {
+            if (candidate == null)
+                continue;
+            inactiveFallback ??= candidate;
+            if (candidate.gameObject.scene == gameObject.scene)
+            {
+                if (candidate.gameObject.activeInHierarchy)
+                    return candidate;
+                sameSceneInactive ??= candidate;
+                continue;
+            }
+            if (!candidate.gameObject.activeInHierarchy)
+                continue;
+            activeFallback ??= candidate;
+        }
+
+        if (sameSceneInactive != null)
+            return sameSceneInactive;
+        return activeFallback != null ? activeFallback : inactiveFallback;
+    }
 }

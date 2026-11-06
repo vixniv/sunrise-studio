@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Concrete
   m_EditorClassIdentifier: Assembly-CSharp::FootstepSurface
   clips:
-  - {fileID: 8300000, guid: f5f0d37048d0242c084894ffe95b9f5f, type: 3}
-  - {fileID: 8300000, guid: 8bbff2d39c21e4ba09595560189ec4c4, type: 3}
-  - {fileID: 8300000, guid: c7d1b2c3592dc4ca7bb62fe128b908ab, type: 3}
-  - {fileID: 8300000, guid: 0c25ba79fda9e4266a9ad7fdabfa318e, type: 3}
-  - {fileID: 8300000, guid: 9f0aca00e591449bda8e5c45db51413e, type: 3}
-  - {fileID: 8300000, guid: 7903de2f3046f49e787db708b44ef4ea, type: 3}
+  - {fileID: 8300000, guid: b0e9937a22c3f4c64ae198ff2dad6f5a, type: 3}
+  - {fileID: 8300000, guid: b53c9c3cca6f445f89fddc8eb7bc0b44, type: 3}
+  - {fileID: 8300000, guid: a97d244813d684bf39dec11c86dd9db7, type: 3}
+  - {fileID: 8300000, guid: b44324d56172e4f48b2bd019baa68b5c, type: 3}
+  - {fileID: 8300000, guid: 7d5c6b1eb4b1d4c308cfb63aafda8c76, type: 3}
+  - {fileID: 8300000, guid: 92ec4190e00794adca96baec9621ede9, type: 3}
   minVolume: 0.8
   maxVolume: 1
   minPitch: 0.92

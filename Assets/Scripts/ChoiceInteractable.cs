@@ -1,16 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using SunriseStudio.UI;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere replaces the cue with the ChoiceWheel.
 // When several interactables are in range, the InteractionCue picks the nearest and only that one takes the tap.
 // With a single choice there is nothing to pick, so the tap runs it directly and no wheel is needed.
 // Picking a choice plays its Yarn node or its dialog lines above this object; the cue stays hidden until the whole action ends.
-public class ChoiceInteractable : MonoBehaviour
+public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
 {
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
     [SerializeField] private ChoiceWheel wheel;
+    [Tooltip("Optional screen-space replacement for ChoiceWheel. Found automatically when present.")]
+    [SerializeField] private ActionInventoryCarouselPresenter actionCarousel;
     [SerializeField] private DialogBubble dialog;
     [Tooltip("Only needed for choices with a Yarn Node.")]
     [SerializeField] private YarnDialogPresenter yarnDialog;
@@ -55,8 +58,11 @@ public class ChoiceInteractable : MonoBehaviour
     private bool tracking;
     private bool cueShown;
     private bool approaching;
+    private bool ownsCarousel;
     // The cue field when it is this object's own cue, not the shared InteractionCue.
     private GameObject ownCue;
+    private readonly List<int> visibleChoiceIndices = new List<int>();
+    private readonly List<InteractionAction> carouselActions = new List<InteractionAction>();
 
     private void Awake()
     {
@@ -64,6 +70,7 @@ public class ChoiceInteractable : MonoBehaviour
         SharedCue.Init(ownCue);
         // Empty references are found in the scene, so this works from a prefab without per-scene setup.
         if (wheel == null) wheel = FindAnyObjectByType<ChoiceWheel>();
+        if (actionCarousel == null) actionCarousel = FindAnyObjectByType<ActionInventoryCarouselPresenter>(FindObjectsInactive.Include);
         if (dialog == null) dialog = FindAnyObjectByType<DialogBubble>();
         if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
     }
@@ -86,14 +93,15 @@ public class ChoiceInteractable : MonoBehaviour
     private void Update()
     {
         // The action runs from opening the wheel until the chosen dialog ends.
-        bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen) ||
-                    (yarnDialog != null && yarnDialog.IsPlaying) || approaching;
+        bool busy = (wheel != null && wheel.IsOpen) || (actionCarousel != null && actionCarousel.IsOpen) ||
+                    (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying) ||
+                    approaching;
         bool want = nearbyPlayer != null && !busy;
         InteractionCue.Request(this, want, ownCue != null);
         bool isTarget = InteractionCue.IsTarget(this);
         SharedCue.Set(ownCue, ref cueShown, want && isTarget);
         // Presses that start during the action belong to the wheel or the dialog.
-        if (!want || !isTarget || (wheel == null && choices.Count != 1))
+        if (!want || !isTarget || (wheel == null && actionCarousel == null && choices.Count != 1))
         {
             tracking = false;
             return;
@@ -104,6 +112,7 @@ public class ChoiceInteractable : MonoBehaviour
         Vector2 position = pointer.position.ReadValue();
         if (pointer.press.wasPressedThisFrame)
         {
+            if (InteractionCue.PointerOverUi(position)) { tracking = false; return; }
             tracking = true;
             pressPosition = position;
             pressTime = Time.unscaledTime;
@@ -114,9 +123,65 @@ public class ChoiceInteractable : MonoBehaviour
         if (!pointer.press.wasReleasedThisFrame) return;
         tracking = false;
         if (maxTravel > Screen.width * tapMaxTravel || Time.unscaledTime - pressTime > tapMaxSeconds) return;
+        TryInteract();
+    }
+
+    public bool TryInteract()
+    {
+        bool busy = (wheel != null && wheel.IsOpen) || (actionCarousel != null && actionCarousel.IsOpen) ||
+                    (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying) ||
+                    approaching;
+        if (nearbyPlayer == null || busy || !InteractionCue.IsTarget(this))
+            return false;
+
+        BuildVisibleChoices();
+        if (visibleChoiceIndices.Count == 0)
+            return false;
+        // Several choices need a carousel or a wheel to pick from; bail out before the sound plays if there is neither.
+        if (visibleChoiceIndices.Count > 1 && actionCarousel == null && wheel == null)
+            return false;
         if (playInteractSound) InteractionCue.PlayInteractSound();
-        if (choices.Count == 1) OnChosen(0);
-        else wheel.Open(nearbyPlayer, choices, OnChosen);
+        if (visibleChoiceIndices.Count == 1)
+            OnChosen(visibleChoiceIndices[0]);
+        else if (actionCarousel != null)
+        {
+            PlayerMove interactingPlayer = nearbyPlayer;
+            interactingPlayer.InteractionMenuOpen = true;
+            ownsCarousel = true;
+            actionCarousel.OpenActions(
+                carouselActions,
+                action =>
+                {
+                    if (int.TryParse(action.Id, out int index) && index >= 0 && index < choices.Count)
+                        OnChosen(index);
+                },
+                () =>
+                {
+                    ownsCarousel = false;
+                    if (interactingPlayer != null)
+                        interactingPlayer.InteractionMenuOpen = false;
+                },
+                interactingPlayer.transform);
+        }
+        else
+            wheel.Open(nearbyPlayer, choices, OnChosen);
+        return true;
+    }
+
+    private void BuildVisibleChoices()
+    {
+        visibleChoiceIndices.Clear();
+        carouselActions.Clear();
+        for (int index = 0; index < choices.Count; index++)
+        {
+            ChoiceWheel.Choice choice = choices[index];
+            if (choice == null || string.IsNullOrWhiteSpace(choice.label))
+                continue;
+            visibleChoiceIndices.Add(index);
+            carouselActions.Add(new InteractionAction(
+                index.ToString(), choice.label, choice.description, choice.timeCostMinutes, choice.icon,
+                choice.locked, choice.lockedReason));
+        }
     }
 
     private void OnChosen(int index)
@@ -169,6 +234,9 @@ public class ChoiceInteractable : MonoBehaviour
     private void OnDisable()
     {
         approaching = false;
+        if (ownsCarousel && actionCarousel != null)
+            actionCarousel.Close();
+        ownsCarousel = false;
         tracking = false;
         nearbyPlayer = null;
         InteractionCue.Request(this, false, ownCue != null);

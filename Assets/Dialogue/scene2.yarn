@@ -123,6 +123,7 @@ title: Gap1_JanitorCabinet
 tags: scene2 gap1 lockers interactable
 ---
 <<if $gap1_master_key is false and $gap1_key_returned is false>>
+    <<sfx "janitor_cabinet_open">>
     Anin: The master key. Sorry, Pak.
     <<give_item "master_key">>
     <<set $gap1_master_key to true>>
@@ -138,6 +139,7 @@ tags: scene2 gap1 lockers interactable
 ---
 // Fal's locker, rocket sticker on the door.
 <<if $gap1_master_key is false>>
+    <<sfx "ui_error">>
     Anin: Locked.
 <<elseif $gap1_notes_placed is true>>
     // Checked before $gap1_locker_open, so closing it never opens it again.
@@ -187,6 +189,7 @@ tags: scene2 gap1 lockers
 title: Gap1_Photo
 tags: scene2 gap1 lockers
 ---
+<<sfx "paper_handle">>
 // Text only for now, no close-up art.
 Anin: A family photo. Fal and his parents, in front of a hospital.
 Anin: They're all smiling. Except his eyes.
@@ -198,6 +201,7 @@ Anin: Just the three of them. He's all they've got.
 title: Gap1_ReportCard
 tags: scene2 gap1 lockers
 ---
+<<sfx "paper_handle">>
 // Text only for now, no close-up art.
 Anin: His report card. Math, sixty-one. Class rank, seven.
 Anin: Someone wrote on it in red pen. "Not enough."
@@ -209,6 +213,7 @@ Anin: That's his dad's writing.
 title: Gap1_Letter
 tags: scene2 gap1 lockers
 ---
+<<sfx "paper_handle">>
 // Text only for now, no close-up art. Sets up the pressure Fal is under.
 Anin: A letter from home.
 Anin: "Fal, we've given everything so you can be great. Top three. Medicine. Don't waste it. Don't let us down."
@@ -220,6 +225,7 @@ Anin: "Don't let us down."
 title: Gap1_Rocket
 tags: scene2 gap1 lockers
 ---
+<<sfx "paper_handle">>
 // Text only for now, no close-up art.
 Anin: Something folded small, tucked behind the letter.
 Anin: A rocket. He drew it so carefully.
@@ -232,6 +238,7 @@ Anin: He never told anyone he wanted this.
 title: Gap1_SealedNote
 tags: scene2 gap1 lockers
 ---
+<<sfx "paper_handle">>
 // Text only for now, no close-up art.
 // It must NOT be openable in this scene.
 Anin: A folded note. My name on the front, in his handwriting.
@@ -277,6 +284,7 @@ tags: scene2 gap1 lockers
 // Fal's math textbook, the one he brought for tutoring.
 Anin: He'll open this tomorrow. For our session.
 // Show the notes being slipped between the pages.
+<<sfx "paper_placement">>
 <<set $gap1_notes_placed to true>>
 // Double reading: "it" = saving him (first play) / the plan (replay).
 Anin: He has to read these. This time it'll work.
@@ -309,6 +317,7 @@ title: Gap1_Dorm_End
 tags: scene2 gap1 dorm
 ---
 // Anin lies down. The clock still reads 00:00.
+<<sfx "bed_drop">>
 Anin: Please. Let this be the last time.
 // The second hand moves.
 <<gap_mode false>>
