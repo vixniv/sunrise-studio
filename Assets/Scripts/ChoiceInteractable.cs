@@ -33,6 +33,16 @@ public class ChoiceInteractable : MonoBehaviour
         new ChoiceWheel.Choice { label = "" },
         new ChoiceWheel.Choice { label = "" },
     };
+    [Header("Approach")]
+    [Tooltip("Before a choice's dialogue starts, the player walks to a spot beside this object and turns to face it, so the two do not overlap.")]
+    [SerializeField] private bool approachBeforeTalking;
+    [Tooltip("Horizontal distance, in world units, between this object and the spot the player walks to. 1 unit = 16 pixels.")]
+    [SerializeField, Min(0f)] private float approachDistance = 1.5f;
+    [Tooltip("Side of this object the player stands on. Nearest keeps the player on the side they came from.")]
+    [SerializeField] private ApproachSide approachSide = ApproachSide.Nearest;
+
+    public enum ApproachSide { Nearest, Left, Right }
+
     [Tooltip("Play the interact sound (set on the Player's InteractionCue) when this object is tapped.")]
     [SerializeField] private bool playInteractSound = true;
     [SerializeField, Range(0.001f, 0.1f)] private float tapMaxTravel = 0.02f;
@@ -44,6 +54,7 @@ public class ChoiceInteractable : MonoBehaviour
     private float maxTravel;
     private bool tracking;
     private bool cueShown;
+    private bool approaching;
     // The cue field when it is this object's own cue, not the shared InteractionCue.
     private GameObject ownCue;
 
@@ -75,7 +86,8 @@ public class ChoiceInteractable : MonoBehaviour
     private void Update()
     {
         // The action runs from opening the wheel until the chosen dialog ends.
-        bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying);
+        bool busy = (wheel != null && wheel.IsOpen) || (dialog != null && dialog.IsOpen) ||
+                    (yarnDialog != null && yarnDialog.IsPlaying) || approaching;
         bool want = nearbyPlayer != null && !busy;
         InteractionCue.Request(this, want, ownCue != null);
         bool isTarget = InteractionCue.IsTarget(this);
@@ -111,19 +123,83 @@ public class ChoiceInteractable : MonoBehaviour
     {
         ChoiceWheel.Choice choice = choices[index];
         Debug.Log($"{name}: chose {index + 1} ({choice.label})", this);
+        bool hasYarn = yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode);
+        bool hasLines = dialog != null && choice.dialogLines.Count > 0;
+        PlayerMove player = nearbyPlayer;
+        if (approachBeforeTalking && player != null && (hasYarn || hasLines))
+        {
+            Approach(player, () => StartChoice(choice, player));
+            return;
+        }
+        StartChoice(choice, player);
+    }
+
+    private void StartChoice(ChoiceWheel.Choice choice, PlayerMove player)
+    {
         if (yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
-            yarnDialog.Play(choice.yarnNode.Trim(), transform, dialogOffset, nearbyPlayer, choice.onChoose.Invoke);
+            yarnDialog.Play(choice.yarnNode.Trim(), transform, dialogOffset, player, choice.onChoose.Invoke);
         else if (dialog != null && choice.dialogLines.Count > 0)
-            dialog.Show(transform, dialogOffset, choice.dialogLines, nearbyPlayer, choice.onChoose.Invoke);
+            dialog.Show(transform, dialogOffset, choice.dialogLines, player, choice.onChoose.Invoke);
         else
             choice.onChoose.Invoke();
     }
 
+    // Walks the player to the standing spot beside this object, turns them to face it, then runs arrived.
+    // The player stays locked (InteractionMenuOpen) for the walk, so no other interaction takes a tap meanwhile.
+    private void Approach(PlayerMove player, System.Action arrived)
+    {
+        float npcX = transform.position.x;
+        float playerX = player.transform.position.x;
+        float side = approachSide == ApproachSide.Left ? -1f
+                   : approachSide == ApproachSide.Right ? 1f
+                   : playerX < npcX ? -1f : 1f;
+        float targetX = npcX + side * approachDistance;
+
+        approaching = true;
+        player.InteractionMenuOpen = true;
+        player.WalkTo(targetX, -side, () =>
+        {
+            approaching = false;
+            if (this == null || !isActiveAndEnabled || player == null) return;
+            player.InteractionMenuOpen = false;
+            arrived();
+        });
+    }
+
     private void OnDisable()
     {
+        approaching = false;
         tracking = false;
         nearbyPlayer = null;
         InteractionCue.Request(this, false, ownCue != null);
         SharedCue.Set(ownCue, ref cueShown, false);
+    }
+
+    // Scene view preview of the approach spots, shown while this object is selected.
+    // Green: where the player stands. Grey: the side Approach Side never uses. Faded: Approach Before Talking is off.
+    private void OnDrawGizmosSelected()
+    {
+        Vector3 origin = transform.position;
+        Collider2D area = GetComponent<Collider2D>();
+        float height = area != null ? area.bounds.size.y : 2f;
+        float alpha = approachBeforeTalking ? 1f : 0.35f;
+        DrawApproachSpot(origin, -1f, height, approachSide != ApproachSide.Right, alpha);
+        DrawApproachSpot(origin, 1f, height, approachSide != ApproachSide.Left, alpha);
+    }
+
+    private void DrawApproachSpot(Vector3 origin, float side, float height, bool used, float alpha)
+    {
+        Color color = used ? new Color(0.2f, 1f, 0.3f, alpha) : new Color(0.6f, 0.6f, 0.6f, alpha * 0.6f);
+        Gizmos.color = color;
+        Vector3 feet = origin + Vector3.right * (side * approachDistance);
+        // Where the player's feet land, a line as tall as this object, and an arrow showing which way the player faces.
+        Gizmos.DrawLine(origin, feet);
+        Gizmos.DrawLine(feet, feet + Vector3.up * height);
+        Gizmos.DrawWireSphere(feet, 0.15f);
+        Vector3 eye = feet + Vector3.up * (height * 0.75f);
+        Vector3 tip = eye + Vector3.right * (-side * 0.5f);
+        Gizmos.DrawLine(eye, tip);
+        Gizmos.DrawLine(tip, tip + new Vector3(side * 0.2f, 0.15f, 0f));
+        Gizmos.DrawLine(tip, tip + new Vector3(side * 0.2f, -0.15f, 0f));
     }
 }

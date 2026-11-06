@@ -68,6 +68,7 @@ public class YarnCommands : MonoBehaviour
 
     private bool leaving;
     private bool pausedAudio;
+    private YarnDialogPresenter presenter;
 
     // Time slot set by <<advance_time>> (morning, lunch, after_school) or a reset (midnight). It carries over to the next scene.
     public static string TimeOfDay { get; private set; } = DefaultTimeOfDay;
@@ -179,6 +180,7 @@ public class YarnCommands : MonoBehaviour
         if (!leaving)
         {
             leaving = true;
+            HideDialogueLine();
             AudioClip clip = string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
             if (CircleTransition.Instance != null)
                 CircleTransition.Instance.LoadScene(scene, clip);
@@ -225,6 +227,7 @@ public class YarnCommands : MonoBehaviour
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
     private YarnTask Fade(Action whileCovered)
     {
+        HideDialogueLine();
         CircleTransition transition = CircleTransition.Instance;
         if (transition == null || !transition.Cover(whileCovered, fadeHoldSeconds))
         {
@@ -232,6 +235,14 @@ public class YarnCommands : MonoBehaviour
             return YarnTask.CompletedTask;
         }
         return YarnTask.WaitUntil(() => transition == null || !transition.IsTransitioning);
+    }
+
+    // Takes the last line off screen before a transition, so it is not still showing when the screen opens again.
+    private void HideDialogueLine()
+    {
+        if (presenter == null && runner != null) presenter = runner.GetComponentInChildren<YarnDialogPresenter>();
+        if (presenter == null) presenter = FindAnyObjectByType<YarnDialogPresenter>();
+        if (presenter != null) presenter.HideCurrentLine();
     }
 
     // <<show "Fal">> / <<hide "Fal">>: turns the character's GameObject on or off.
