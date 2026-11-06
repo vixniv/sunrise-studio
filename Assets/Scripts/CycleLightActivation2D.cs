@@ -43,6 +43,7 @@ public class CycleLightActivation2D : MonoBehaviour
             case "day":
             case "afternoon":
             case "lunch":
+            case "afterschool":
             case "dream":
             case "dreamsequence":
                 useWindowLight = true;
@@ -50,7 +51,6 @@ public class CycleLightActivation2D : MonoBehaviour
                 break;
 
             case "night":
-            case "afterschool":
                 useWindowLight = false;
                 useLampLight = true;
                 break;
