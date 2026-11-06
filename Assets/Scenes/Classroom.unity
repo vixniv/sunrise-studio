@@ -1975,10 +1975,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.5962963
-    width: 3.1638224
-    height: 3.1638227
+    x: 0.5432292
+    y: 0
+    width: 0.96310186
+    height: 0.7888889
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2008,7 +2008,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.4375, z: -10}
+  m_LocalPosition: {x: -20.066559, y: 2.4359102, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5658,8 +5658,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -18.962, y: -0.14319992, z: 0}
-    m_Extent: {x: 4.2336, y: 2.6884, z: 0}
+    m_Center: {x: -18.9989, y: -2.6636, z: 0}
+    m_Extent: {x: 4.2061, y: 5.2202, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -5671,8 +5671,10 @@ MonoBehaviour:
   m_ShapeLightFalloffOffset: {x: 0, y: 0}
   m_ShapePath:
   - {x: -22.696136, y: -0.5217597, z: 0}
-  - {x: -22.634266, y: -2.3327365, z: 0}
-  - {x: -15.226638, y: 2.0444577, z: 0}
+  - {x: -22.705215, y: -7.3846583, z: 0}
+  - {x: -19.77478, y: -7.36091, z: 0.0000007508677}
+  - {x: -15.322354, y: -4.486847, z: 0}
+  - {x: -15.293418, y: 2.0559, z: 0.0000006118696}
   - {x: -18.19751, y: 2.038166, z: 0}
   references:
     version: 2
