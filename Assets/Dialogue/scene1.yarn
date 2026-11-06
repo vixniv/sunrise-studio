@@ -46,6 +46,7 @@ tags: setup
 title: Dorm_Start
 tags: scene1 dorm
 ---
+<<sfx "alarm_clock">>
 // Anin wakes up in her dorm room. Kirana (roommate) is not there.
 Anin: Looks like Kirana left early. Not really her thing.
 <<set $story_exit to true>>
@@ -76,6 +77,7 @@ tags: scene1 dorm interactable
 <<else>>
     Anin: I should hurry.
     -> Get dressed
+        <<sfx "getting_dressed">>
         <<set $anin_dressed to true>>
         <<fade>>
         // Anin showers, rushes through her makeup, puts on her uniform.

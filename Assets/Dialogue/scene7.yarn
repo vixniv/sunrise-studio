@@ -180,6 +180,7 @@ Fal: Sometimes I'm glad. Sometimes it feels like being stuck.
 title: Day4_Dorm_Night
 tags: scene7 day4 dorm
 ---
+<<sfx "light_switch">>
 Anin: Not tonight. Whoever she is, I'm going to see her.
 <<stay_awake "success">>
 // MIDNIGHT: the gap begins with Anin AWAKE.

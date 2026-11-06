@@ -10,6 +10,7 @@ using UnityEngine.Rendering.Universal;
 // Yarn dialogue uses Say instead: one line at a time, and the box stays open until Close.
 // The box grows to fit each line: text wraps at maxTextWidth and the box height follows the line count.
 // The box slides sideways (and down) to stay inside the camera view when the speaker is near an edge.
+[ExecuteAlways]
 public class DialogBubble : MonoBehaviour
 {
     [Tooltip("Needs a 9-sliced sprite with a center pivot and Draw Mode set to Sliced or Tiled.")]
@@ -50,7 +51,27 @@ public class DialogBubble : MonoBehaviour
 
     private void Awake()
     {
-        if (box != null) box.gameObject.SetActive(false);
+        HideUntilUsed();
+    }
+
+    private void OnEnable()
+    {
+        // Scene files contain instructional placeholder copy in this legacy world-space bubble.
+        // Never render that copy in Edit Mode; runtime Show/Say explicitly reveals real dialogue.
+        if (!Application.isPlaying)
+            HideUntilUsed();
+    }
+
+    private void OnValidate()
+    {
+        if (!Application.isPlaying)
+            HideUntilUsed();
+    }
+
+    private void HideUntilUsed()
+    {
+        if (box != null && box.gameObject.activeSelf)
+            box.gameObject.SetActive(false);
     }
 
     // Shows the lines one at a time above talker's sprite (plus talkerOffset). finished runs after the last line closes.

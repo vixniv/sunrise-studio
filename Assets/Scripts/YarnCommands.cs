@@ -130,25 +130,80 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("sound_resume", (Action)(() => SetAudioPaused(false)));
         runner.AddCommandHandler("freeze_frame", (Func<YarnTask>)PlayFreezeFrame);
 
-        // Not built yet.
-        runner.AddCommandHandler("quest_start", (Action<string, string>)((id, text) => Pending($"quest_start {id}: {text}")));
-        runner.AddCommandHandler("quest_update", (Action<string, string>)((id, text) => Pending($"quest_update {id}: {text}")));
-        runner.AddCommandHandler("quest_complete", (Action<string>)(id => Pending($"quest_complete {id}")));
-        runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) => Pending($"event_marker {id} {visible}")));
-        runner.AddCommandHandler("give_item", (Action<string>)(id => Pending($"give_item {id}")));
-        runner.AddCommandHandler("remove_item", (Action<string>)(id => Pending($"remove_item {id}")));
-        runner.AddCommandHandler("open_locker", (Action<string>)(id => Pending($"open_locker {id}")));
-        runner.AddCommandHandler("close_locker", (Action<string>)(id => Pending($"close_locker {id}")));
-        runner.AddCommandHandler("blur_writing", (Action<string>)(id => Pending($"blur_writing {id}")));
-        runner.AddCommandHandler("blur_action", (Action<string>)(id => Pending($"blur_action {id}")));
-        runner.AddCommandHandler("gap_mode", (Action<bool>)(on => Pending($"gap_mode {on}")));
+        runner.AddCommandHandler("quest_start", (Action<string, string>)((id, text) =>
+            PendingWithAudio($"quest_start {id}: {text}", "ui_quest_popup")));
+        runner.AddCommandHandler("quest_update", (Action<string, string>)((id, text) =>
+            PendingWithAudio($"quest_update {id}: {text}", "ui_quest_popup")));
+        runner.AddCommandHandler("quest_complete", (Action<string>)(id =>
+            PendingWithAudio($"quest_complete {id}", "ui_quest_complete")));
+        runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) =>
+        {
+            if (visible) SunriseAudio.Play("ui_achievement");
+            Pending($"event_marker {id} {visible}");
+        }));
+        runner.AddCommandHandler("give_item", (Action<string>)GiveItem);
+        runner.AddCommandHandler("remove_item", (Action<string>)RemoveItem);
+        runner.AddCommandHandler("open_locker", (Action<string>)(id =>
+        {
+            SunriseAudio.PlaySequence("locker_unlock", "locker_open");
+            Pending($"open_locker {id}");
+        }));
+        runner.AddCommandHandler("close_locker", (Action<string>)(id =>
+        {
+            SunriseAudio.Play("locker_close");
+            Pending($"close_locker {id}");
+        }));
+        runner.AddCommandHandler("blur_writing", (Action<string>)(id =>
+        {
+            SunriseAudio.PlaySequence("paper_handle", "writing_pencil");
+            Pending($"blur_writing {id}");
+        }));
+        runner.AddCommandHandler("blur_action", (Action<string>)(id =>
+        {
+            SunriseAudio.Play(Key(id).Contains("bolt") || Key(id).Contains("flagpole")
+                ? "bolt_unscrew"
+                : "ui_interact");
+            Pending($"blur_action {id}");
+        }));
+        runner.AddCommandHandler("gap_mode", (Action<bool>)(on =>
+        {
+            if (on) SunriseAudio.Play("gap_transition");
+            Pending($"gap_mode {on}");
+        }));
         runner.AddCommandHandler("gap_begin_awake", (Action)(() => Pending("gap_begin_awake")));
-        runner.AddCommandHandler("memory_montage", (Action<bool>)(on => Pending($"memory_montage {on}")));
-        runner.AddCommandHandler("stay_awake", (Action<string>)(result => Pending($"stay_awake {result}")));
-        runner.AddCommandHandler("edit_calendar", (Action)(() => Pending("edit_calendar")));
-        runner.AddCommandHandler("draw_sketchbook", (Action)(() => Pending("draw_sketchbook")));
-        runner.AddCommandHandler("ticking_clock", (Action)(() => Pending("ticking_clock")));
-        runner.AddCommandHandler("end_card", (Action<string>)(text => Pending($"end_card {text}")));
+        runner.AddCommandHandler("memory_montage", (Action<bool>)(on =>
+        {
+            SunriseAudio.Play(on ? "memory_transition_in" : "memory_transition_back");
+            Pending($"memory_montage {on}");
+        }));
+        runner.AddCommandHandler("stay_awake", (Action<string>)(result =>
+        {
+            SunriseAudio.PlaySequence(Key(result) == "success"
+                ? new[] { "drowsiness", "snap_awake" }
+                : new[] { "drowsiness" });
+            Pending($"stay_awake {result}");
+        }));
+        runner.AddCommandHandler("edit_calendar", (Action)(() =>
+        {
+            SunriseAudio.PlaySequence("calendar_paper_handle", "calendar_writing");
+            Pending("edit_calendar");
+        }));
+        runner.AddCommandHandler("draw_sketchbook", (Action)(() =>
+        {
+            SunriseAudio.PlaySequence("sketchbook_page_turn", "pencil_sketching");
+            Pending("draw_sketchbook");
+        }));
+        runner.AddCommandHandler("ticking_clock", (Action)(() =>
+        {
+            SunriseAudio.PlayLoop("clock_ticking");
+            Pending("ticking_clock");
+        }));
+        runner.AddCommandHandler("end_card", (Action<string>)(text =>
+        {
+            SunriseAudio.StopLoop();
+            SunriseAudio.Play("end_chapter_sting");
+            Pending($"end_card {text}");
+        }));
     }
 
     // <<scene_transition "Classroom">>: does nothing when the location is this scene, so a node can open with the
@@ -179,13 +234,22 @@ public class YarnCommands : MonoBehaviour
         if (!leaving)
         {
             leaving = true;
-            AudioClip clip = string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
+            bool doorTransition = Key(sound) == "door";
+            AudioClip clip = doorTransition
+                ? SunriseAudio.GetClip("door_open")
+                : string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
+            if (doorTransition)
+                SunriseAudio.QueueDoorClose();
+
             if (CircleTransition.Instance != null)
                 CircleTransition.Instance.LoadScene(scene, clip);
             else
+            {
+                if (doorTransition)
+                    SunriseAudio.Play("door_open");
                 SceneManager.LoadScene(scene);
+            }
         }
-        // Keeps the dialogue (and the frozen player) waiting until this scene unloads.
         return YarnTask.WaitUntil(() => this == null);
     }
 
@@ -205,6 +269,9 @@ public class YarnCommands : MonoBehaviour
     // <<advance_time "lunch">>: covers the screen, switches the time slot (ActiveDuringTime objects follow), uncovers it.
     private YarnTask AdvanceTime(string slot)
     {
+        SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
+            ? "night_transition"
+            : "day_transition");
         return Fade(() =>
         {
             TimeOfDay = slot.Trim();
@@ -256,6 +323,7 @@ public class YarnCommands : MonoBehaviour
     // <<cutscene "anin_joins_table">>: plays the matching Timeline and waits for it to finish.
     private YarnTask PlayCutscene(string id)
     {
+        PlayCutsceneAudio(id);
         Cutscene cutscene = cutscenes.Find(c => c.id.Trim() == id.Trim());
         if (cutscene == null || cutscene.director == null)
         {
@@ -282,11 +350,11 @@ public class YarnCommands : MonoBehaviour
     // and Scene After Hard Reset loads, even when it is this scene. Yarn variables are kept.
     private async YarnTask HardReset()
     {
+        SunriseAudio.PlaySequence("hard_reset", "night_transition");
         if (freezeFrame != null) await freezeFrame.Play();
         else Debug.LogWarning($"<<hard_reset>>: {name} has no Freeze Frame assigned, so there is no white flash.", this);
 
         StartOver(GapTimeOfDay, true);
-        // A frozen world stays frozen until the scene unloads (FreezeFrame releases it then).
         if (string.IsNullOrWhiteSpace(sceneAfterHardReset))
         {
             if (freezeFrame != null) freezeFrame.Release();
@@ -298,6 +366,7 @@ public class YarnCommands : MonoBehaviour
     // <<soft_reset>>: midnight comes without a death, so there is no white flash. The loop starts over in the Dorm at midnight.
     private YarnTask SoftReset()
     {
+        SunriseAudio.PlaySequence("soft_reset", "night_transition");
         StartOver(GapTimeOfDay, true);
         return LoadLocation(dormScene, "");
     }
@@ -305,6 +374,8 @@ public class YarnCommands : MonoBehaviour
     // <<end_gap>>: the gap is over and Dec 10 starts again in the Dorm, in the morning.
     private YarnTask EndGap()
     {
+        SunriseAudio.Play("day_transition");
+        SunriseAudio.StopLoop();
         StartOver(DefaultTimeOfDay, false);
         return LoadLocation(dormScene, "");
     }
@@ -323,10 +394,14 @@ public class YarnCommands : MonoBehaviour
     // Clip of the Sounds entry named soundName, or null (with a warning naming command) when there is none.
     private AudioClip FindClip(string soundName, string command)
     {
+        AudioClip libraryClip = SunriseAudio.GetClip(soundName);
+        if (libraryClip != null)
+            return libraryClip;
+
         Sound sound = sounds.Find(s => s.name == soundName);
         if (sound == null || sound.clip == null)
         {
-            Debug.LogWarning($"<<{command}>>: no clip named \"{soundName}\" in {name}'s Sounds list.", this);
+            Debug.LogWarning($"<<{command}>>: no audio cue or serialized clip named \"{soundName}\".", this);
             return null;
         }
         return sound.clip;
@@ -334,14 +409,40 @@ public class YarnCommands : MonoBehaviour
 
     private void PlaySound(string soundName)
     {
-        AudioClip clip = FindClip(soundName, "sfx");
-        if (clip == null) return;
+        switch (Key(soundName))
+        {
+            case "gettingdressed":
+                SunriseAudio.PlaySequence("wardrobe_open", "clothes_rustle", "wardrobe_close");
+                return;
+            case "writeandplacenote":
+                SunriseAudio.PlaySequence("writing_pencil", "paper_placement");
+                return;
+            case "booknote":
+                SunriseAudio.PlaySequence("book_open", "book_page_turn", "writing_pencil");
+                return;
+            case "blazerkey":
+                SunriseAudio.PlaySequence("blazer_pocket", "keys_pickup");
+                return;
+            case "festivalmemory":
+                SunriseAudio.PlaySequence("festival_transition", "festival_crowd");
+                return;
+        }
+
+        if (SunriseAudio.Play(soundName) != null)
+            return;
+
+        Sound sound = sounds.Find(s => s.name == soundName);
+        if (sound == null || sound.clip == null)
+        {
+            Debug.LogWarning($"<<sfx>>: no audio cue or serialized clip named \"{soundName}\".", this);
+            return;
+        }
         if (sfxSource == null)
         {
             Debug.LogWarning($"<<sfx>>: {name} has no Audio Source.", this);
             return;
         }
-        sfxSource.PlayOneShot(clip);
+        sfxSource.PlayOneShot(sound.clip);
     }
 
     // Pauses every Audio Source in the game. AudioListener.pause outlives the scene, so it is undone on unload.
@@ -351,10 +452,56 @@ public class YarnCommands : MonoBehaviour
         pausedAudio = paused;
     }
 
-    private void Pending(string command) => Debug.Log($"<<{command}>> (not implemented yet)", this);
+    private void PlayCutsceneAudio(string id)
+    {
+        switch (Key(id))
+        {
+            case "aninjoinstable":
+                SunriseAudio.PlaySequence("chair_move", "food_serving", "plate_put_down");
+                break;
+            case "falreadsnotes":
+                SunriseAudio.PlaySequence("book_pickup", "book_open", "book_page_turn", "paper_drop", "paper_pickup", "paper_handle", "blazer_pocket");
+                break;
+            case "falfalloffscreen":
+                SunriseAudio.PlaySequence("fall_impact", "distant_scream", "running_to_fal", "ambience_drop_after_fal", "sting_before_again");
+                break;
+            case "falfalloffscreen2":
+                SunriseAudio.PlaySequence("fall_impact", "distant_scream", "books_drop", "locker_grab_rattle", "ambience_drop_after_fal");
+                break;
+            case "day4lunchmatches":
+                SunriseAudio.Play("reveal_sting");
+                break;
+        }
+    }
+
+    private void GiveItem(string id)
+    {
+        if (Key(id).Contains("key"))
+            SunriseAudio.PlaySequence("keys_pickup", "ui_item_pickup");
+        else
+            SunriseAudio.Play("ui_item_pickup");
+        Pending($"give_item {id}");
+    }
+
+    private void RemoveItem(string id)
+    {
+        SunriseAudio.Play(Key(id).Contains("key") ? "keys_return" : "ui_click_short");
+        Pending($"remove_item {id}");
+    }
+
+    private void PendingWithAudio(string command, string cue)
+    {
+        SunriseAudio.Play(cue);
+        Pending(command);
+    }
+
+    private void Pending(string command) =>
+        Debug.Log($"<<{command}>> (not implemented yet)", this);
+
 
     private void OnDestroy()
     {
+        SunriseAudio.StopLoop();
         if (pausedAudio) AudioListener.pause = false;
     }
 }

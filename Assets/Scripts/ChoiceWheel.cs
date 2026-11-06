@@ -17,6 +17,13 @@ public class ChoiceWheel : MonoBehaviour
         public string label = "Choice";
         [Tooltip("Optional. When empty, the box shows the choice number instead.")]
         public Sprite icon;
+        [Tooltip("Shown under the carousel while this action is centered.")]
+        [TextArea(2, 4)] public string description;
+        [Tooltip("Minutes spent when this action is confirmed.")]
+        [Min(0)] public int timeCostMinutes;
+        public bool locked;
+        [Tooltip("Shown instead of Description while locked.")]
+        public string lockedReason;
         [Tooltip("Optional. Yarn node to run after this choice is picked (needs a YarnDialogPresenter). Used instead of Dialog Lines.")]
         public string yarnNode;
         [Tooltip("Optional. Shown one at a time above the object after this choice is picked; tap for the next line.")]

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // Plays a footstep each time the walk or run animation reaches a step point,
 // so the step tempo always follows the animation playing.
@@ -6,7 +7,7 @@ using UnityEngine;
 public class PlayerFootsteps : MonoBehaviour
 {
     [Header("Sound")]
-    [Tooltip("Floor sound set for this scene. Left empty, the player walks silently.")]
+    [Tooltip("Fallback floor sound. Scene mapping from SunriseAudioLibrary takes priority when present.")]
     public FootstepSurface surface;
     [Range(0f, 1f)] public float volume = 1f;
 
@@ -54,6 +55,14 @@ public class PlayerFootsteps : MonoBehaviour
     void Awake()
     {
         source = GetComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.spatialBlend = 0f;
+
+        FootstepSurface sceneSurface =
+            SunriseAudio.GetSurfaceForScene(SceneManager.GetActiveScene().name);
+        if (sceneSurface != null)
+            surface = sceneSurface;
+
         if (animator == null)
         {
             Transform child = transform.Find("Visual");

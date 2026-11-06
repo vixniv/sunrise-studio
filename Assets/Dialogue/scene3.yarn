@@ -303,6 +303,7 @@ tags: scene3 day2 lockers interactable required
 ---
 // Fal dropped this on his way to take the rooftop key.
 // Only the torn end is readable. Do not show the rest anywhere.
+<<sfx "crumpled_note_unfold">>
 Anin: It's torn. I can only read the end.
 Anin: "...not enough."
 Anin: His dad's words. Even now.
