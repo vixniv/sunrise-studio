@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -24,8 +25,9 @@ public class YarnCommands : MonoBehaviour
     [Serializable]
     public class Actor
     {
-        [Tooltip("Name used in <<show \"name\">> and <<hide \"name\">>, such as \"Fal\".")]
+        [Tooltip("Name used by Yarn actor commands such as <<show>>, <<hide>>, and <<move_character>>.")]
         public string name;
+        [Tooltip("The character's root GameObject in this scene.")]
         public GameObject target;
     }
 
@@ -68,6 +70,17 @@ public class YarnCommands : MonoBehaviour
 
     private bool leaving;
     private bool pausedAudio;
+    private readonly HashSet<GameObject> movingActors = new HashSet<GameObject>();
+
+    private static readonly int IsWalkingParameter = Animator.StringToHash("IsWalking");
+    private static readonly int IsRunningParameter = Animator.StringToHash("IsRunning");
+
+    private enum MoveAnimation
+    {
+        None,
+        Walk,
+        Run
+    }
 
     // Time slot set by <<advance_time>> (morning, lunch, after_school) or a reset (midnight). It carries over to the next scene.
     public static string TimeOfDay { get; private set; } = DefaultTimeOfDay;
@@ -116,11 +129,18 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
+        runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
+        runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
+        runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
+        runner.AddCommandHandler("close_dialogue_bubble", (Action)CloseDialogueBubble);
         // Same as show and hide; the later scenes use these names.
         runner.AddCommandHandler("npc_enter", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("npc_exit", (Action<string>)(actor => SetActorVisible(actor, false)));
+        runner.AddCommandHandler("move_character", (Func<string, float, float, string, YarnTask>)MoveCharacter);
+        runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
+        runner.AddCommandHandler("wait_for_character_moves", (Func<YarnTask>)WaitForCharacterMoves);
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
@@ -289,6 +309,64 @@ public class YarnCommands : MonoBehaviour
         return YarnTask.CompletedTask;
     }
 
+    // <<fade_teleport_character "Anin" -8 "left">>: changes X and facing while the screen is covered.
+    private YarnTask FadeTeleportCharacter(string actorName, float destinationX, string facing)
+    {
+        return Fade(() => TeleportCharacter(actorName, destinationX, facing));
+    }
+
+    // <<teleport_character "Anin" -8 "left">>: changes world X and facing immediately, keeping Y and Z.
+    private void TeleportCharacter(string actorName, float destinationX, string facing)
+    {
+        GameObject target = FindActorTarget(actorName, "teleport_character");
+        if (target == null)
+            return;
+
+        if (float.IsNaN(destinationX) || float.IsInfinity(destinationX))
+        {
+            Debug.LogError($"<<teleport_character>>: destination X must be finite for \"{target.name}\".", this);
+            return;
+        }
+
+        if (movingActors.Contains(target))
+        {
+            Debug.LogError($"<<teleport_character>>: \"{target.name}\" is still moving. Wait for its move to finish first.", this);
+            return;
+        }
+
+        string facingKey = (facing ?? string.Empty).Trim().ToLowerInvariant();
+        if (facingKey != "left" && facingKey != "right" && facingKey != "keep")
+        {
+            Debug.LogError($"<<teleport_character>>: facing must be \"left\", \"right\", or \"keep\" for \"{target.name}\".", this);
+            return;
+        }
+
+        Vector3 position = target.transform.position;
+        target.transform.position = new Vector3(destinationX, position.y, position.z);
+        Rigidbody2D body = target.GetComponent<Rigidbody2D>();
+        if (body != null)
+            body.position = new Vector2(destinationX, body.position.y);
+        if (facingKey != "keep")
+            FaceActor(target, facingKey == "right" ? 1f : -1f);
+    }
+
+    // <<face_character "Anin" "left">>: changes only the actor's sprite facing.
+    private void FaceCharacter(string actorName, string facing)
+    {
+        GameObject target = FindActorTarget(actorName, "face_character");
+        if (target == null)
+            return;
+
+        string facingKey = (facing ?? string.Empty).Trim().ToLowerInvariant();
+        if (facingKey != "left" && facingKey != "right")
+        {
+            Debug.LogError($"<<face_character>>: facing must be \"left\" or \"right\" for \"{target.name}\".", this);
+            return;
+        }
+
+        FaceActor(target, facingKey == "right" ? 1f : -1f);
+    }
+
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
     private YarnTask Fade(Action whileCovered)
     {
@@ -299,6 +377,19 @@ public class YarnCommands : MonoBehaviour
             return YarnTask.CompletedTask;
         }
         return YarnTask.WaitUntil(() => transition == null || !transition.IsTransitioning);
+    }
+
+    // <<close_dialogue_bubble>>: hides the current dialogue UI before a cutscene action.
+    private void CloseDialogueBubble()
+    {
+        YarnDialogPresenter presenter = GetComponent<YarnDialogPresenter>();
+        if (presenter == null)
+        {
+            Debug.LogError("<<close_dialogue_bubble>>: no YarnDialogPresenter on the Dialogue object.", this);
+            return;
+        }
+
+        presenter.HideDialogueForCutscene();
     }
 
     // <<show "Fal">> / <<hide "Fal">>: turns the character's GameObject on or off.
@@ -318,6 +409,268 @@ public class YarnCommands : MonoBehaviour
             return;
         }
         target.SetActive(visible);
+    }
+
+    // <<move_character "Anin" 12 3 "walk">>: moves one Actor to a world X and waits for arrival.
+    private YarnTask MoveCharacter(string actorName, float destinationX, float speed, string animation)
+    {
+        GameObject target = FindActorTarget(actorName, "move_character");
+        if (target == null || !TryStartCharacterMove(target, destinationX, speed, animation, 0f))
+            return YarnTask.CompletedTask;
+
+        return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
+    }
+
+    // <<start_character_move "Dira" 20 3 "walk" 0.5>>: starts a move after a delay and returns immediately.
+    private void StartCharacterMove(string actorName, float destinationX, float speed, string animation, float delay)
+    {
+        GameObject target = FindActorTarget(actorName, "start_character_move");
+        if (target != null)
+            TryStartCharacterMove(target, destinationX, speed, animation, delay);
+    }
+
+    // <<wait_for_character_moves>>: waits for all non-blocking character moves to finish.
+    private YarnTask WaitForCharacterMoves()
+    {
+        return YarnTask.WaitUntil(() => this == null || movingActors.Count == 0);
+    }
+
+    private GameObject FindActorTarget(string actorName, string commandName)
+    {
+        string key = (actorName ?? string.Empty).Trim();
+        Actor actor = actors != null ? actors.Find(candidate => candidate != null &&
+            !string.IsNullOrWhiteSpace(candidate.name) &&
+            string.Equals(candidate.name.Trim(), key, StringComparison.OrdinalIgnoreCase)) : null;
+
+        if (actor == null || actor.target == null)
+        {
+            Debug.LogError($"<<{commandName}>>: no Actor named \"{key}\" with a target GameObject is assigned in {name}'s Actors list.", this);
+            return null;
+        }
+
+        return actor.target;
+    }
+
+    private bool TryStartCharacterMove(GameObject target, float destinationX, float speed, string animation, float delay)
+    {
+        if (float.IsNaN(destinationX) || float.IsInfinity(destinationX))
+        {
+            Debug.LogError($"<<move_character>>: destination X must be a finite number for \"{target.name}\".", this);
+            return false;
+        }
+
+        if (float.IsNaN(speed) || float.IsInfinity(speed) || speed <= 0f)
+        {
+            Debug.LogError($"<<move_character>>: speed must be greater than 0 for \"{target.name}\".", this);
+            return false;
+        }
+
+        if (float.IsNaN(delay) || float.IsInfinity(delay) || delay < 0f)
+        {
+            Debug.LogError($"<<start_character_move>>: delay must be 0 or greater for \"{target.name}\".", this);
+            return false;
+        }
+
+        if (movingActors.Contains(target))
+        {
+            Debug.LogError($"A character move is already active for \"{target.name}\". Wait for it to finish before starting another.", this);
+            return false;
+        }
+
+        MoveAnimation moveAnimation = ParseMoveAnimation(animation);
+        if (moveAnimation == MoveAnimation.None)
+            Debug.LogError($"Move animation \"{animation}\" is not supported for \"{target.name}\". Use \"walk\" or \"run\"; the character will still move without an animation.", this);
+
+        movingActors.Add(target);
+        StartCoroutine(MoveCharacterRoutine(target, destinationX, speed, moveAnimation, delay));
+        return true;
+    }
+
+    private static MoveAnimation ParseMoveAnimation(string animation)
+    {
+        string key = (animation ?? string.Empty).Trim().ToLowerInvariant();
+        switch (key)
+        {
+            case "walk": return MoveAnimation.Walk;
+            case "run": return MoveAnimation.Run;
+            default: return MoveAnimation.None;
+        }
+    }
+
+    private IEnumerator MoveCharacterRoutine(GameObject target, float destinationX, float speed, MoveAnimation moveAnimation, float delay)
+    {
+        Animator animator = null;
+        bool animationStarted = false;
+        PlayerMove[] playerMoves = null;
+        bool[] playerMoveWasEnabled = null;
+        Rigidbody2D[] bodies = null;
+        bool[] bodyWasSimulated = null;
+
+        try
+        {
+            if (delay > 0f)
+                yield return new WaitForSeconds(delay);
+
+            if (target == null)
+                yield break;
+
+            float deltaX = destinationX - target.transform.position.x;
+            if (Mathf.Abs(deltaX) <= 0.0001f)
+                yield break;
+
+            float facingDirection = Mathf.Sign(deltaX);
+            FaceActor(target, facingDirection);
+
+            animator = target.GetComponentInChildren<Animator>(true);
+            animationStarted = TryStartMoveAnimation(target, animator, moveAnimation);
+
+            // Pause player input and physics while moving by Transform so the cutscene reaches its exact X.
+            playerMoves = target.GetComponentsInChildren<PlayerMove>(true);
+            playerMoveWasEnabled = new bool[playerMoves.Length];
+            for (int i = 0; i < playerMoves.Length; i++)
+            {
+                playerMoveWasEnabled[i] = playerMoves[i] != null && playerMoves[i].enabled;
+                if (playerMoveWasEnabled[i])
+                    playerMoves[i].enabled = false;
+            }
+
+            bodies = target.GetComponentsInChildren<Rigidbody2D>(true);
+            bodyWasSimulated = new bool[bodies.Length];
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                if (bodies[i] == null)
+                    continue;
+
+                bodyWasSimulated[i] = bodies[i].simulated;
+                if (bodyWasSimulated[i])
+                {
+                    bodies[i].linearVelocity = Vector2.zero;
+                    bodies[i].simulated = false;
+                }
+            }
+
+            while (target != null)
+            {
+                Vector3 position = target.transform.position;
+                float nextX = Mathf.MoveTowards(position.x, destinationX, speed * Time.deltaTime);
+                target.transform.position = new Vector3(nextX, position.y, position.z);
+
+                if (Mathf.Abs(destinationX - nextX) <= 0.0001f)
+                {
+                    target.transform.position = new Vector3(destinationX, position.y, position.z);
+                    break;
+                }
+
+                yield return null;
+            }
+        }
+        finally
+        {
+            if (target != null)
+            {
+                if (animationStarted)
+                    StopMoveAnimation(animator);
+
+                if (bodies != null)
+                {
+                    for (int i = 0; i < bodies.Length; i++)
+                    {
+                        if (bodies[i] == null || !bodyWasSimulated[i])
+                            continue;
+
+                        bodies[i].position = bodies[i].transform.position;
+                        bodies[i].linearVelocity = Vector2.zero;
+                        bodies[i].simulated = true;
+                    }
+                }
+
+                if (playerMoves != null)
+                {
+                    for (int i = 0; i < playerMoves.Length; i++)
+                    {
+                        if (playerMoves[i] != null && playerMoveWasEnabled[i])
+                            playerMoves[i].enabled = true;
+                    }
+                }
+            }
+
+            movingActors.Remove(target);
+        }
+    }
+
+    private static void FaceActor(GameObject target, float direction)
+    {
+        PlayerMove playerMove = target.GetComponent<PlayerMove>();
+        if (playerMove != null)
+        {
+            playerMove.Face(direction);
+            return;
+        }
+
+        // The current character sprite art faces left when unflipped.
+        bool faceRight = direction > 0f;
+        foreach (SpriteRenderer spriteRenderer in target.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            if (spriteRenderer != null)
+                spriteRenderer.flipX = faceRight;
+        }
+    }
+
+    private bool TryStartMoveAnimation(GameObject target, Animator animator, MoveAnimation animation)
+    {
+        if (animation == MoveAnimation.None)
+            return false;
+
+        if (animator == null)
+        {
+            Debug.LogError($"<<move_character>>: \"{target.name}\" has no Animator. It will move without animation.", this);
+            return false;
+        }
+
+        bool hasWalking = HasBoolParameter(animator, IsWalkingParameter);
+        bool hasRunning = HasBoolParameter(animator, IsRunningParameter);
+        if (!hasWalking || (animation == MoveAnimation.Run && !hasRunning))
+        {
+            string missing = !hasWalking ? "IsWalking" : "IsRunning";
+            Debug.LogError($"<<move_character>>: \"{target.name}\" Animator is missing the bool parameter {missing}. It will move without animation.", this);
+            return false;
+        }
+
+        animator.SetBool(IsWalkingParameter, true);
+        if (hasRunning)
+            animator.SetBool(IsRunningParameter, animation == MoveAnimation.Run);
+        return true;
+    }
+
+    private static void StopMoveAnimation(Animator animator)
+    {
+        if (animator == null)
+            return;
+
+        if (HasBoolParameter(animator, IsWalkingParameter))
+            animator.SetBool(IsWalkingParameter, false);
+        if (HasBoolParameter(animator, IsRunningParameter))
+            animator.SetBool(IsRunningParameter, false);
+    }
+
+    private static bool HasBoolParameter(Animator animator, int parameterHash)
+    {
+        if (animator == null)
+            return false;
+
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.nameHash == parameterHash && parameter.type == AnimatorControllerParameterType.Bool)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void OnDestroy()
+    {
+        SunriseAudio.StopLoop();
+        if (pausedAudio) AudioListener.pause = false;
     }
 
     // <<cutscene "anin_joins_table">>: plays the matching Timeline and waits for it to finish.
@@ -498,10 +851,4 @@ public class YarnCommands : MonoBehaviour
     private void Pending(string command) =>
         Debug.Log($"<<{command}>> (not implemented yet)", this);
 
-
-    private void OnDestroy()
-    {
-        SunriseAudio.StopLoop();
-        if (pausedAudio) AudioListener.pause = false;
-    }
 }
