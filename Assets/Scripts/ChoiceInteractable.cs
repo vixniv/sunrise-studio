@@ -171,8 +171,15 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     {
         ChoiceWheel.Choice choice = choices[index];
         Debug.Log($"{name}: chose {index + 1} ({choice.label})", this);
-        if (yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
-            yarnDialog.Play(choice.yarnNode.Trim(), transform, dialogOffset, nearbyPlayer, choice.onChoose.Invoke);
+        string yarnNode = choice.yarnNode?.Trim();
+        if (yarnDialog != null && yarnDialog.CanPlayNode(yarnNode))
+            yarnDialog.Play(yarnNode, transform, dialogOffset, nearbyPlayer, choice.onChoose.Invoke);
+        else if (yarnDialog != null && choice.dialogLines.Count > 0)
+        {
+            if (!string.IsNullOrWhiteSpace(yarnNode))
+                Debug.LogWarning($"Missing Yarn node \"{yarnNode}\" on {name}; using configured dialog lines.", this);
+            yarnDialog.PlayLines(choice.dialogLines, transform, dialogOffset, nearbyPlayer, choice.onChoose.Invoke);
+        }
         else if (dialog != null && choice.dialogLines.Count > 0)
             dialog.Show(transform, dialogOffset, choice.dialogLines, nearbyPlayer, choice.onChoose.Invoke);
         else
