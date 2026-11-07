@@ -137,9 +137,24 @@ namespace SunriseStudio.UI
                 float textHeight = lineCount == 1
                     ? 30f * visualScale
                     : Mathf.Max(1f, size.y - verticalTextPadding * visualScale);
-                label.rectTransform.sizeDelta = new Vector2(
+                RectTransform labelRect = label.rectTransform;
+                labelRect.sizeDelta = new Vector2(
                     Mathf.Max(1f, size.x - horizontalTextPadding * visualScale),
                     textHeight);
+
+                // The artwork is right-anchored and changes size for each state.
+                // Keep the label centred on the artwork instead of leaving it at
+                // the authored position for the original, much larger bubble.
+                if (visual != null)
+                {
+                    RectTransform visualRect = visual.rectTransform;
+                    labelRect.anchorMin = visualRect.anchorMin;
+                    labelRect.anchorMax = visualRect.anchorMax;
+                    labelRect.pivot = new Vector2(0.5f, 0.5f);
+                    labelRect.anchoredPosition = visualRect.anchoredPosition + new Vector2(
+                        (0.5f - visualRect.pivot.x) * size.x,
+                        (0.5f - visualRect.pivot.y) * size.y);
+                }
             }
         }
     }
