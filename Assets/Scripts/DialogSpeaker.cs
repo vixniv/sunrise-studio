@@ -13,6 +13,7 @@ public class DialogSpeaker : MonoBehaviour
     [SerializeField] private Vector2 dialogOffset = new Vector2(0f, 0.25f);
 
     public Vector2 DialogOffset => dialogOffset;
+    public string CharacterName => characterName;
 
     public static bool TryFind(string name, out DialogSpeaker speaker)
     {

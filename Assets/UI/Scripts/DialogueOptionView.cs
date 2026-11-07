@@ -25,6 +25,7 @@ namespace SunriseStudio.UI
         [SerializeField, Min(0f)] float verticalTextPadding = 8f;
         [SerializeField] Color defaultTextColor = new(0.027f, 0.051f, 0.169f, 1f);
         [SerializeField] Color selectedTextColor = Color.white;
+        [SerializeField, Range(0.2f, 1f)] float visualScale = 0.35f;
 
         Action chosen;
         RectTransform root;
@@ -34,10 +35,17 @@ namespace SunriseStudio.UI
         bool selected;
         int lineCount = 1;
         float lineHeight;
+        float authoredFontSize;
 
         public void Bind(string text, Action onChosen)
         {
             chosen = onChosen;
+            if (label != null)
+            {
+                if (authoredFontSize <= 0f)
+                    authoredFontSize = label.fontSize;
+                label.fontSize = authoredFontSize * visualScale;
+            }
             label.text = text;
             ConfigureHeight(text);
             button.onClick.RemoveListener(Choose);
@@ -71,7 +79,12 @@ namespace SunriseStudio.UI
             label.textWrappingMode = TextWrappingModes.Normal;
             label.overflowMode = TextOverflowModes.Overflow;
 
-            float textWidth = Mathf.Max(1f, defaultSize.x - horizontalTextPadding);
+            Vector2 scaledDefaultSize = defaultSize * visualScale;
+            Vector2 scaledSelectedSize = selectedSize * visualScale;
+            Vector2 scaledTwoLineSelectedSize = twoLineSelectedSize * visualScale;
+            float textWidth = Mathf.Max(
+                1f,
+                scaledDefaultSize.x - horizontalTextPadding * visualScale);
             lineHeight = Mathf.Max(1f, label.GetPreferredValues("Ag", textWidth, 0f).y);
             float preferredHeight = label.GetPreferredValues(text ?? string.Empty, textWidth, 0f).y;
             lineCount = Mathf.Max(1, Mathf.RoundToInt(preferredHeight / lineHeight));
@@ -83,8 +96,8 @@ namespace SunriseStudio.UI
 
             float extraHeight = Mathf.Max(0, lineCount - 2) * lineHeight;
             float fixedHeight = lineCount == 1
-                ? selectedSize.y
-                : twoLineSelectedSize.y + extraHeight;
+                ? scaledSelectedSize.y
+                : scaledTwoLineSelectedSize.y + extraHeight;
 
             if (root != null)
                 root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, fixedHeight);
@@ -103,11 +116,11 @@ namespace SunriseStudio.UI
             Vector2 size;
             if (lineCount == 1)
             {
-                size = highlighted ? selectedSize : defaultSize;
+                size = (highlighted ? selectedSize : defaultSize) * visualScale;
             }
             else
             {
-                size = highlighted ? twoLineSelectedSize : twoLineDefaultSize;
+                size = (highlighted ? twoLineSelectedSize : twoLineDefaultSize) * visualScale;
                 size.y += Mathf.Max(0, lineCount - 2) * lineHeight;
             }
 
@@ -122,10 +135,10 @@ namespace SunriseStudio.UI
             {
                 label.color = highlighted ? selectedTextColor : defaultTextColor;
                 float textHeight = lineCount == 1
-                    ? 30f
-                    : Mathf.Max(1f, size.y - verticalTextPadding);
+                    ? 30f * visualScale
+                    : Mathf.Max(1f, size.y - verticalTextPadding * visualScale);
                 label.rectTransform.sizeDelta = new Vector2(
-                    Mathf.Max(1f, size.x - horizontalTextPadding),
+                    Mathf.Max(1f, size.x - horizontalTextPadding * visualScale),
                     textHeight);
             }
         }

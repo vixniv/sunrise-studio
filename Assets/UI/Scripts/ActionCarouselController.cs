@@ -147,8 +147,9 @@ namespace SunriseStudio.UI
         // Center card confirms. A side card rotates into the center first.
         void HandleCardClicked(int index)
         {
-            float distanceFromCenter = Mathf.Abs(WrappedCardDelta(index, orbitPosition));
-            if (index == selectedIndex && distanceFromCenter <= 0.08f && !dragging)
+            // Highlighted card is already player's selection. Confirm immediately;
+            // do not reject tap while final snap animation is a fraction off-center.
+            if (index == selectedIndex && !dragging)
                 ConfirmSelection();
             else
                 SelectIndex(index);

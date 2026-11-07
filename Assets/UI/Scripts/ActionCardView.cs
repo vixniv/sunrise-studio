@@ -47,6 +47,19 @@ namespace SunriseStudio.UI
 
         public InteractionAction Action => action;
 
+        void Awake()
+        {
+            // Visual moves above root while selected. Use moving visual as hit target,
+            // otherwise transparent root hitbox stays below visible selected card.
+            if (background != null)
+                background.raycastTarget = true;
+            Graphic rootGraphic = GetComponent<Graphic>();
+            if (rootGraphic != null && rootGraphic != background)
+                rootGraphic.raycastTarget = false;
+            if (button != null && background != null)
+                button.targetGraphic = background;
+        }
+
         void OnEnable()
         {
             if (button != null)

@@ -66,7 +66,13 @@ namespace SunriseStudio.UI
             Time.timeScale = 1f;
             AudioListener.pause = false;
             SetInteractable(false);
-            SceneManager.LoadScene(gameplayScene.Trim());
+
+            string sceneName = gameplayScene.Trim();
+
+            if (CircleTransition.Instance != null)
+                CircleTransition.Instance.LoadScene(sceneName);
+            else
+                SceneManager.LoadScene(sceneName);
         }
 
         void HandleConfigClicked()
