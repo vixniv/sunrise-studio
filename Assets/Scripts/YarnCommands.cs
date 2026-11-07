@@ -127,7 +127,9 @@ public class YarnCommands : MonoBehaviour
         // The player gets control back when the node ends, so there is nothing to do here.
         runner.AddCommandHandler("enable_control", (Action)(() => { }));
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
+        runner.AddCommandHandler("scene_transition_at_x", (Func<string, float, string, YarnTask>)SceneTransitionAtX);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
+        runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
@@ -141,6 +143,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("move_character", (Func<string, float, float, string, YarnTask>)MoveCharacter);
         runner.AddCommandHandler("move_character_to_actor", (Func<string, string, float, float, string, YarnTask>)MoveCharacterToActor);
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
+        runner.AddCommandHandler("start_character_move_to_actor", (Action<string, string, float, float, string, float>)StartCharacterMoveToActor);
         runner.AddCommandHandler("wait_for_character_moves", (Func<YarnTask>)WaitForCharacterMoves);
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
@@ -241,6 +244,42 @@ public class YarnCommands : MonoBehaviour
         return LoadLocation(location, sound);
     }
 
+    // <<scene_transition_at_x "Library" -8 "right">>: loads a room with the player at X before its first frame.
+    private YarnTask SceneTransitionAtX(string location, float destinationX, string facing)
+    {
+        if (leaving)
+            return YarnTask.CompletedTask;
+
+        if (float.IsNaN(destinationX) || float.IsInfinity(destinationX))
+        {
+            Debug.LogError("<<scene_transition_at_x>>: destination X must be finite.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        string facingKey = (facing ?? string.Empty).Trim().ToLowerInvariant();
+        if (facingKey != "left" && facingKey != "right")
+        {
+            Debug.LogError("<<scene_transition_at_x>>: facing must be \"left\" or \"right\".", this);
+            return YarnTask.CompletedTask;
+        }
+
+        string scene = FindBuildScene(Key(location));
+        if (scene == null)
+        {
+            Debug.LogError($"<<scene_transition_at_x>>: no Build Profile scene matches \"{location}\".", this);
+            return YarnTask.CompletedTask;
+        }
+
+        if (scene == SceneManager.GetActiveScene().name)
+        {
+            Debug.LogError("<<scene_transition_at_x>>: destination must be a different scene.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        DoorSpawn.SetNextSpawn(scene, destinationX, facingKey == "right");
+        return LoadLocation(scene, "");
+    }
+
     // Loads location even when it is this scene, so a reset reloads the room with the objects of the new $chapter_scene.
     private YarnTask LoadLocation(string location, string sound)
     {
@@ -293,12 +332,27 @@ public class YarnCommands : MonoBehaviour
         SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
             ? "night_transition"
             : "day_transition");
+        return Fade(() => ApplyTimeOfDay(slot));
+    }
+
+    // Changes the time and places an actor while the same transition covers the screen.
+    private YarnTask AdvanceTimeTeleportCharacter(string slot, string actorName, float destinationX, string facing)
+    {
+        SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
+            ? "night_transition"
+            : "day_transition");
         return Fade(() =>
         {
-            TimeOfDay = slot.Trim();
-            Debug.Log($"<<advance_time>>: it is now {TimeOfDay}.", this);
-            TimeOfDayChanged?.Invoke();
+            ApplyTimeOfDay(slot);
+            TeleportCharacter(actorName, destinationX, facing);
         });
+    }
+
+    private void ApplyTimeOfDay(string slot)
+    {
+        TimeOfDay = slot.Trim();
+        Debug.Log($"<<advance_time>>: it is now {TimeOfDay}.", this);
+        TimeOfDayChanged?.Invoke();
     }
 
     // <<fade>>: covers and uncovers the screen. <<fade "out">> and <<fade "in">> only log for now:
@@ -444,6 +498,22 @@ public class YarnCommands : MonoBehaviour
         GameObject target = FindActorTarget(actorName, "start_character_move");
         if (target != null)
             TryStartCharacterMove(target, destinationX, speed, animation, delay);
+    }
+
+    // <<start_character_move_to_actor "Fal" "Anin" -1 3 "walk" 0.5>>: starts a move to Anin's current X minus one.
+    private void StartCharacterMoveToActor(string actorName, string referenceActorName, float offsetX, float speed, string animation, float delay)
+    {
+        GameObject reference = FindActorTarget(referenceActorName, "start_character_move_to_actor");
+        if (reference == null)
+            return;
+
+        if (float.IsNaN(offsetX) || float.IsInfinity(offsetX))
+        {
+            Debug.LogError("<<start_character_move_to_actor>>: X offset must be finite.", this);
+            return;
+        }
+
+        StartCharacterMove(actorName, reference.transform.position.x + offsetX, speed, animation, delay);
     }
 
     // <<wait_for_character_moves>>: waits for all non-blocking character moves to finish.

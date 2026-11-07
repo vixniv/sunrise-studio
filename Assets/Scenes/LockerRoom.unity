@@ -830,6 +830,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &168157321
@@ -3581,6 +3582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &773334431

@@ -316,7 +316,7 @@ title: Lockers_Check
 tags: scene1 lockers
 ---
 <<if $lockers_clock and $lockers_fal and $lockers_hook>>
-    Anin: Well, let's wait for him a while longer. 
+    Anin: Well, let's wait for him a while longer.
     <<close_dialogue_bubble>>
     <<move_character "Anin" -15.8 10 "walk">>
     <<jump Lockers_FriendsArrive>>
