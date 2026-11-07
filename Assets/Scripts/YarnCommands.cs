@@ -139,6 +139,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("npc_enter", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("npc_exit", (Action<string>)(actor => SetActorVisible(actor, false)));
         runner.AddCommandHandler("move_character", (Func<string, float, float, string, YarnTask>)MoveCharacter);
+        runner.AddCommandHandler("move_character_to_actor", (Func<string, string, float, float, string, YarnTask>)MoveCharacterToActor);
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
         runner.AddCommandHandler("wait_for_character_moves", (Func<YarnTask>)WaitForCharacterMoves);
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
@@ -419,6 +420,22 @@ public class YarnCommands : MonoBehaviour
             return YarnTask.CompletedTask;
 
         return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
+    }
+
+    // <<move_character_to_actor "Fal" "Anin" -1 3 "walk">>: walks to Anin's current X minus one unit.
+    private YarnTask MoveCharacterToActor(string actorName, string referenceActorName, float offsetX, float speed, string animation)
+    {
+        GameObject reference = FindActorTarget(referenceActorName, "move_character_to_actor");
+        if (reference == null)
+            return YarnTask.CompletedTask;
+
+        if (float.IsNaN(offsetX) || float.IsInfinity(offsetX))
+        {
+            Debug.LogError("<<move_character_to_actor>>: X offset must be finite.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        return MoveCharacter(actorName, reference.transform.position.x + offsetX, speed, animation);
     }
 
     // <<start_character_move "Dira" 20 3 "walk" 0.5>>: starts a move after a delay and returns immediately.
