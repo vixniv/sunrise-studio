@@ -37,6 +37,13 @@ namespace SunriseStudio.UI
         float lineHeight;
         float authoredFontSize;
 
+        float ScaledLeftPadding => horizontalTextPadding * 1.4f * visualScale;
+        float ScaledRightPadding => horizontalTextPadding * 0.5f * visualScale;
+
+        float GetTextWidth(float bubbleWidth) => Mathf.Max(
+            1f,
+            bubbleWidth - ScaledLeftPadding - ScaledRightPadding);
+
         public void Bind(string text, Action onChosen)
         {
             chosen = onChosen;
@@ -82,9 +89,7 @@ namespace SunriseStudio.UI
             Vector2 scaledDefaultSize = defaultSize * visualScale;
             Vector2 scaledSelectedSize = selectedSize * visualScale;
             Vector2 scaledTwoLineSelectedSize = twoLineSelectedSize * visualScale;
-            float textWidth = Mathf.Max(
-                1f,
-                scaledDefaultSize.x - horizontalTextPadding * visualScale);
+            float textWidth = GetTextWidth(scaledDefaultSize.x);
             lineHeight = Mathf.Max(1f, label.GetPreferredValues("Ag", textWidth, 0f).y);
             float preferredHeight = label.GetPreferredValues(text ?? string.Empty, textWidth, 0f).y;
             lineCount = Mathf.Max(1, Mathf.RoundToInt(preferredHeight / lineHeight));
@@ -139,7 +144,7 @@ namespace SunriseStudio.UI
                     : Mathf.Max(1f, size.y - verticalTextPadding * visualScale);
                 RectTransform labelRect = label.rectTransform;
                 labelRect.sizeDelta = new Vector2(
-                    Mathf.Max(1f, size.x - horizontalTextPadding * visualScale),
+                    GetTextWidth(size.x),
                     textHeight);
 
                 // The artwork is right-anchored and changes size for each state.
@@ -152,7 +157,8 @@ namespace SunriseStudio.UI
                     labelRect.anchorMax = visualRect.anchorMax;
                     labelRect.pivot = new Vector2(0.5f, 0.5f);
                     labelRect.anchoredPosition = visualRect.anchoredPosition + new Vector2(
-                        (0.5f - visualRect.pivot.x) * size.x,
+                        (0.5f - visualRect.pivot.x) * size.x
+                            + (ScaledLeftPadding - ScaledRightPadding) * 0.5f,
                         (0.5f - visualRect.pivot.y) * size.y);
                 }
             }
