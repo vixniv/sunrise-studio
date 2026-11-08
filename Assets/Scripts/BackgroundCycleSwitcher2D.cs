@@ -26,7 +26,7 @@ public class BackgroundCycleSwitcher2D : MonoBehaviour
             return;
 
         string timeSlot = Normalize(YarnCommands.TimeOfDay);
-        bool isNight = timeSlot == "night" || timeSlot == "afterschool";
+        bool isNight = timeSlot == "night";
         Sprite selectedBackground = isNight ? nightBackground : dayBackground;
 
         if (selectedBackground != null)

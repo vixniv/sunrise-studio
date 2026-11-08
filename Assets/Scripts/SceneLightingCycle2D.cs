@@ -52,18 +52,18 @@ public class SceneLightingCycle2D : MonoBehaviour
         {
             case "day":
             case "morning":
+            case "lunch":
                 activeVolume = dayVolume;
                 activeLightIntensity = dayIntensity;
                 break;
 
             case "afternoon":
-            case "lunch":
+            case "afterschool":
                 activeVolume = afternoonVolume;
                 activeLightIntensity = afternoonIntensity;
                 break;
 
             case "night":
-            case "afterschool":
                 activeVolume = nightVolume;
                 activeLightIntensity = nightIntensity;
                 break;
