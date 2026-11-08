@@ -26,6 +26,8 @@ namespace SunriseStudio.UI
         [SerializeField] Color defaultTextColor = new(0.027f, 0.051f, 0.169f, 1f);
         [SerializeField] Color selectedTextColor = Color.white;
         [SerializeField, Range(0.2f, 1f)] float visualScale = 0.35f;
+        [Tooltip("Rotates the complete choice card so its artwork, tape, and text stay aligned.")]
+        [SerializeField, Range(-10f, 10f)] float tiltDegrees = 2f;
 
         Action chosen;
         RectTransform root;
@@ -36,6 +38,8 @@ namespace SunriseStudio.UI
         int lineCount = 1;
         float lineHeight;
         float authoredFontSize;
+        Quaternion authoredRotation = Quaternion.identity;
+        bool rotationCaptured;
 
         float ScaledLeftPadding => horizontalTextPadding * 1.4f * visualScale;
         float ScaledRightPadding => horizontalTextPadding * 0.5f * visualScale;
@@ -47,6 +51,7 @@ namespace SunriseStudio.UI
         public void Bind(string text, Action onChosen)
         {
             chosen = onChosen;
+            ApplyTilt();
             if (label != null)
             {
                 if (authoredFontSize <= 0f)
@@ -78,6 +83,22 @@ namespace SunriseStudio.UI
 
         void Refresh() => SetState(hovered || pressed || selected);
 
+        void ApplyTilt()
+        {
+            if (root == null)
+                root = transform as RectTransform;
+            if (root == null)
+                return;
+
+            if (!rotationCaptured)
+            {
+                authoredRotation = root.localRotation;
+                rotationCaptured = true;
+            }
+
+            root.localRotation = authoredRotation * Quaternion.Euler(0f, 0f, tiltDegrees);
+        }
+
         void ConfigureHeight(string text)
         {
             if (label == null)
@@ -103,11 +124,17 @@ namespace SunriseStudio.UI
             float fixedHeight = lineCount == 1
                 ? scaledSelectedSize.y
                 : scaledTwoLineSelectedSize.y + extraHeight;
+            float fixedWidth = Mathf.Max(scaledSelectedSize.x, scaledTwoLineSelectedSize.x);
 
             if (root != null)
+            {
+                root.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fixedWidth);
                 root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, fixedHeight);
+            }
             if (layoutElement != null)
             {
+                layoutElement.minWidth = fixedWidth;
+                layoutElement.preferredWidth = fixedWidth;
                 layoutElement.minHeight = fixedHeight;
                 layoutElement.preferredHeight = fixedHeight;
             }

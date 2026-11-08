@@ -131,11 +131,23 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("freeze_frame", (Func<YarnTask>)PlayFreezeFrame);
 
         runner.AddCommandHandler("quest_start", (Action<string, string>)((id, text) =>
-            PendingWithAudio($"quest_start {id}: {text}", "ui_quest_popup")));
+        {
+            SunriseStudio.UI.QuestTracker.StartQuest(id, text);
+            SunriseAudio.Play("ui_quest_popup");
+            Debug.Log($"Quest started: {id} — {text}", this);
+        }));
         runner.AddCommandHandler("quest_update", (Action<string, string>)((id, text) =>
-            PendingWithAudio($"quest_update {id}: {text}", "ui_quest_popup")));
+        {
+            SunriseStudio.UI.QuestTracker.UpdateQuest(id, text);
+            SunriseAudio.Play("ui_quest_popup");
+            Debug.Log($"Quest updated: {id} — {text}", this);
+        }));
         runner.AddCommandHandler("quest_complete", (Action<string>)(id =>
-            PendingWithAudio($"quest_complete {id}", "ui_quest_complete")));
+        {
+            SunriseStudio.UI.QuestTracker.CompleteQuest(id);
+            SunriseAudio.Play("ui_quest_complete");
+            Debug.Log($"Quest completed: {id}", this);
+        }));
         runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) =>
         {
             if (visible) SunriseAudio.Play("ui_achievement");

@@ -22,6 +22,8 @@ namespace SunriseStudio.UI
         [Header("Compact Presentation")]
         [Tooltip("Scales body, speaker tag, tail, indicator, and text together.")]
         [SerializeField, Range(0.25f, 1f)] float visualScale = 0.5f;
+        [Tooltip("Rotates the complete dialogue card, including its text, tag, tail, and indicator.")]
+        [SerializeField, Range(-10f, 10f)] float tiltDegrees = 2f;
 
         [Header("Text Pages")]
         [SerializeField, Range(1, 4)] int maximumLinesPerPage = 2;
@@ -39,6 +41,10 @@ namespace SunriseStudio.UI
         [SerializeField] RectTransform tail;
         [SerializeField, Min(0f)] float screenMargin = 8f;
         [SerializeField, Min(0f)] float tailEdgePadding = 18f;
+
+        [Header("Choice Positioning")]
+        [Tooltip("Space between the dialogue bubble and its choices.")]
+        [SerializeField, Min(0f)] float choiceGap = 6f;
 
         readonly List<DialogueOptionView> options = new();
         readonly List<string> pages = new();
@@ -61,6 +67,7 @@ namespace SunriseStudio.UI
         Vector2 authoredIndicatorPosition;
         Vector2 indicatorBasePosition;
         Vector3 compactBubbleScale = Vector3.one;
+        Quaternion compactBubbleRotation = Quaternion.identity;
         float textTopInset;
         float textBottomInset;
         float bubbleExtraHeight;
@@ -167,7 +174,11 @@ namespace SunriseStudio.UI
         void LateUpdate()
         {
             if (IsVisible)
+            {
                 FollowSpeaker();
+                if (options.Count > 0)
+                    PositionChoicesNearBubble();
+            }
         }
 
         public void ShowLine(string speaker, string text, Transform talker, Vector2 talkerOffset, Action onAdvance)
@@ -213,16 +224,112 @@ namespace SunriseStudio.UI
                 });
                 options.Add(option);
             }
+
+            Canvas.ForceUpdateCanvases();
+            PrepareChoicesLayout();
+            PositionChoicesNearBubble();
         }
 
         public void ClearChoices()
         {
             foreach (DialogueOptionView option in options)
                 if (option != null)
+                {
+                    option.gameObject.SetActive(false);
                     Destroy(option.gameObject);
+                }
             options.Clear();
             if (optionTemplate != null)
                 optionTemplate.gameObject.SetActive(false);
+        }
+
+        void PrepareChoicesLayout()
+        {
+            if (choicesRoot == null || options.Count == 0)
+                return;
+
+            float width = 1f;
+            float height = 0f;
+            int activeCount = 0;
+            foreach (DialogueOptionView option in options)
+            {
+                if (option == null || !option.gameObject.activeSelf ||
+                    option.transform is not RectTransform optionRect)
+                    continue;
+
+                optionRect.ForceUpdateRectTransforms();
+                width = Mathf.Max(width, optionRect.rect.width);
+                height += optionRect.rect.height;
+                activeCount++;
+            }
+
+            VerticalLayoutGroup layout = choicesRoot.GetComponent<VerticalLayoutGroup>();
+            if (layout != null)
+            {
+                width += layout.padding.left + layout.padding.right;
+                height += layout.padding.top + layout.padding.bottom;
+                if (activeCount > 1)
+                    height += layout.spacing * (activeCount - 1);
+            }
+
+            choicesRoot.anchorMin = new Vector2(0f, 1f);
+            choicesRoot.anchorMax = new Vector2(0f, 1f);
+            choicesRoot.pivot = new Vector2(1f, 1f);
+            choicesRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            choicesRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(1f, height));
+            LayoutRebuilder.ForceRebuildLayoutImmediate(choicesRoot);
+        }
+
+        void PositionChoicesNearBubble()
+        {
+            if (choicesRoot == null || bubbleRoot == null || options.Count == 0 ||
+                bubbleRoot.parent is not RectTransform parent || choicesRoot.parent != parent)
+                return;
+
+            float parentWidth = parent.rect.width;
+            float parentHeight = parent.rect.height;
+            float bubbleWidth = bubbleRoot.rect.width * Mathf.Abs(bubbleRoot.localScale.x);
+            float bubbleHeight = bubbleRoot.rect.height * Mathf.Abs(bubbleRoot.localScale.y);
+            float bubbleLeft = bubbleRoot.anchoredPosition.x - bubbleRoot.pivot.x * bubbleWidth;
+            float bubbleTop = -bubbleRoot.anchoredPosition.y -
+                              (1f - bubbleRoot.pivot.y) * bubbleHeight;
+            float bubbleRight = bubbleLeft + bubbleWidth;
+            float bubbleBottom = bubbleTop + bubbleHeight;
+            float choiceWidth = choicesRoot.rect.width;
+            float choiceHeight = choicesRoot.rect.height;
+            float maximumLeft = Mathf.Max(screenMargin, parentWidth - screenMargin - choiceWidth);
+            float maximumTop = Mathf.Max(screenMargin, parentHeight - screenMargin - choiceHeight);
+
+            // Figma layout: choices sit immediately to the dialogue's right.
+            float left = bubbleRight + choiceGap;
+            float top = Mathf.Clamp(bubbleTop, screenMargin, maximumTop);
+            bool fitsRight = left + choiceWidth <= parentWidth - screenMargin;
+
+            if (!fitsRight)
+            {
+                // Near the right edge, move the complete stack above the dialogue
+                // instead of clamping it left and letting the cards overlap the bubble.
+                left = bubbleLeft + (bubbleWidth - choiceWidth) * 0.5f;
+                top = bubbleTop - choiceGap - choiceHeight;
+                bool fitsAbove = top >= screenMargin;
+
+                if (!fitsAbove)
+                {
+                    top = bubbleBottom + choiceGap;
+                    bool fitsBelow = top + choiceHeight <= parentHeight - screenMargin;
+                    if (!fitsBelow)
+                    {
+                        left = bubbleLeft - choiceGap - choiceWidth;
+                        top = Mathf.Clamp(bubbleTop, screenMargin, maximumTop);
+                    }
+                }
+            }
+
+            left = Mathf.Clamp(left, screenMargin, maximumLeft);
+            top = Mathf.Clamp(top, screenMargin, maximumTop);
+            choicesRoot.anchoredPosition = new Vector2(
+                Mathf.Round(left + choiceWidth),
+                -Mathf.Round(top));
         }
 
         public void Hide()
@@ -443,6 +550,8 @@ namespace SunriseStudio.UI
                 authoredBubblePosition = bubbleRoot.anchoredPosition;
                 authoredBubbleSize = bubbleRoot.sizeDelta;
                 compactBubbleScale = bubbleRoot.localScale * visualScale;
+                compactBubbleRotation = bubbleRoot.localRotation *
+                    Quaternion.Euler(0f, 0f, tiltDegrees);
             }
             if (tail != null)
                 authoredTailPosition = tail.anchoredPosition;
@@ -494,6 +603,7 @@ namespace SunriseStudio.UI
                 bubbleRoot.anchoredPosition = authoredBubblePosition;
                 bubbleRoot.sizeDelta = authoredBubbleSize;
                 bubbleRoot.localScale = compactBubbleScale;
+                bubbleRoot.localRotation = compactBubbleRotation;
             }
             if (bubbleBody != null)
                 bubbleBody.sizeDelta = authoredBodySize;
@@ -626,8 +736,11 @@ namespace SunriseStudio.UI
 
         void ApplyCompactScale()
         {
-            if (bubbleRoot != null)
-                bubbleRoot.localScale = compactBubbleScale;
+            if (bubbleRoot == null)
+                return;
+
+            bubbleRoot.localScale = compactBubbleScale;
+            bubbleRoot.localRotation = compactBubbleRotation;
         }
 
         static Renderer FindSpeakerRenderer(Transform talker)

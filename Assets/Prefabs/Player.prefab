@@ -428,6 +428,7 @@ MonoBehaviour:
   windowLightZoneLayers:
     serializedVersion: 2
     m_Bits: 64
+  characters: []
   characterCollider: {fileID: 1549403173263443031}
   spriteRenderers: []
   backlightStrengthAtNoCoverage: 1
@@ -769,6 +770,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5475098831631229392, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
   m_PrefabInstance: {fileID: 6697390529076107895}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1690767885543942517 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5442381744698929922, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
+  m_PrefabInstance: {fileID: 6697390529076107895}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshPro
 --- !u!1 &5274343994737457614 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1568328922728227769, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
@@ -790,5 +802,16 @@ MonoBehaviour:
   sortingLayer: Foreground
   sortingOrder: 100
   pixelsPerUnit: 16
+  labelBox: {fileID: 6820294923056968836}
+  label: {fileID: 1690767885543942517}
+  horizontalPadding: 12
+  verticalPadding: 20
+  minimumWidthPixels: 64
+  visualScale: 0.32
   interactSound: {fileID: 8300000, guid: 696cb5b00ff59478f92c5f45c84861b6, type: 3}
   interactVolume: 1
+--- !u!212 &6820294923056968836 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 168716947436891891, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
+  m_PrefabInstance: {fileID: 6697390529076107895}
+  m_PrefabAsset: {fileID: 0}

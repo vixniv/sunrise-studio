@@ -13,6 +13,8 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 {
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
+    [Tooltip("Optional object name shown by InteractionCue. Empty derives it from Story Node or this GameObject name.")]
+    [SerializeField] private string interactionLabel = "";
     [Tooltip("Scene to load when there is no story reason to stop. Must be in the Build Profile scene list.")]
     [SerializeField] private string destinationScene = "SchoolMap";
     [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
@@ -75,6 +77,9 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 
     public bool DefaultEntrance => defaultEntrance;
     public SpawnFacing Facing => spawnFacing;
+    public string InteractionLabel => !string.IsNullOrWhiteSpace(interactionLabel)
+        ? interactionLabel.Trim()
+        : InteractionLabelUtility.FromYarnTitle(storyNode, name);
 
     public bool LeadsTo(string scene) =>
         !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);

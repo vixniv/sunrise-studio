@@ -11,6 +11,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
 {
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
+    [Tooltip("Optional object name shown by InteractionCue. Empty derives it from the first Yarn Node.")]
+    [SerializeField] private string interactionLabel = "";
     [SerializeField] private ChoiceWheel wheel;
     [Tooltip("Optional screen-space replacement for ChoiceWheel. Found automatically when present.")]
     [SerializeField] private ActionInventoryCarouselPresenter actionCarousel;
@@ -52,6 +54,19 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     private GameObject ownCue;
     private readonly List<int> visibleChoiceIndices = new List<int>();
     private readonly List<InteractionAction> carouselActions = new List<InteractionAction>();
+
+    public string InteractionLabel
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(interactionLabel))
+                return interactionLabel.Trim();
+            foreach (ChoiceWheel.Choice choice in choices)
+                if (choice != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
+                    return InteractionLabelUtility.FromYarnTitle(choice.yarnNode, name);
+            return InteractionLabelUtility.FromYarnTitle(null, name);
+        }
+    }
 
     private void Awake()
     {
