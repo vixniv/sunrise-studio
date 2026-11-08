@@ -3241,7 +3241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1799030649
 Transform:
   m_ObjectHideFlags: 0
@@ -3384,12 +3384,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Clue_ObservantStudent
     dialogLines: []
     onChoose:
@@ -3397,6 +3402,10 @@ MonoBehaviour:
         m_Calls: []
   - label: Item
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: 
     dialogLines: []
     onChoose:
@@ -3404,6 +3413,10 @@ MonoBehaviour:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: 
     dialogLines: []
     onChoose:
@@ -3411,6 +3424,10 @@ MonoBehaviour:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: 
     dialogLines: []
     onChoose:
@@ -3418,6 +3435,10 @@ MonoBehaviour:
         m_Calls: []
   - label: Empty
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: 
     dialogLines: []
     onChoose:
@@ -5019,8 +5040,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -18.0256, y: -2.79175, z: 0}
-    m_Extent: {x: 3.3564, y: 5.07295, z: 0}
+    m_Center: {x: -18.53645, y: -2.78155, z: 0}
+    m_Extent: {x: 3.7686496, y: 5.0623503, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -5031,10 +5052,15 @@ MonoBehaviour:
   m_ShapeLightFalloffSize: 0.5
   m_ShapeLightFalloffOffset: {x: 0, y: 0}
   m_ShapePath:
-  - {x: -20.883936, y: -7.342917, z: 0}
-  - {x: -17.625546, y: -7.365583, z: 0}
-  - {x: -15.167194, y: 1.7804935, z: 0}
+  - {x: -21.806305, y: -7.3429165, z: 0}
+  - {x: -15.651669, y: -7.33, z: 0}
+  - {x: -15.26719, y: -4.85, z: -0.00000033745982}
+  - {x: -15.26719, y: 1.7804935, z: 0}
   - {x: -18.275976, y: 1.7753863, z: 0}
+  - {x: -19.352095, y: -0.24414241, z: 0.0000003472669}
+  - {x: -19.352095, y: -2.8870845, z: -0.000000071463774}
+  - {x: -19.334358, y: -5.5300274, z: -0.0000002945353}
+  - {x: -20.806604, y: -6.2040668, z: 0.00000079029996}
   references:
     version: 2
     RefIds:
@@ -5253,6 +5279,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5283,6 +5333,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6820495961154592701, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

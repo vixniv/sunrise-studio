@@ -5677,8 +5677,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -18.962, y: -0.14319992, z: 0}
-    m_Extent: {x: 4.2336, y: 2.6884, z: 0}
+    m_Center: {x: -18.9989, y: -2.6636, z: 0}
+    m_Extent: {x: 4.2061, y: 5.2202, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -5690,8 +5690,10 @@ MonoBehaviour:
   m_ShapeLightFalloffOffset: {x: 0, y: 0}
   m_ShapePath:
   - {x: -22.696136, y: -0.5217597, z: 0}
-  - {x: -22.634266, y: -2.3327365, z: 0}
-  - {x: -15.226638, y: 2.0444577, z: 0}
+  - {x: -22.705215, y: -7.3846583, z: 0}
+  - {x: -19.77478, y: -7.36091, z: 0.0000007508677}
+  - {x: -15.322354, y: -4.486847, z: 0}
+  - {x: -15.293418, y: 2.0559, z: 0.0000006118696}
   - {x: -18.19751, y: 2.038166, z: 0}
   references:
     version: 2
