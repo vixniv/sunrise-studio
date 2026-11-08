@@ -38,6 +38,13 @@ public static class DoorSpawn
         PlayerMove[] players = InScene<PlayerMove>(scene);
         if (players.Length == 0)
         {
+            MapPlayerMove[] mapPlayers = InScene<MapPlayerMove>(scene);
+            if (mapPlayers.Length > 0)
+            {
+                PlaceMapPlayerAtPreviousDoor(scene, mapPlayers[0], previousScene);
+                return;
+            }
+
             Debug.Log($"DoorSpawn: {scene.name} has no active PlayerMove, so nothing to place.");
             return;
         }
@@ -108,6 +115,52 @@ public static class DoorSpawn
         }
 
         FacePlayer(scene, player, door, position.x);
+    }
+
+    private static void PlaceMapPlayerAtPreviousDoor(
+        Scene scene,
+        MapPlayerMove player,
+        string previousScene)
+    {
+        if (string.IsNullOrWhiteSpace(previousScene))
+        {
+            Debug.Log($"DoorSpawn: {scene.name} was the first loaded scene, so the map player keeps the authored position.");
+            return;
+        }
+
+        MapDoor[] doors = InScene<MapDoor>(scene);
+        MapDoor matchingDoor = null;
+        foreach (MapDoor candidate in doors)
+        {
+            if (!candidate.LeadsTo(previousScene))
+                continue;
+
+            matchingDoor = candidate;
+            break;
+        }
+
+        if (matchingDoor == null)
+        {
+            Debug.Log($"DoorSpawn: {scene.name} has no map door leading to {previousScene}, " +
+                      "so the map player keeps the authored position.");
+            return;
+        }
+
+        Vector2 position = matchingDoor.ReturnPosition;
+        player.transform.position = new Vector3(
+            position.x,
+            position.y,
+            player.transform.position.z);
+
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.position = position;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        Debug.Log($"DoorSpawn: map player starts at {matchingDoor.name} in {scene.name} " +
+                  $"because they came from {previousScene}.", matchingDoor);
     }
 
     // Active components of type T in scene only, unlike FindObjectsByType, which also returns the old scene's.
