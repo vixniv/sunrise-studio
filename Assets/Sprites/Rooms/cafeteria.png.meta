@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3cac3bccf356b4edfb757633a0742756
+guid: e20e9b67fbea04e9fa8d071f09c82f5e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8520544551348565118
-    second: cafeteria_0
+      213: -630601037833995888
+    second: cafeteria-day_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cafeteria_0
+      name: cafeteria-day_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e74750c202e0f3670800000000000000
-      internalID: 8520544551348565118
+      spriteID: 09979e872b7af37f0800000000000000
+      internalID: -630601037833995888
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cafeteria_0: 8520544551348565118
+      cafeteria-day_0: -630601037833995888
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
