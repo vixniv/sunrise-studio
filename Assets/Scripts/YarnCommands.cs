@@ -610,6 +610,7 @@ public class YarnCommands : MonoBehaviour
     private IEnumerator MoveCharacterRoutine(GameObject target, float destinationX, float speed, MoveAnimation moveAnimation, float delay)
     {
         Animator animator = null;
+        SpriteFrameLoop[] frameLoops = null;
         bool animationStarted = false;
         PlayerMove[] playerMoves = null;
         bool[] playerMoveWasEnabled = null;
@@ -632,7 +633,10 @@ public class YarnCommands : MonoBehaviour
             FaceActor(target, facingDirection);
 
             animator = target.GetComponentInChildren<Animator>(true);
-            animationStarted = TryStartMoveAnimation(target, animator, moveAnimation);
+            // NPCs without an Animator (Dira, Kirana, Lila, Fal) animate with SpriteFrameLoop instead.
+            if (animator == null)
+                frameLoops = target.GetComponentsInChildren<SpriteFrameLoop>(true);
+            animationStarted = TryStartMoveAnimation(target, animator, frameLoops, moveAnimation);
 
             // Pause player input and physics while moving by Transform so the cutscene reaches its exact X.
             playerMoves = target.GetComponentsInChildren<PlayerMove>(true);
@@ -679,7 +683,7 @@ public class YarnCommands : MonoBehaviour
             if (target != null)
             {
                 if (animationStarted)
-                    StopMoveAnimation(animator);
+                    StopMoveAnimation(animator, frameLoops);
 
                 if (bodies != null)
                 {
@@ -726,16 +730,13 @@ public class YarnCommands : MonoBehaviour
         }
     }
 
-    private bool TryStartMoveAnimation(GameObject target, Animator animator, MoveAnimation animation)
+    private bool TryStartMoveAnimation(GameObject target, Animator animator, SpriteFrameLoop[] frameLoops, MoveAnimation animation)
     {
         if (animation == MoveAnimation.None)
             return false;
 
         if (animator == null)
-        {
-            Debug.LogError($"<<move_character>>: \"{target.name}\" has no Animator. It will move without animation.", this);
-            return false;
-        }
+            return TryStartFrameLoopWalk(target, frameLoops, animation);
 
         bool hasWalking = HasBoolParameter(animator, IsWalkingParameter);
         bool hasRunning = HasBoolParameter(animator, IsRunningParameter);
@@ -752,8 +753,38 @@ public class YarnCommands : MonoBehaviour
         return true;
     }
 
-    private static void StopMoveAnimation(Animator animator)
+    // Walk for characters animated by SpriteFrameLoop. "run" plays the walk frames faster.
+    private bool TryStartFrameLoopWalk(GameObject target, SpriteFrameLoop[] frameLoops, MoveAnimation animation)
     {
+        bool started = false;
+        if (frameLoops != null)
+        {
+            foreach (SpriteFrameLoop frameLoop in frameLoops)
+            {
+                if (frameLoop == null || !frameLoop.HasWalkFrames)
+                    continue;
+
+                frameLoop.SetMoving(true, animation == MoveAnimation.Run);
+                started = true;
+            }
+        }
+
+        if (!started)
+            Debug.LogError($"<<move_character>>: \"{target.name}\" has no Animator and no SpriteFrameLoop with Walk Frames. It will move without animation.", this);
+        return started;
+    }
+
+    private static void StopMoveAnimation(Animator animator, SpriteFrameLoop[] frameLoops)
+    {
+        if (frameLoops != null)
+        {
+            foreach (SpriteFrameLoop frameLoop in frameLoops)
+            {
+                if (frameLoop != null)
+                    frameLoop.SetMoving(false, false);
+            }
+        }
+
         if (animator == null)
             return;
 

@@ -257,6 +257,17 @@ MonoBehaviour:
   - {fileID: 1659729395, guid: a319792464eba45a09226d59e87ea8ea, type: 3}
   framesPerSecond: 5
   randomStart: 1
+  walkFrames:
+  - {fileID: 768626705202597609, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -6581053661256078121, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 532621129199782263, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -5548538725665468776, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 5225238895518417889, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 5321633664626808119, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 180523815968990069, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -1636434758507469156, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  walkFramesPerSecond: 10
+  runFrameRateMultiplier: 1.5
 --- !u!1 &8413948469590168066
 GameObject:
   m_ObjectHideFlags: 0

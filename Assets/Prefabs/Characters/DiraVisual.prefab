@@ -400,3 +400,14 @@ MonoBehaviour:
   - {fileID: -2468062888723735599, guid: f5049a50b239545a1917154c8ac81b79, type: 3}
   framesPerSecond: 5
   randomStart: 1
+  walkFrames:
+  - {fileID: -2555402862923746303, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: -7355313651772138027, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: -9163592365285342500, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: 2801749581171582725, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: 3494823135524904989, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: 8432328329345441097, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: 4750612771104516547, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  - {fileID: -7407036739951846532, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
+  walkFramesPerSecond: 10
+  runFrameRateMultiplier: 1.5
