@@ -133,6 +133,13 @@ public class DialogBubble : MonoBehaviour
         finished?.Invoke();
     }
 
+    // Hides only the visible bubble during a cutscene, leaving Yarn's dialogue input lock intact.
+    public void HideForCutscene()
+    {
+        if (box != null)
+            box.gameObject.SetActive(false);
+    }
+
     private void OnDisable() => Close();
 
     private void Update()

@@ -33,6 +33,15 @@ public class YarnDialogPresenter : DialoguePresenterBase
 
     public bool IsPlaying => playing;
 
+    // Hides the active dialogue display while Yarn continues a cutscene command.
+    public void HideDialogueForCutscene()
+    {
+        if (hud != null)
+            hud.Hide();
+        else if (bubble != null)
+            bubble.HideForCutscene();
+    }
+
     // Runs the Yarn node. Lines without a character name show above defaultTalker (plus talkerOffset).
     // finished runs once the dialogue ends. player may be null (cutscenes).
     public void Play(string node, Transform talker, Vector2 talkerOffset, PlayerMove player, Action finished)

@@ -12,11 +12,23 @@ using UnityEngine.SceneManagement;
 public static class DoorSpawn
 {
     private static string currentScene = "";
+    private static string pendingScene;
+    private static float pendingX;
+    private static bool pendingFaceRight;
+
+    // One-time arrival position requested by a Yarn scene transition.
+    public static void SetNextSpawn(string sceneName, float x, bool faceRight)
+    {
+        pendingScene = sceneName;
+        pendingX = x;
+        pendingFaceRight = faceRight;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Register()
     {
         currentScene = "";
+        pendingScene = null;
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -33,6 +45,9 @@ public static class DoorSpawn
         // Remembered here rather than when the old scene unloads, because that can happen after this runs.
         string previousScene = currentScene;
         currentScene = scene.name;
+        bool usePendingSpawn = pendingScene != null &&
+            string.Equals(pendingScene, scene.name, System.StringComparison.OrdinalIgnoreCase);
+        pendingScene = null;
 
         // Searched in the new scene only: the old scene's objects (such as the Dorm's player) can still exist here.
         PlayerMove[] players = InScene<PlayerMove>(scene);
@@ -42,6 +57,21 @@ public static class DoorSpawn
             return;
         }
         PlayerMove player = players[0];
+
+        if (usePendingSpawn)
+        {
+            Vector3 spawnPosition = player.transform.position;
+            player.transform.position = new Vector3(pendingX, spawnPosition.y, spawnPosition.z);
+            Rigidbody2D body = player.GetComponent<Rigidbody2D>();
+            if (body != null)
+            {
+                body.position = new Vector2(pendingX, body.position.y);
+                body.linearVelocity = Vector2.zero;
+            }
+            player.Face(pendingFaceRight ? 1f : -1f);
+            Debug.Log($"DoorSpawn: story transition placed the player at X {pendingX} in {scene.name}, facing {(pendingFaceRight ? "Right" : "Left")}.", player);
+            return;
+        }
 
         foreach (YarnCutscene cutscene in InScene<YarnCutscene>(scene))
         {
