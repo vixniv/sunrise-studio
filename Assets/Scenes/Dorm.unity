@@ -686,17 +686,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day3_Dorm_Blazer
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &127593064
@@ -945,17 +951,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_Desk
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &232036073
@@ -1112,17 +1124,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap3_Calendar
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &269604941
@@ -1445,17 +1463,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 4022139241080342954}
   wheel: {fileID: 18589155}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Dorm_Bed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &299217966
@@ -1768,10 +1792,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.30416667
     y: 0
-    width: 0.99999994
-    height: 1
+    width: 0.6025039
+    height: 0.4935185
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2125,17 +2149,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_Poster
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &478959187
@@ -2484,17 +2514,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap2_Dorm_KiranaBed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &562068912
@@ -2636,17 +2672,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 4022139241080342954}
   wheel: {fileID: 18589155}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Dorm_Calendar
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &594298867
@@ -2970,17 +3012,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap3_KiranaBed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &647824631
@@ -3672,17 +3720,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap1_Dorm_Clock
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &809762893
@@ -4179,17 +4233,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap1_Dorm_Window
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &996846613
@@ -4399,17 +4459,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_Poster
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1016151663
@@ -4672,17 +4738,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap4_Calendar
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1106280786
@@ -4824,17 +4896,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 4022139241080342954}
   wheel: {fileID: 18589155}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Dorm_Poster
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1114854203
@@ -5646,17 +5724,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_Bed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1348399120
@@ -6430,17 +6514,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day4_Calendar
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1621485834
@@ -7064,17 +7154,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_KiranaBed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1698370573
@@ -7231,17 +7327,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_Bed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1705730919
@@ -7758,17 +7860,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Day2_Dorm_KiranaBed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1767709687
@@ -8983,17 +9091,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap1_Dorm_KiranaBed
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1986528042
@@ -9569,17 +9683,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 4022139241080342954}
   wheel: {fileID: 18589155}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Dorm_Desk
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &2130792102
@@ -9751,17 +9871,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
   wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
     icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
     yarnNode: Gap2_Dorm_Clock
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &2133278597
@@ -10181,14 +10307,22 @@ PrefabInstance:
       objectReference: {fileID: 1326022622}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].name
       value: Kirana
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].target
+      value: 
+      objectReference: {fileID: 2892008741172733836}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].target
       value: 
       objectReference: {fileID: 1360440004}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
@@ -10375,6 +10509,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -10429,6 +10587,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6820495961154592701, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

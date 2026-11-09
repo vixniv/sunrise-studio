@@ -189,6 +189,10 @@ tags: scene3 day2 lockers event
 // Footsteps. Fal comes in, bag over one shoulder, opens his locker.
 <<npc_enter "Fal">>
 Fal: Oh. Anin. You're early for once.
+<<face_character "Anin" "left">>
+<<close_dialogue_bubble>>
+<<move_character_to_actor "Fal" "Anin" -2.5 10 "walk">>
+Anin: Morning, Fal.
 -> Did you bring your math book?
 -> Let's start studying now, before class.
 Fal: Now? Okay, okay, teacher.
@@ -209,12 +213,14 @@ Fal: ...Who wrote these?
 Fal: ...Right.
 Fal: Thanks.
 Fal: Let's just do the integrals after school. Lockers, like we said.
+<<close_dialogue_bubble>>
+<<move_character "Fal" 12.5 10 "walk">>
 // He leaves without looking back.
 <<npc_exit "Fal">>
 
 Anin: He went quiet. That's good, right? It means it reached him.
 <<quest_update "day2" "Meet Fal at the lockers after school">>
-<<advance_time "after_school">>
+<<advance_time_teleport_character "after_school" "Anin" 28.0854 "left">>
 // Optional day events will go here later. For now, time advances
 // straight to after school once this event ends.
 // Anin is still in the Locker Room, and a start node only plays when a
@@ -260,6 +266,9 @@ title: Day2_Eve_Check
 tags: scene3 day2 lockers
 ---
 <<if $d2_eve_clock and $d2_eve_hook>>
+    Anin: Please, not again.
+    <<close_dialogue_bubble>>
+    <<move_character "Anin" -15.8 10 "walk">>
     <<jump Day2_FriendsArrive>>
 <<endif>>
 ===
@@ -270,9 +279,13 @@ tags: scene3 day2 lockers event
 // Footsteps. Kirana, Dira and Lila come in from the hallway.
 // Lila shoves her sketchbook into her locker.
 <<npc_enter "Kirana">>
-<<npc_enter "Dira">>
 <<npc_enter "Lila">>
 Lila: Anin? You're still here?
+<<face_character "Anin" "right">>
+<<close_dialogue_bubble>>
+<<start_character_move "Lila" -11.6 10 "walk" 0>>
+<<start_character_move "Kirana" -13.4 10 "walk" 0>>
+<<wait_for_character_moves>>
 Kirana: She's waiting for her study date.
 Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up—
 // Anin says "twice" AT THE SAME TIME as Kirana would. Show both
@@ -280,8 +293,11 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up—
 // PAYOFF in Scene 7 lunch: Kirana says "You finish my sentences too."
 Anin: —twice.
 Kirana: ...Creepy. Okay. Bye.
+<<close_dialogue_bubble>>
+<<start_character_move "Lila" -32.6 10 "walk" 0>>
+<<start_character_move "Kirana" -32.6 10 "walk" 0>>
+<<wait_for_character_moves>>
 <<npc_exit "Kirana">>
-<<npc_exit "Dira">>
 <<npc_exit "Lila">>
 
 // Anin is alone.

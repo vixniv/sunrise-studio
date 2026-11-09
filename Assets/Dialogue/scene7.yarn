@@ -69,14 +69,19 @@ tags: scene7 day4 classroom event
 ---
 // Dira is staring at her open book.
 Dira: Anin. Come here.
+<<close_dialogue_bubble>>
+<<move_character "Anin" 8.136344 10 "walk">>
 Dira: Someone wrote in my book. "You've read this before."
 Dira: This is your handwriting.
 -> It's not—
 -> I don't remember writing it.
 Dira: That's not a no.
-<<npc_enter "Lila">>
 // Lila bursts in, sketchbook in hand.
+<<npc_enter "LilaScene7">>
 Lila: Guys. Guys. Look.
+<<close_dialogue_bubble>>
+<<face_character "Anin" "left">>
+<<move_character "LilaScene7" 5.8 10 "walk">>
 Lila: I didn't draw these. I don't remember drawing these. But it's my sketchbook, and it's... us. At Warmus.
 // Interactable: Day4_Sketchbook (required)
 ===
@@ -156,8 +161,8 @@ Kirana: Three islands away. I'm scared I'll forget what you all sound like.
 title: Day4_Library
 tags: scene7 day4 library event
 ---
-<<advance_time "after_school">>
 <<npc_enter "Fal">>
+<<advance_time_teleport_character "after_school" "Anin" 3 "right">>
 Fal: You look worse than me, and I'm the one failing math.
 Fal: Can I ask you something weird?
 Fal: Do you ever feel like we keep missing tomorrow?
