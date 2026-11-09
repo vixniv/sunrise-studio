@@ -905,7 +905,7 @@ Transform:
   m_GameObject: {fileID: 321672664}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.5625, y: -4.875, z: 0}
+  m_LocalPosition: {x: -2, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1163,7 +1163,7 @@ Transform:
   m_GameObject: {fileID: 404649048}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: -4.875, z: 0}
+  m_LocalPosition: {x: 2.3125, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1299,6 +1299,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 321672665}
     m_Modifications:
+    - target: {fileID: 1395506584659977879, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1411,9 +1415,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.055555556
-    width: 0.6651411
-    height: 0.66629314
+    y: 0.5199005
+    width: 0.27116707
+    height: 0.27163672
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2402,7 +2406,7 @@ Transform:
   m_GameObject: {fileID: 677713825}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5625, y: -4.875, z: 0}
+  m_LocalPosition: {x: -2, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3168,7 +3172,7 @@ Transform:
   m_GameObject: {fileID: 825516232}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: -4.875, z: 0}
+  m_LocalPosition: {x: 2.3125, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3481,8 +3485,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1156643448}
-  - {fileID: 321672665}
   - {fileID: 1486909301}
+  - {fileID: 321672665}
   - {fileID: 404649049}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4202,6 +4206,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 677713830}
     m_Modifications:
+    - target: {fileID: 1395506584659977879, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5698,6 +5706,9 @@ MonoBehaviour:
   - {fileID: 982045949, guid: 460f53c7d5e5340519c62208d7ddf03c, type: 3}
   framesPerSecond: 5
   randomStart: 1
+  walkFrames: []
+  walkFramesPerSecond: 10
+  runFrameRateMultiplier: 1.5
 --- !u!1 &1642460116
 GameObject:
   m_ObjectHideFlags: 0
@@ -6015,6 +6026,9 @@ MonoBehaviour:
   - {fileID: 581150879, guid: 661de3219a11b42bbad33a3a370558fd, type: 3}
   framesPerSecond: 5
   randomStart: 1
+  walkFrames: []
+  walkFramesPerSecond: 10
+  runFrameRateMultiplier: 1.5
 --- !u!1001 &1719842850
 PrefabInstance:
   m_ObjectHideFlags: 0
