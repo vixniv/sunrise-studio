@@ -11,6 +11,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
 {
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
+    [Tooltip("Optional object name shown by InteractionCue. Empty derives it from the first Yarn Node.")]
+    [SerializeField] private string interactionLabel = "";
     [SerializeField] private ChoiceWheel wheel;
     [Tooltip("Optional screen-space replacement for ChoiceWheel. Found automatically when present.")]
     [SerializeField] private ActionInventoryCarouselPresenter actionCarousel;
@@ -63,6 +65,19 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     private GameObject ownCue;
     private readonly List<int> visibleChoiceIndices = new List<int>();
     private readonly List<InteractionAction> carouselActions = new List<InteractionAction>();
+
+    public string InteractionLabel
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(interactionLabel))
+                return interactionLabel.Trim();
+            foreach (ChoiceWheel.Choice choice in choices)
+                if (choice != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
+                    return InteractionLabelUtility.FromYarnTitle(choice.yarnNode, name);
+            return InteractionLabelUtility.FromYarnTitle(null, name);
+        }
+    }
 
     private void Awake()
     {
@@ -188,21 +203,28 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     {
         ChoiceWheel.Choice choice = choices[index];
         Debug.Log($"{name}: chose {index + 1} ({choice.label})", this);
-        bool hasYarn = yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode);
-        bool hasLines = dialog != null && choice.dialogLines.Count > 0;
+        string yarnNode = choice.yarnNode?.Trim();
+        bool hasYarn = yarnDialog != null && yarnDialog.CanPlayNode(yarnNode);
+        bool hasLines = (yarnDialog != null || dialog != null) && choice.dialogLines.Count > 0;
         PlayerMove player = nearbyPlayer;
         if (approachBeforeTalking && player != null && (hasYarn || hasLines))
         {
-            Approach(player, () => StartChoice(choice, player));
+            Approach(player, () => StartChoice(choice, yarnNode, player));
             return;
         }
-        StartChoice(choice, player);
+        StartChoice(choice, yarnNode, player);
     }
 
-    private void StartChoice(ChoiceWheel.Choice choice, PlayerMove player)
+    private void StartChoice(ChoiceWheel.Choice choice, string yarnNode, PlayerMove player)
     {
-        if (yarnDialog != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
-            yarnDialog.Play(choice.yarnNode.Trim(), transform, dialogOffset, player, choice.onChoose.Invoke);
+        if (yarnDialog != null && yarnDialog.CanPlayNode(yarnNode))
+            yarnDialog.Play(yarnNode, transform, dialogOffset, player, choice.onChoose.Invoke);
+        else if (yarnDialog != null && choice.dialogLines.Count > 0)
+        {
+            if (!string.IsNullOrWhiteSpace(yarnNode))
+                Debug.LogWarning($"Missing Yarn node \"{yarnNode}\" on {name}; using configured dialog lines.", this);
+            yarnDialog.PlayLines(choice.dialogLines, transform, dialogOffset, player, choice.onChoose.Invoke);
+        }
         else if (dialog != null && choice.dialogLines.Count > 0)
             dialog.Show(transform, dialogOffset, choice.dialogLines, player, choice.onChoose.Invoke);
         else

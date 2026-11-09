@@ -19,6 +19,12 @@ namespace SunriseStudio.UI
         [SerializeField] DialogueOptionView optionTemplate;
         [SerializeField, Min(1f)] float charactersPerSecond = 42f;
 
+        [Header("Compact Presentation")]
+        [Tooltip("Scales body, speaker tag, tail, indicator, and text together.")]
+        [SerializeField, Range(0.25f, 1f)] float visualScale = 0.5f;
+        [Tooltip("Rotates the complete dialogue card, including its text, tag, tail, and indicator.")]
+        [SerializeField, Range(-10f, 10f)] float tiltDegrees = 2f;
+
         [Header("Text Pages")]
         [SerializeField, Range(1, 4)] int maximumLinesPerPage = 2;
         [Tooltip("Authored BodyText size. Used when an inactive prefab reports a zero rect during Awake.")]
@@ -35,6 +41,10 @@ namespace SunriseStudio.UI
         [SerializeField] RectTransform tail;
         [SerializeField, Min(0f)] float screenMargin = 8f;
         [SerializeField, Min(0f)] float tailEdgePadding = 18f;
+
+        [Header("Choice Positioning")]
+        [Tooltip("Space between the dialogue bubble and its choices.")]
+        [SerializeField, Min(0f)] float choiceGap = 6f;
 
         readonly List<DialogueOptionView> options = new();
         readonly List<string> pages = new();
@@ -53,7 +63,11 @@ namespace SunriseStudio.UI
         Vector2 authoredBubbleSize;
         Vector2 authoredBodySize;
         Vector2 authoredTextSize;
+        Vector2 authoredTextPosition;
         Vector2 authoredIndicatorPosition;
+        Vector2 indicatorBasePosition;
+        Vector3 compactBubbleScale = Vector3.one;
+        Quaternion compactBubbleRotation = Quaternion.identity;
         float textTopInset;
         float textBottomInset;
         float bubbleExtraHeight;
@@ -72,15 +86,51 @@ namespace SunriseStudio.UI
                 tail = bubbleRoot.Find("Tail") as RectTransform;
             if (bubbleRoot != null)
                 bubbleBody = bubbleRoot.Find("Body") as RectTransform;
+            EnsureBodyTextIsInsideBody();
             if (nextIndicator != null)
                 indicatorRect = nextIndicator.transform as RectTransform;
 
             canvas = GetComponentInParent<Canvas>();
             CaptureAuthoredLayout();
+            ApplyCompactScale();
+
+            // Template exists only as clone source. Never show placeholder copy.
+            if (optionTemplate != null)
+                optionTemplate.gameObject.SetActive(false);
 
             if (continueButton != null)
                 continueButton.onClick.AddListener(Continue);
             Hide();
+        }
+
+        void EnsureBodyTextIsInsideBody()
+        {
+            if (bodyText == null || bubbleBody == null)
+                return;
+
+            RectTransform textRect = bodyText.rectTransform;
+            if (textRect.parent == bubbleBody)
+                return;
+
+            // Some HUD prefab revisions saved BodyText beside Body. That makes its
+            // position independent from the panel being resized. Reparent it while
+            // retaining the authored top-left layout values.
+            Vector2 anchorMin = textRect.anchorMin;
+            Vector2 anchorMax = textRect.anchorMax;
+            Vector2 pivot = textRect.pivot;
+            Vector2 position = textRect.anchoredPosition;
+            Vector2 size = textRect.sizeDelta;
+            Quaternion rotation = textRect.localRotation;
+            Vector3 scale = textRect.localScale;
+
+            textRect.SetParent(bubbleBody, false);
+            textRect.anchorMin = anchorMin;
+            textRect.anchorMax = anchorMax;
+            textRect.pivot = pivot;
+            textRect.anchoredPosition = position;
+            textRect.sizeDelta = size;
+            textRect.localRotation = rotation;
+            textRect.localScale = scale;
         }
 
         void OnDestroy()
@@ -124,7 +174,11 @@ namespace SunriseStudio.UI
         void LateUpdate()
         {
             if (IsVisible)
+            {
                 FollowSpeaker();
+                if (options.Count > 0)
+                    PositionChoicesNearBubble();
+            }
         }
 
         public void ShowLine(string speaker, string text, Transform talker, Vector2 talkerOffset, Action onAdvance)
@@ -170,14 +224,112 @@ namespace SunriseStudio.UI
                 });
                 options.Add(option);
             }
+
+            Canvas.ForceUpdateCanvases();
+            PrepareChoicesLayout();
+            PositionChoicesNearBubble();
         }
 
         public void ClearChoices()
         {
             foreach (DialogueOptionView option in options)
                 if (option != null)
+                {
+                    option.gameObject.SetActive(false);
                     Destroy(option.gameObject);
+                }
             options.Clear();
+            if (optionTemplate != null)
+                optionTemplate.gameObject.SetActive(false);
+        }
+
+        void PrepareChoicesLayout()
+        {
+            if (choicesRoot == null || options.Count == 0)
+                return;
+
+            float width = 1f;
+            float height = 0f;
+            int activeCount = 0;
+            foreach (DialogueOptionView option in options)
+            {
+                if (option == null || !option.gameObject.activeSelf ||
+                    option.transform is not RectTransform optionRect)
+                    continue;
+
+                optionRect.ForceUpdateRectTransforms();
+                width = Mathf.Max(width, optionRect.rect.width);
+                height += optionRect.rect.height;
+                activeCount++;
+            }
+
+            VerticalLayoutGroup layout = choicesRoot.GetComponent<VerticalLayoutGroup>();
+            if (layout != null)
+            {
+                width += layout.padding.left + layout.padding.right;
+                height += layout.padding.top + layout.padding.bottom;
+                if (activeCount > 1)
+                    height += layout.spacing * (activeCount - 1);
+            }
+
+            choicesRoot.anchorMin = new Vector2(0f, 1f);
+            choicesRoot.anchorMax = new Vector2(0f, 1f);
+            choicesRoot.pivot = new Vector2(1f, 1f);
+            choicesRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            choicesRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(1f, height));
+            LayoutRebuilder.ForceRebuildLayoutImmediate(choicesRoot);
+        }
+
+        void PositionChoicesNearBubble()
+        {
+            if (choicesRoot == null || bubbleRoot == null || options.Count == 0 ||
+                bubbleRoot.parent is not RectTransform parent || choicesRoot.parent != parent)
+                return;
+
+            float parentWidth = parent.rect.width;
+            float parentHeight = parent.rect.height;
+            float bubbleWidth = bubbleRoot.rect.width * Mathf.Abs(bubbleRoot.localScale.x);
+            float bubbleHeight = bubbleRoot.rect.height * Mathf.Abs(bubbleRoot.localScale.y);
+            float bubbleLeft = bubbleRoot.anchoredPosition.x - bubbleRoot.pivot.x * bubbleWidth;
+            float bubbleTop = -bubbleRoot.anchoredPosition.y -
+                              (1f - bubbleRoot.pivot.y) * bubbleHeight;
+            float bubbleRight = bubbleLeft + bubbleWidth;
+            float bubbleBottom = bubbleTop + bubbleHeight;
+            float choiceWidth = choicesRoot.rect.width;
+            float choiceHeight = choicesRoot.rect.height;
+            float maximumLeft = Mathf.Max(screenMargin, parentWidth - screenMargin - choiceWidth);
+            float maximumTop = Mathf.Max(screenMargin, parentHeight - screenMargin - choiceHeight);
+
+            // Figma layout: choices sit immediately to the dialogue's right.
+            float left = bubbleRight + choiceGap;
+            float top = Mathf.Clamp(bubbleTop, screenMargin, maximumTop);
+            bool fitsRight = left + choiceWidth <= parentWidth - screenMargin;
+
+            if (!fitsRight)
+            {
+                // Near the right edge, move the complete stack above the dialogue
+                // instead of clamping it left and letting the cards overlap the bubble.
+                left = bubbleLeft + (bubbleWidth - choiceWidth) * 0.5f;
+                top = bubbleTop - choiceGap - choiceHeight;
+                bool fitsAbove = top >= screenMargin;
+
+                if (!fitsAbove)
+                {
+                    top = bubbleBottom + choiceGap;
+                    bool fitsBelow = top + choiceHeight <= parentHeight - screenMargin;
+                    if (!fitsBelow)
+                    {
+                        left = bubbleLeft - choiceGap - choiceWidth;
+                        top = Mathf.Clamp(bubbleTop, screenMargin, maximumTop);
+                    }
+                }
+            }
+
+            left = Mathf.Clamp(left, screenMargin, maximumLeft);
+            top = Mathf.Clamp(top, screenMargin, maximumTop);
+            choicesRoot.anchoredPosition = new Vector2(
+                Mathf.Round(left + choiceWidth),
+                -Mathf.Round(top));
         }
 
         public void Hide()
@@ -397,6 +549,9 @@ namespace SunriseStudio.UI
             {
                 authoredBubblePosition = bubbleRoot.anchoredPosition;
                 authoredBubbleSize = bubbleRoot.sizeDelta;
+                compactBubbleScale = bubbleRoot.localScale * visualScale;
+                compactBubbleRotation = bubbleRoot.localRotation *
+                    Quaternion.Euler(0f, 0f, tiltDegrees);
             }
             if (tail != null)
                 authoredTailPosition = tail.anchoredPosition;
@@ -404,6 +559,11 @@ namespace SunriseStudio.UI
                 authoredBodySize = bubbleBody.sizeDelta;
             if (bodyText != null)
             {
+                RectTransform textRect = bodyText.rectTransform;
+                textRect.anchorMin = new Vector2(0f, 1f);
+                textRect.anchorMax = new Vector2(0f, 1f);
+                textRect.pivot = new Vector2(0f, 1f);
+                authoredTextPosition = textRect.anchoredPosition;
                 authoredTextSize = bodyText.rectTransform.sizeDelta;
                 if (authoredTextSize.x <= 0f)
                     authoredTextSize.x = textAreaSize.x;
@@ -412,7 +572,10 @@ namespace SunriseStudio.UI
                 bodyText.rectTransform.sizeDelta = authoredTextSize;
             }
             if (indicatorRect != null)
+            {
                 authoredIndicatorPosition = indicatorRect.anchoredPosition;
+                indicatorBasePosition = authoredIndicatorPosition;
+            }
 
             if (bubbleBody != null && bodyText != null)
             {
@@ -421,10 +584,16 @@ namespace SunriseStudio.UI
                     0f,
                     authoredBodySize.y - textTopInset - authoredTextSize.y);
             }
-            if (bubbleRoot != null && bubbleBody != null)
-                bubbleExtraHeight = Mathf.Max(0f, authoredBubbleSize.y - authoredBodySize.y);
             if (tail != null && bubbleBody != null)
+            {
                 tailOverlap = authoredBodySize.y + authoredTailPosition.y;
+                // Only include the part of the tail that extends below the body. The
+                // authored BubbleRoot currently contains extra empty height, so using
+                // BubbleRoot - Body would make short dialogue appear much too tall.
+                bubbleExtraHeight = Mathf.Max(0f, tail.rect.height - tailOverlap);
+            }
+            else if (bubbleRoot != null && bubbleBody != null)
+                bubbleExtraHeight = Mathf.Max(0f, authoredBubbleSize.y - authoredBodySize.y);
         }
 
         void RestoreAuthoredLayout()
@@ -433,15 +602,23 @@ namespace SunriseStudio.UI
             {
                 bubbleRoot.anchoredPosition = authoredBubblePosition;
                 bubbleRoot.sizeDelta = authoredBubbleSize;
+                bubbleRoot.localScale = compactBubbleScale;
+                bubbleRoot.localRotation = compactBubbleRotation;
             }
             if (bubbleBody != null)
                 bubbleBody.sizeDelta = authoredBodySize;
             if (bodyText != null)
+            {
+                bodyText.rectTransform.anchoredPosition = authoredTextPosition;
                 bodyText.rectTransform.sizeDelta = authoredTextSize;
+            }
             if (tail != null)
                 tail.anchoredPosition = authoredTailPosition;
             if (indicatorRect != null)
+            {
                 indicatorRect.anchoredPosition = authoredIndicatorPosition;
+                indicatorBasePosition = authoredIndicatorPosition;
+            }
         }
 
         void FitBubbleToPage(string page)
@@ -456,16 +633,18 @@ namespace SunriseStudio.UI
             float bodyHeight = Mathf.Max(
                 minimumBodyHeight,
                 preferredTextHeight + textTopInset + textBottomInset);
-            if (authoredBodySize.y > 0f)
-                bodyHeight = Mathf.Min(bodyHeight, authoredBodySize.y);
 
             bubbleBody.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bodyHeight);
-            bodyText.rectTransform.SetSizeWithCurrentAnchors(
+            RectTransform textRect = bodyText.rectTransform;
+            textRect.anchorMin = new Vector2(0f, 1f);
+            textRect.anchorMax = new Vector2(0f, 1f);
+            textRect.pivot = new Vector2(0f, 1f);
+            textRect.anchoredPosition = authoredTextPosition;
+            textRect.SetSizeWithCurrentAnchors(
                 RectTransform.Axis.Vertical,
                 Mathf.Max(1f, preferredTextHeight));
-            bubbleRoot.SetSizeWithCurrentAnchors(
-                RectTransform.Axis.Vertical,
-                bodyHeight + bubbleExtraHeight);
+            float bubbleHeight = bodyHeight + bubbleExtraHeight;
+            bubbleRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bubbleHeight);
 
             if (tail != null)
             {
@@ -473,6 +652,20 @@ namespace SunriseStudio.UI
                 tailPosition.y = -bodyHeight + tailOverlap;
                 tail.anchoredPosition = tailPosition;
             }
+
+            if (indicatorRect != null)
+            {
+                // NextIndicator is anchored to BubbleRoot's bottom. Move its baseline
+                // with the changing root height so it keeps the same distance from the
+                // top of the speech bubble.
+                indicatorBasePosition = authoredIndicatorPosition;
+                indicatorBasePosition.y += bubbleHeight - authoredBubbleSize.y;
+                indicatorRect.anchoredPosition = indicatorBasePosition;
+            }
+
+            textRect.ForceUpdateRectTransforms();
+            bubbleBody.ForceUpdateRectTransforms();
+            bubbleRoot.ForceUpdateRectTransforms();
         }
 
         void SetIndicatorVisible(bool visible)
@@ -480,7 +673,7 @@ namespace SunriseStudio.UI
             if (nextIndicator != null)
                 nextIndicator.SetActive(visible);
             if (!visible && indicatorRect != null)
-                indicatorRect.anchoredPosition = authoredIndicatorPosition;
+                indicatorRect.anchoredPosition = indicatorBasePosition;
         }
 
         void AnimateNextIndicator()
@@ -489,7 +682,7 @@ namespace SunriseStudio.UI
                 return;
 
             float wave = Mathf.Sin(Time.unscaledTime * indicatorBobCyclesPerSecond * Mathf.PI * 2f);
-            Vector2 position = authoredIndicatorPosition;
+            Vector2 position = indicatorBasePosition;
             position.y += Mathf.Round(wave * indicatorBobDistance);
             indicatorRect.anchoredPosition = position;
         }
@@ -519,21 +712,35 @@ namespace SunriseStudio.UI
 
             float speakerX = point.x - parent.rect.xMin;
             float speakerYFromTop = parent.rect.yMax - point.y;
-            float bubbleWidth = bubbleRoot.rect.width;
-            float bubbleHeight = bubbleRoot.rect.height;
+            float scaleX = Mathf.Max(0.0001f, Mathf.Abs(bubbleRoot.localScale.x));
+            float scaleY = Mathf.Max(0.0001f, Mathf.Abs(bubbleRoot.localScale.y));
+            float bubbleWidth = bubbleRoot.rect.width * scaleX;
+            float bubbleHeight = bubbleRoot.rect.height * scaleY;
             float parentWidth = parent.rect.width;
             float parentHeight = parent.rect.height;
 
-            float bubbleLeft = speakerX - authoredTailPosition.x;
+            float bubbleLeft = speakerX - authoredTailPosition.x * scaleX;
             bubbleLeft = Mathf.Clamp(bubbleLeft, screenMargin, Mathf.Max(screenMargin, parentWidth - bubbleWidth - screenMargin));
 
-            float tailTipFromTop = -tail.anchoredPosition.y + tail.rect.height;
+            float tailTipFromTop = (-tail.anchoredPosition.y + tail.rect.height) * scaleY;
             float bubbleTop = speakerYFromTop - tailTipFromTop;
             bubbleTop = Mathf.Clamp(bubbleTop, screenMargin, Mathf.Max(screenMargin, parentHeight - bubbleHeight - screenMargin));
 
             bubbleRoot.anchoredPosition = new Vector2(Mathf.Round(bubbleLeft), -Mathf.Round(bubbleTop));
-            float tailX = Mathf.Clamp(speakerX - bubbleLeft, tailEdgePadding, bubbleWidth - tailEdgePadding);
+            float tailX = Mathf.Clamp(
+                (speakerX - bubbleLeft) / scaleX,
+                tailEdgePadding,
+                bubbleRoot.rect.width - tailEdgePadding);
             tail.anchoredPosition = new Vector2(Mathf.Round(tailX), tail.anchoredPosition.y);
+        }
+
+        void ApplyCompactScale()
+        {
+            if (bubbleRoot == null)
+                return;
+
+            bubbleRoot.localScale = compactBubbleScale;
+            bubbleRoot.localRotation = compactBubbleRotation;
         }
 
         static Renderer FindSpeakerRenderer(Transform talker)

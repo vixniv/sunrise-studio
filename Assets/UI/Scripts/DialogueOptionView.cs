@@ -25,6 +25,9 @@ namespace SunriseStudio.UI
         [SerializeField, Min(0f)] float verticalTextPadding = 8f;
         [SerializeField] Color defaultTextColor = new(0.027f, 0.051f, 0.169f, 1f);
         [SerializeField] Color selectedTextColor = Color.white;
+        [SerializeField, Range(0.2f, 1f)] float visualScale = 0.35f;
+        [Tooltip("Rotates the complete choice card so its artwork, tape, and text stay aligned.")]
+        [SerializeField, Range(-10f, 10f)] float tiltDegrees = 2f;
 
         Action chosen;
         RectTransform root;
@@ -34,10 +37,27 @@ namespace SunriseStudio.UI
         bool selected;
         int lineCount = 1;
         float lineHeight;
+        float authoredFontSize;
+        Quaternion authoredRotation = Quaternion.identity;
+        bool rotationCaptured;
+
+        float ScaledLeftPadding => horizontalTextPadding * 1.4f * visualScale;
+        float ScaledRightPadding => horizontalTextPadding * 0.5f * visualScale;
+
+        float GetTextWidth(float bubbleWidth) => Mathf.Max(
+            1f,
+            bubbleWidth - ScaledLeftPadding - ScaledRightPadding);
 
         public void Bind(string text, Action onChosen)
         {
             chosen = onChosen;
+            ApplyTilt();
+            if (label != null)
+            {
+                if (authoredFontSize <= 0f)
+                    authoredFontSize = label.fontSize;
+                label.fontSize = authoredFontSize * visualScale;
+            }
             label.text = text;
             ConfigureHeight(text);
             button.onClick.RemoveListener(Choose);
@@ -63,6 +83,22 @@ namespace SunriseStudio.UI
 
         void Refresh() => SetState(hovered || pressed || selected);
 
+        void ApplyTilt()
+        {
+            if (root == null)
+                root = transform as RectTransform;
+            if (root == null)
+                return;
+
+            if (!rotationCaptured)
+            {
+                authoredRotation = root.localRotation;
+                rotationCaptured = true;
+            }
+
+            root.localRotation = authoredRotation * Quaternion.Euler(0f, 0f, tiltDegrees);
+        }
+
         void ConfigureHeight(string text)
         {
             if (label == null)
@@ -71,7 +107,10 @@ namespace SunriseStudio.UI
             label.textWrappingMode = TextWrappingModes.Normal;
             label.overflowMode = TextOverflowModes.Overflow;
 
-            float textWidth = Mathf.Max(1f, defaultSize.x - horizontalTextPadding);
+            Vector2 scaledDefaultSize = defaultSize * visualScale;
+            Vector2 scaledSelectedSize = selectedSize * visualScale;
+            Vector2 scaledTwoLineSelectedSize = twoLineSelectedSize * visualScale;
+            float textWidth = GetTextWidth(scaledDefaultSize.x);
             lineHeight = Mathf.Max(1f, label.GetPreferredValues("Ag", textWidth, 0f).y);
             float preferredHeight = label.GetPreferredValues(text ?? string.Empty, textWidth, 0f).y;
             lineCount = Mathf.Max(1, Mathf.RoundToInt(preferredHeight / lineHeight));
@@ -83,13 +122,19 @@ namespace SunriseStudio.UI
 
             float extraHeight = Mathf.Max(0, lineCount - 2) * lineHeight;
             float fixedHeight = lineCount == 1
-                ? selectedSize.y
-                : twoLineSelectedSize.y + extraHeight;
+                ? scaledSelectedSize.y
+                : scaledTwoLineSelectedSize.y + extraHeight;
+            float fixedWidth = Mathf.Max(scaledSelectedSize.x, scaledTwoLineSelectedSize.x);
 
             if (root != null)
+            {
+                root.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fixedWidth);
                 root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, fixedHeight);
+            }
             if (layoutElement != null)
             {
+                layoutElement.minWidth = fixedWidth;
+                layoutElement.preferredWidth = fixedWidth;
                 layoutElement.minHeight = fixedHeight;
                 layoutElement.preferredHeight = fixedHeight;
             }
@@ -103,11 +148,11 @@ namespace SunriseStudio.UI
             Vector2 size;
             if (lineCount == 1)
             {
-                size = highlighted ? selectedSize : defaultSize;
+                size = (highlighted ? selectedSize : defaultSize) * visualScale;
             }
             else
             {
-                size = highlighted ? twoLineSelectedSize : twoLineDefaultSize;
+                size = (highlighted ? twoLineSelectedSize : twoLineDefaultSize) * visualScale;
                 size.y += Mathf.Max(0, lineCount - 2) * lineHeight;
             }
 
@@ -122,11 +167,27 @@ namespace SunriseStudio.UI
             {
                 label.color = highlighted ? selectedTextColor : defaultTextColor;
                 float textHeight = lineCount == 1
-                    ? 30f
-                    : Mathf.Max(1f, size.y - verticalTextPadding);
-                label.rectTransform.sizeDelta = new Vector2(
-                    Mathf.Max(1f, size.x - horizontalTextPadding),
+                    ? 30f * visualScale
+                    : Mathf.Max(1f, size.y - verticalTextPadding * visualScale);
+                RectTransform labelRect = label.rectTransform;
+                labelRect.sizeDelta = new Vector2(
+                    GetTextWidth(size.x),
                     textHeight);
+
+                // The artwork is right-anchored and changes size for each state.
+                // Keep the label centred on the artwork instead of leaving it at
+                // the authored position for the original, much larger bubble.
+                if (visual != null)
+                {
+                    RectTransform visualRect = visual.rectTransform;
+                    labelRect.anchorMin = visualRect.anchorMin;
+                    labelRect.anchorMax = visualRect.anchorMax;
+                    labelRect.pivot = new Vector2(0.5f, 0.5f);
+                    labelRect.anchoredPosition = visualRect.anchoredPosition + new Vector2(
+                        (0.5f - visualRect.pivot.x) * size.x
+                            + (ScaledLeftPadding - ScaledRightPadding) * 0.5f,
+                        (0.5f - visualRect.pivot.y) * size.y);
+                }
             }
         }
     }

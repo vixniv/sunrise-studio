@@ -30,8 +30,22 @@ public class YarnDialogPresenter : DialoguePresenterBase
     private Transform defaultTalker;
     private Vector2 defaultOffset;
     private Action onFinished;
+    private IReadOnlyList<string> directLines;
+    private int directLineIndex;
 
     public bool IsPlaying => playing;
+
+    public bool CanPlayNode(string node)
+    {
+        if (runner == null || runner.YarnProject == null || string.IsNullOrWhiteSpace(node))
+            return false;
+
+        string wanted = node.Trim();
+        foreach (string available in runner.YarnProject.NodeNames)
+            if (string.Equals(available, wanted, StringComparison.Ordinal))
+                return true;
+        return false;
+    }
 
     // Hides the active dialogue display while Yarn continues a cutscene command.
     public void HideDialogueForCutscene()
@@ -59,6 +73,57 @@ public class YarnDialogPresenter : DialoguePresenterBase
         onFinished = finished;
         hud = ResolveActiveHud();
         RunNode(node);
+    }
+
+    // Uses same HUD for inspector-authored fallback lines when configured Yarn node is missing.
+    public void PlayLines(
+        IReadOnlyList<string> lines,
+        Transform talker,
+        Vector2 talkerOffset,
+        PlayerMove player,
+        Action finished)
+    {
+        if (IsPlaying || runner != null && runner.IsDialogueRunning || lines == null || lines.Count == 0)
+        {
+            finished?.Invoke();
+            return;
+        }
+
+        playing = true;
+        listener = player;
+        if (listener != null)
+            listener.InteractionMenuOpen = true;
+        defaultTalker = talker;
+        defaultOffset = talkerOffset;
+        onFinished = finished;
+        directLines = lines;
+        directLineIndex = 0;
+        hud = ResolveActiveHud();
+
+        if (hud != null)
+            ShowNextDirectLine();
+        else if (bubble != null)
+            bubble.Show(talker, talkerOffset, lines, player, Finish);
+        else
+            Finish();
+    }
+
+    private void ShowNextDirectLine()
+    {
+        if (!playing || directLines == null)
+            return;
+        if (directLineIndex >= directLines.Count)
+        {
+            Finish();
+            return;
+        }
+
+        DialogSpeaker speaker = defaultTalker != null
+            ? defaultTalker.GetComponent<DialogSpeaker>()
+            : null;
+        string speakerName = speaker != null ? speaker.CharacterName : string.Empty;
+        string line = directLines[directLineIndex++];
+        hud.ShowLine(speakerName, line, defaultTalker, defaultOffset, ShowNextDirectLine);
     }
 
     private async void RunNode(string node)
@@ -101,6 +166,12 @@ public class YarnDialogPresenter : DialoguePresenterBase
 
         if (hud != null)
         {
+            // Never let the legacy world-space DialogBubble render alongside the HUD.
+            // Its TMP text lives in world space and can otherwise appear far below the
+            // screen-space bubble while the HUD panel itself looks empty.
+            if (bubble != null && bubble.IsOpen)
+                bubble.Close();
+
             bool hudAdvanced = false;
             hud.ShowLine(line.CharacterName, line.TextWithoutCharacterName.Text, talker, offset, () => hudAdvanced = true);
             await YarnTask.WaitUntil(() => hudAdvanced || !hud.IsVisible, token.NextContentToken).SuppressCancellationThrow();
@@ -181,6 +252,8 @@ public class YarnDialogPresenter : DialoguePresenterBase
         playing = false;
         listener = null;
         defaultTalker = null;
+        directLines = null;
+        directLineIndex = 0;
         onFinished = null;
         finished?.Invoke();
     }

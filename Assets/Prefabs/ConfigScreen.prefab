@@ -1441,10 +1441,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 586, y: 270}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1643,6 +1643,7 @@ GameObject:
   - component: {fileID: 2419186114312586605}
   - component: {fileID: 3878580980914968672}
   - component: {fileID: 8377866942565620176}
+  - component: {fileID: 4418728797223704788}
   m_Layer: 5
   m_Name: BTN_Close
   m_TagString: Untagged
@@ -1738,7 +1739,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 21300000, guid: 878a0156ab3c34f089ac80d61d90ff75, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: dd01abaf195ff48f3aeaad2c451e1f95, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: ac20a4e812dbb4402b8cd0a4b31e451a, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: 878a0156ab3c34f089ac80d61d90ff75, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -1767,6 +1768,22 @@ MonoBehaviour:
   visual: {fileID: 4211682972894178270}
   selectable: {fileID: 3878580980914968672}
   pressedOffset: {x: 2, y: -2}
+--- !u!114 &4418728797223704788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7263967084898676359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e7a8ccd5def4d8085d5b063c637e91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SunriseStudio.UI.PressedTextVisual
+  selectable: {fileID: 3878580980914968672}
+  label: {fileID: 1697090137813649495}
+  pressedOffset: {x: 1, y: -1}
+  pressedColor: {r: 0.9019608, g: 0.95686275, b: 1, a: 1}
 --- !u!1 &7523877455873286636
 GameObject:
   m_ObjectHideFlags: 0
