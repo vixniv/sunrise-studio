@@ -158,7 +158,11 @@ Kirana: Finally, lunch break. Imagine what would happen to us without Dira.
 Lila: Dira is today's MVP. Thank you so muchhhh! I'll buy you bakwan at Warmus as a thank-you.
 Dira: You don't have to go that far, but I'm not complaining.
 Lila: Let's go to Warmus! See you guys there!
+<<close_dialogue_bubble>>
+<<move_character "LilaScene1" -10 10 "walk">>
 Dira: Careful, Lila— waaaaahhh!
+<<close_dialogue_bubble>>
+<<move_character "DiraScene1" -10 15 "run">>
 
 // Lila grabs Dira's hand and drags her out toward the cafeteria.
 // Both NPCs exit the classroom.
@@ -170,6 +174,8 @@ Kirana: So, Warmus?
 -> I don't know yet.
     Kirana: Anyway, see you there if you decide to come.
 Anin: Alright, see you there.
+<<close_dialogue_bubble>>
+<<move_character "KiranaScene1" -10 10 "walk">>
 
 // Kirana exits.
 <<hide "Kirana">>
@@ -193,8 +199,8 @@ Anin: Sup. Have you guys ordered yet?
 Kirana: Oh, Anin! We've been waiting for you. Yeah, we all got nasi goreng. You should order now, look at the queue.
 Anin: Why is everyone suddenly eating at Warmus?
 
-// Anin waits in line until it's her turn (short fade or walk-up).
-<<fade>>
+<<close_dialogue_bubble>>
+<<move_character "Anin" -10.9551 10 "walk">>
 Anin: Hi Ma'am, can I have white rice with...
 -> Fried tempeh
     Warmus Ma'am: Plain Anin and her tempeh. You really love tempeh, don't you?
@@ -204,6 +210,9 @@ Anin: Hi Ma'am, can I have white rice with...
     Warmus Ma'am: This is the signature dish from my hometown in Jogja. Hope you like it.
 Anin: Thanks, Ma'am.
 
+// Anin waits in line until it's her turn (short fade or walk-up).
+<<fade_teleport_character "Anin" -5.5 "right">>
+// Position Anin and friends at the table and play sitting animation
 <<cutscene "anin_joins_table">>
 // Anin sits down with the group.
 <<jump Lunch_Table>>
@@ -228,8 +237,11 @@ Kirana: Let's stop right there. Dira's continuing her studies too, obviously, th
 Anin: Ummm, I don't have anything in mind yet. Let's just enjoy high school while it lasts.
 
 // Fal walks up to the table.
+<<close_dialogue_bubble>>
 <<show "Fal">>
+<<move_character "Fal" -8.371 10 "walk">>
 Fal: Anin, got a sec?
+<<face_character "Anin" "left">>
 Kirana: Ooooooh.
 Fal: Shut up, Kirana. Um. Math finals. I'm kind of... dying. Could you teach me? Just the integrals.
 -> Lockers after school, then the library?
@@ -239,11 +251,18 @@ Fal: Shut up, Kirana. Um. Math finals. I'm kind of... dying. Could you teach me?
 Fal: And after we study... there's something I want to tell you.
 
 // Fal leaves.
+<<close_dialogue_bubble>>
+<<move_character "Fal" -27.5 10 "walk">>
 <<hide "Fal">>
 Kirana: HE WANTS TO TELL YOU SOMETHING.
+<<face_character "Anin" "right">>
 Anin: ...He always says that.
 Kirana: Always?? How many times have you two—
 Anin: Figure of speech.
+
+<<hide "Kirana">>
+<<hide "Dira">>
+<<hide "Lila">>
 
 <<advance_time "after_school">>
 <<quest_update "scene1_explore" "Meet Fal at the lockers">>
@@ -297,6 +316,9 @@ title: Lockers_Check
 tags: scene1 lockers
 ---
 <<if $lockers_clock and $lockers_fal and $lockers_hook>>
+    Anin: Well, let's wait for him a while longer.
+    <<close_dialogue_bubble>>
+    <<move_character "Anin" -15.8 10 "walk">>
     <<jump Lockers_FriendsArrive>>
 <<endif>>
 ===
@@ -306,14 +328,23 @@ tags: scene1 lockers event
 ---
 // Footsteps. Kirana, Dira, Lila enter from the hallway, heading to the dorm.
 // Lila stops at her locker and shoves her sketchbook inside.
-<<show "Kirana">>
-<<show "Dira">>
 <<show "Lila">>
+<<show "Kirana">>
 Lila: Anin? You're still here?
+<<face_character "Anin" "right">>
+<<close_dialogue_bubble>>
+<<start_character_move "Lila" -11.6 10 "walk" 0>>
+<<start_character_move "Kirana" -13.4 10 "walk" 0>>
+<<wait_for_character_moves>>
+
 Kirana: She's waiting for her study date.
 -> He's just late.
 -> Don't start.
 Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
+<<close_dialogue_bubble>>
+<<start_character_move "Lila" -32.6 10 "walk" 0>>
+<<start_character_move "Kirana" -32.6 10 "walk" 0>>
+<<wait_for_character_moves>>
 
 <<cutscene "fal_fall_offscreen">>
 // OFFSCREEN ONLY. A sound from above, then screams from across the park.

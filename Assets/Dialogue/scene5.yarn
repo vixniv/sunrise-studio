@@ -204,13 +204,15 @@ tags: scene5 day3 lockers event
 ---
 <<npc_enter "Fal">>
 Fal: There you are. I almost went to the auditorium.
+<<close_dialogue_bubble>>
+<<move_character_to_actor "Fal" "Anin" -2.5 10 "walk">>
 // He holds up the auditorium note from Gap 2.
 Fal: You left this in my locker, right? Looks like your writing.
 -> ...Let's go to the library. Like we planned.
 -> I didn't write that. Not awake, anyway.
     Fal: What?
 Anin: Nothing. Library. Come on.
-<<scene_transition "Library">>
+<<scene_transition_at_x "Library" 3 "right">>
 <<jump Day3_Library>>
 ===
 
@@ -258,6 +260,7 @@ Anin: So when I sleep... it's me.
 // Kirana drops onto her bed.
 <<sfx "bed_drop">>
 Kirana: You look like you saw a ghost.
+<<face_character "Anin" "right">>
 -> Maybe I did.
 -> Just tired.
 Anin: I can't sleep tonight. I won't.

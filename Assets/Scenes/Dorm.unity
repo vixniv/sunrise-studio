@@ -702,6 +702,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &127593064
@@ -966,6 +967,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &232036073
@@ -1138,6 +1140,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &269604941
@@ -1476,6 +1479,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &299217966
@@ -1788,9 +1792,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00076277653
+    x: 0
     y: 0
-    width: 0.99827105
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -2161,6 +2165,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &478959187
@@ -2525,6 +2530,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &562068912
@@ -2682,6 +2688,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &594298867
@@ -3021,6 +3028,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &647824631
@@ -3728,6 +3736,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &809762893
@@ -4240,6 +4249,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &996846613
@@ -4465,6 +4475,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1016151663
@@ -4743,6 +4754,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1106280786
@@ -4900,6 +4912,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1114854203
@@ -5727,6 +5740,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1348399120
@@ -6516,6 +6530,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1621485834
@@ -7155,6 +7170,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1698370573
@@ -7327,6 +7343,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1705730919
@@ -7859,6 +7876,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1767709687
@@ -9089,6 +9107,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &1986528042
@@ -9680,6 +9699,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &2130792102
@@ -9867,6 +9887,7 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
 --- !u!61 &2133278597
@@ -10286,14 +10307,22 @@ PrefabInstance:
       objectReference: {fileID: 1326022622}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].name
       value: Kirana
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].target
+      value: 
+      objectReference: {fileID: 2892008741172733836}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].target
       value: 
       objectReference: {fileID: 1360440004}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}

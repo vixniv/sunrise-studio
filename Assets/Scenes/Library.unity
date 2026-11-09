@@ -1271,7 +1271,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -23.441793, y: 2.43568, z: -10}
+  m_LocalPosition: {x: -13.815473, y: 2.43613, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3157,6 +3157,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1361912579}
   - component: {fileID: 1361912577}
+  - component: {fileID: 1361912581}
+  - component: {fileID: 1361912580}
   m_Layer: 0
   m_Name: Fal
   m_TagString: Untagged
@@ -3194,6 +3196,76 @@ Transform:
   - {fileID: 226776418}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1361912580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361912576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1361912581}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!61 &1361912581
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361912576}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.02676344, y: 2.967081}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.4466896, y: 5.690838}
+  m_EdgeRadius: 0
 --- !u!1 &1372744677
 GameObject:
   m_ObjectHideFlags: 0
@@ -3500,6 +3572,11 @@ Transform:
   - {fileID: 670628163}
   m_Father: {fileID: 877562381}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1506014909 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 1616248448}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1543805769
 GameObject:
   m_ObjectHideFlags: 0
@@ -3607,7 +3684,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2564647810717430902, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
   m_PrefabInstance: {fileID: 1616248448}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1506014909}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05006a984cf7d4e0c8592952039a256d, type: 3}
@@ -4948,14 +5025,22 @@ PrefabInstance:
       objectReference: {fileID: 1326022622}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].name
       value: Fal
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].target
+      value: 
+      objectReference: {fileID: 1506014909}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].target
       value: 
       objectReference: {fileID: 1361912576}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}

@@ -47,6 +47,15 @@ public class YarnDialogPresenter : DialoguePresenterBase
         return false;
     }
 
+    // Hides the active dialogue display while Yarn continues a cutscene command.
+    public void HideDialogueForCutscene()
+    {
+        if (hud != null)
+            hud.Hide();
+        else if (bubble != null)
+            bubble.HideForCutscene();
+    }
+
     // Runs the Yarn node. Lines without a character name show above defaultTalker (plus talkerOffset).
     // finished runs once the dialogue ends. player may be null (cutscenes).
     public void Play(string node, Transform talker, Vector2 talkerOffset, PlayerMove player, Action finished)
@@ -217,6 +226,19 @@ public class YarnDialogPresenter : DialoguePresenterBase
         // Closing the wheel frees the player; the dialogue is still going.
         if (listener != null) listener.InteractionMenuOpen = true;
         return picked >= 0 ? available[picked] : null;
+    }
+
+    // A finished line stays on screen until the next line replaces it. Commands that cover the screen
+    // (<<advance_time>>, <<fade>>, scene changes) call this first, so the old line is gone when the screen opens again.
+    // The dialogue keeps running: the next line opens the bubble (or the HUD) again.
+    public void HideCurrentLine()
+    {
+        if (!IsPlaying) return;
+        if (bubble != null) bubble.Close();
+        // Lines show in the DialogueHudView when the scene has one, so it must be hidden too.
+        if (hud != null) hud.Hide();
+        // Closing the bubble frees the player; the dialogue is still going.
+        if (listener != null) listener.InteractionMenuOpen = true;
     }
 
     private void Finish()
