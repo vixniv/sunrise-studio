@@ -70,6 +70,7 @@ public class YarnCommands : MonoBehaviour
 
     private bool leaving;
     private bool pausedAudio;
+    private YarnDialogPresenter presenter;
     private readonly HashSet<GameObject> movingActors = new HashSet<GameObject>();
 
     private static readonly int IsWalkingParameter = Animator.StringToHash("IsWalking");
@@ -294,6 +295,7 @@ public class YarnCommands : MonoBehaviour
         if (!leaving)
         {
             leaving = true;
+            HideDialogueLine();
             bool doorTransition = Key(sound) == "door";
             AudioClip clip = doorTransition
                 ? SunriseAudio.GetClip("door_open")
@@ -425,6 +427,7 @@ public class YarnCommands : MonoBehaviour
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
     private YarnTask Fade(Action whileCovered)
     {
+        HideDialogueLine();
         CircleTransition transition = CircleTransition.Instance;
         if (transition == null || !transition.Cover(whileCovered, fadeHoldSeconds))
         {
@@ -432,6 +435,14 @@ public class YarnCommands : MonoBehaviour
             return YarnTask.CompletedTask;
         }
         return YarnTask.WaitUntil(() => transition == null || !transition.IsTransitioning);
+    }
+
+    // Takes the last line off screen before a transition, so it is not still showing when the screen opens again.
+    private void HideDialogueLine()
+    {
+        if (presenter == null && runner != null) presenter = runner.GetComponentInChildren<YarnDialogPresenter>();
+        if (presenter == null) presenter = FindAnyObjectByType<YarnDialogPresenter>();
+        if (presenter != null) presenter.HideCurrentLine();
     }
 
     // <<close_dialogue_bubble>>: hides the current dialogue UI before a cutscene action.

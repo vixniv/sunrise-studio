@@ -1098,6 +1098,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1799,13 +1802,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 735187779}
     m_Modifications:
+    - target: {fileID: 352038161323612743, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4060086071087709858, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
       propertyPath: m_Name
       value: Visual
       objectReference: {fileID: 0}
     - target: {fileID: 7416779556571716530, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.875
+      value: -0.74
       objectReference: {fileID: 0}
     - target: {fileID: 7416779556571716530, guid: cb48845aa3a854d82b1e6a8ebc133420, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2774,6 +2781,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3541,6 +3551,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4194,6 +4207,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 1
+  approachDistance: 3.9
+  approachSide: 1
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4906,7 +4922,7 @@ Transform:
   m_GameObject: {fileID: 1114854201}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.375, y: -4.875, z: 0}
+  m_LocalPosition: {x: 11.8, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5084,6 +5100,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5542,7 +5561,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4768075493843228430, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.875
+      value: 1.29
       objectReference: {fileID: 0}
     - target: {fileID: 4768075493843228430, guid: cbf4a526d9ecb4701a537c12efabb625, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7580,7 +7599,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1395506584659977879, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_FlipX
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8314,7 +8333,7 @@ Transform:
   m_GameObject: {fileID: 2029213722}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 17.9375, y: -4.875, z: 0}
+  m_LocalPosition: {x: 16, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
