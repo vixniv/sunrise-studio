@@ -21,7 +21,10 @@ MonoBehaviour:
   m_ActivePlatformGuid: 
   m_AdditionalPlatformBuildSettings: []
   m_OverrideGlobalSceneList: 0
-  m_Scenes: []
+  m_Scenes:
+  - m_enabled: 1
+    m_path: Assets/Scenes/TitleScreen.unity
+    m_guid: afe1eff3e2bfb4cde94fa0ae56fab2c2
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
