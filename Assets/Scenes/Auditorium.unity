@@ -415,6 +415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -432,6 +433,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -594,6 +598,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &72864824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1759,9 +1765,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 0.99999994
-    height: 1
+    y: 0.39814815
+    width: 0.33437502
+    height: 0.2738908
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1791,7 +1797,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 36.564735, y: 2.436469, z: -10}
+  m_LocalPosition: {x: 36.564743, y: 2.436469, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1960,6 +1966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -1977,6 +1984,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2187,6 +2197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -2204,6 +2215,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2982,6 +2996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -2999,6 +3014,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3221,7 +3239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &821064790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3304,12 +3322,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 821064789}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -50.5, y: -4.875, z: 0}
   m_LocalScale: {x: 0.95, y: 0.95, z: 0.95}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2062862690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &840653989
 PrefabInstance:
@@ -3386,7 +3404,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1723448987688769398, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
 --- !u!4 &840653990 stripped
 Transform:
@@ -3721,6 +3742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -3738,6 +3760,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3941,6 +3966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -3958,6 +3984,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4108,6 +4137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -4125,6 +4155,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4373,6 +4406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -4390,6 +4424,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4546,6 +4583,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -4563,6 +4601,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5760,6 +5801,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 821064792}
+  proximityDistance: 14
 --- !u!1 &1642460116
 GameObject:
   m_ObjectHideFlags: 0
@@ -6139,6 +6182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -6156,6 +6200,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -7761,6 +7808,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &1983836183
 GameObject:
   m_ObjectHideFlags: 0
@@ -8166,7 +8215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2029213723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8298,6 +8347,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1640803320}
+  - {fileID: 821064792}
   m_Father: {fileID: 992315417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2062862691
@@ -8625,6 +8675,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &244974681915686901
 GameObject:
   m_ObjectHideFlags: 0
@@ -8816,6 +8868,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -8837,6 +8913,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -8870,6 +8962,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6820495961154592701, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -8936,6 +9036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -8953,6 +9054,9 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -8969,6 +9073,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneDoor
   cue: {fileID: 0}
+  interactionLabel: 
   destinationScene: SchoolMap
   enterSound: {fileID: 0}
   enterVolume: 1
@@ -8976,7 +9081,9 @@ MonoBehaviour:
   spawnPoint: {fileID: 0}
   defaultEntrance: 0
   spawnFacing: 0
-  storyNode: 
+  storyNode: Gap4_Auditorium_Exit
+  storyNodeChapterScene: 8
+  storyNodeUntilCutsceneStarts: {fileID: 1640803321}
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   tapMaxTravel: 0.02
@@ -9001,7 +9108,6 @@ SceneRoots:
   - {fileID: 345082558}
   - {fileID: 1175142180}
   - {fileID: 732680879}
-  - {fileID: 821064792}
   - {fileID: 1984970636}
   - {fileID: 465817826}
   - {fileID: 992315417}

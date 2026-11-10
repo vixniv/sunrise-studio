@@ -35,6 +35,10 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
     [SerializeField] private string storyNode = "";
+    [Tooltip("Optional. Run this door's Story Node during this $chapter_scene even when $story_exit is false. Set to 0 to disable.")]
+    [SerializeField, Min(0)] private int storyNodeChapterScene;
+    [Tooltip("Optional. Stop using the Story Node once this cutscene starts. Use with Story Node Chapter Scene.")]
+    [SerializeField] private YarnCutscene storyNodeUntilCutsceneStarts;
     [Tooltip("Plays the Story Node. Leave empty to use the one in the scene.")]
     [SerializeField] private YarnDialogPresenter yarnDialog;
     [Tooltip("World offset from the top of this object's sprite to the bottom of the dialog box.")]
@@ -207,7 +211,13 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
             return false;
         try
         {
-            return runner.VariableStorage.TryGetValue(YarnCommands.StoryExitVariable, out bool active) && active;
+            if (runner.VariableStorage.TryGetValue(YarnCommands.StoryExitVariable, out bool active) && active)
+                return true;
+
+            bool inChapter = storyNodeChapterScene > 0 &&
+                             runner.VariableStorage.TryGetValue("$chapter_scene", out float chapterScene) &&
+                             chapterScene == storyNodeChapterScene;
+            return inChapter && (storyNodeUntilCutsceneStarts == null || !storyNodeUntilCutsceneStarts.HasStarted);
         }
         catch (Exception e)
         {

@@ -605,8 +605,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNode
+      value: Classroom_ExitBeforeExplore
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: destinationScene
       value: SchoolMap
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: interactionLabel
+      value: Door
       objectReference: {fileID: 0}
     - target: {fileID: 7333009451300224665, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: m_LocalScale.x
@@ -686,6 +694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
+  - morning
   - lunch
   - after_school
   - midnight
@@ -1081,6 +1090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 556314116}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -1983,9 +1993,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 1
-    height: 1
+    y: 0.39814815
+    width: 0.33437502
+    height: 0.2738908
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2764,6 +2774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -3011,6 +3022,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 556314120}
+    - targetCorrespondingSourceObject: {fileID: 1723448987688769398, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
 --- !u!1 &556314116 stripped
 GameObject:
@@ -3538,6 +3552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 556314116}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -4194,6 +4209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 556314116}
+  interactionLabel: 
   wheel: {fileID: 18589155}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
@@ -5087,6 +5103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
+  interactionLabel: 
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -8688,6 +8705,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}

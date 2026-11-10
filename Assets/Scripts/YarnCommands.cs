@@ -130,7 +130,9 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
         runner.AddCommandHandler("scene_transition_at_x", (Func<string, float, string, YarnTask>)SceneTransitionAtX);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
+        runner.AddCommandHandler("advance_time_to_scene", (Func<string, string, YarnTask>)AdvanceTimeToScene);
         runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
+        runner.AddCommandHandler("delay", (Func<float, YarnTask>)Delay);
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
@@ -173,6 +175,7 @@ public class YarnCommands : MonoBehaviour
             SunriseAudio.Play("ui_quest_complete");
             Debug.Log($"Quest completed: {id}", this);
         }));
+        runner.AddCommandHandler("quest_clear", (Action)(() => SunriseStudio.UI.QuestTracker.ClearQuest()));
         runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) =>
         {
             if (visible) SunriseAudio.Play("ui_achievement");
@@ -294,7 +297,7 @@ public class YarnCommands : MonoBehaviour
     }
 
     // Loads location even when it is this scene, so a reset reloads the room with the objects of the new $chapter_scene.
-    private YarnTask LoadLocation(string location, string sound)
+    private YarnTask LoadLocation(string location, string sound, Action whileCovered = null)
     {
         string scene = FindBuildScene(Key(location));
         if (scene == null)
@@ -316,11 +319,12 @@ public class YarnCommands : MonoBehaviour
                 SunriseAudio.QueueDoorClose();
 
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(scene, clip);
+                CircleTransition.Instance.LoadScene(scene, clip, 1f, whileCovered);
             else
             {
                 if (doorTransition)
                     SunriseAudio.Play("door_open");
+                whileCovered?.Invoke();
                 SceneManager.LoadScene(scene);
             }
         }
@@ -349,6 +353,16 @@ public class YarnCommands : MonoBehaviour
         return Fade(() => ApplyTimeOfDay(slot));
     }
 
+    // <<advance_time_to_scene "lunch" "Cafeteria">>: changes time while the screen is covered,
+    // then loads the destination before uncovering it. This uses one transition for both actions.
+    private YarnTask AdvanceTimeToScene(string slot, string location)
+    {
+        SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
+            ? "night_transition"
+            : "day_transition");
+        return LoadLocation(location, "", () => ApplyTimeOfDay(slot));
+    }
+
     // Changes the time and places an actor while the same transition covers the screen.
     private YarnTask AdvanceTimeTeleportCharacter(string slot, string actorName, float destinationX, string facing)
     {
@@ -367,6 +381,22 @@ public class YarnCommands : MonoBehaviour
         TimeOfDay = slot.Trim();
         Debug.Log($"<<advance_time>>: it is now {TimeOfDay}.", this);
         TimeOfDayChanged?.Invoke();
+    }
+
+    // <<delay 1.5>>: pauses this Yarn node for 1.5 real seconds, even when the world is frozen.
+    private YarnTask Delay(float seconds)
+    {
+        if (float.IsNaN(seconds) || float.IsInfinity(seconds) || seconds < 0f)
+        {
+            Debug.LogError("<<delay>>: seconds must be a finite number of 0 or greater.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        if (seconds == 0f)
+            return YarnTask.CompletedTask;
+
+        double resumeAt = Time.unscaledTimeAsDouble + seconds;
+        return YarnTask.WaitUntil(() => this == null || Time.unscaledTimeAsDouble >= resumeAt);
     }
 
     // <<fade>>: covers and uncovers the screen. <<fade "out">> and <<fade "in">> only log for now:

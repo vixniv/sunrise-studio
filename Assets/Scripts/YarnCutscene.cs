@@ -32,11 +32,20 @@ public class YarnCutscene : MonoBehaviour
              "Off: the player still starts at the door (see DoorSpawn).")]
     [SerializeField] private bool keepPlayerPosition = true;
 
+    [Header("Optional proximity start")]
+    [Tooltip("When assigned, wait until the player is this close to the target on the X axis instead of starting on scene load.")]
+    [SerializeField] private Transform proximityTarget;
+    [SerializeField, Min(0f)] private float proximityDistance = 3f;
+
     private bool leaving;
+    private bool started;
+
+    public bool HasStarted => started || (playOnce && played.Contains(startNode.Trim()));
 
     // True when this cutscene is about to play and keeps the player where the scene places them. Checked before Start.
     public bool KeepsPlayerInPlace =>
-        keepPlayerPosition && isActiveAndEnabled && yarnDialog != null && !(playOnce && played.Contains(startNode.Trim()));
+        proximityTarget == null && keepPlayerPosition && isActiveAndEnabled && yarnDialog != null &&
+        !(playOnce && played.Contains(startNode.Trim()));
 
     // Clears the played nodes when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -52,9 +61,27 @@ public class YarnCutscene : MonoBehaviour
             yield break;
         }
         string node = startNode.Trim();
-        if (playOnce && !played.Add(node)) yield break;
+        if (playOnce && played.Contains(node)) yield break;
 
         if (player == null) player = FindAnyObjectByType<PlayerMove>();
+        if (proximityTarget != null)
+        {
+            if (player == null)
+            {
+                Debug.LogError($"{name} needs a Player for its proximity start.", this);
+                yield break;
+            }
+
+            while (isActiveAndEnabled && proximityTarget != null && player != null &&
+                   (Mathf.Abs(player.transform.position.x - proximityTarget.position.x) > proximityDistance ||
+                    player.InteractionMenuOpen || yarnDialog.IsPlaying))
+                yield return null;
+
+            if (!isActiveAndEnabled || proximityTarget == null || player == null) yield break;
+        }
+
+        if (playOnce && !played.Add(node)) yield break;
+        started = true;
         // Frozen during Start Delay too, so the player cannot walk before the first line shows.
         if (player != null) player.InteractionMenuOpen = true;
         if (startDelay > 0f) yield return new WaitForSecondsRealtime(startDelay);

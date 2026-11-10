@@ -84,6 +84,13 @@ Lila: Guys. Guys. Look.
 <<move_character "LilaScene7" 5.8 10 "walk">>
 Lila: I didn't draw these. I don't remember drawing these. But it's my sketchbook, and it's... us. At Warmus.
 // Interactable: Day4_Sketchbook (required)
+<<set $story_exit to true>>
+===
+
+title: Day4_Classroom_BlockedExit
+tags: scene7 day4 classroom interactable
+---
+Anin: Run away? not now
 ===
 
 title: Day4_Sketchbook
@@ -94,8 +101,8 @@ Anin: Page after page. The same lunch. Same table.
 // just sleepwalking.
 Anin: I didn't draw these. She did.
 Kirana: Okay. This is a prank. Right? Anin?
-<<advance_time "lunch">>
-<<scene_transition "Cafeteria">>
+<<set $story_exit to false>>
+<<advance_time_to_scene "lunch" "Cafeteria">>
 <<jump Day4_Lunch>>
 ===
 
@@ -173,6 +180,7 @@ Fal: Sometimes I'm glad. Sometimes it feels like being stuck.
 <<set $truth_fal to true>>
 <<npc_exit "Fal">>
 <<scene_transition "Dorm">>
+<<quest_clear>>
 <<jump Day4_Dorm_Night>>
 ===
 
