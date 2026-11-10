@@ -212,7 +212,7 @@ Fal: You left this in my locker, right? Looks like your writing.
 -> I didn't write that. Not awake, anyway.
     Fal: What?
 Anin: Nothing. Library. Come on.
-<<scene_transition_at_x "Library" 3 "right">>
+<<scene_transition_at_x "Library" 2.5 "right">>
 <<jump Day3_Library>>
 ===
 
@@ -225,6 +225,9 @@ Anin: Nothing. Library. Come on.
 title: Day3_Library
 tags: scene5 day3 library event
 ---
+// Anin sits on the left chair; Fal is already seated on the right one (SitPose Start Sitting).
+// The X here sets her seat, also when Play starts in the Library (Playtest Start skips the lockers transition).
+<<teleport_character "Anin" -0.7 "sit">>
 Fal: Okay. Integrals. Go easy on me.
 -> You're better at this than you think.
 -> Your dad's not here. It's just us.

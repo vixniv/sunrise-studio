@@ -1,13 +1,17 @@
 using UnityEngine;
 
 /// <summary>
-/// Switches one room background sprite to match the current Yarn time slot.
+/// Switches one room background sprite to match the current Yarn time slot,
+/// and shows objects that only belong to the day art (e.g. open counters and staff).
 /// </summary>
 public class BackgroundCycleSwitcher2D : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer backgroundRenderer;
     [SerializeField] private Sprite dayBackground;
     [SerializeField] private Sprite nightBackground;
+
+    [Tooltip("Active during the day, hidden at night (e.g. counter overlays and the staff behind them, which the night art covers with shutters).")]
+    [SerializeField] private GameObject[] dayOnlyObjects;
 
     private void OnEnable()
     {
@@ -22,11 +26,21 @@ public class BackgroundCycleSwitcher2D : MonoBehaviour
 
     private void ApplyCurrentTime()
     {
+        string timeSlot = Normalize(YarnCommands.TimeOfDay);
+        bool isNight = timeSlot == "night";
+
+        if (dayOnlyObjects != null)
+        {
+            foreach (GameObject dayOnlyObject in dayOnlyObjects)
+            {
+                if (dayOnlyObject != null)
+                    dayOnlyObject.SetActive(!isNight);
+            }
+        }
+
         if (backgroundRenderer == null)
             return;
 
-        string timeSlot = Normalize(YarnCommands.TimeOfDay);
-        bool isNight = timeSlot == "night";
         Sprite selectedBackground = isNight ? nightBackground : dayBackground;
 
         if (selectedBackground != null)
