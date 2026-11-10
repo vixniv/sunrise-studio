@@ -297,6 +297,7 @@ GameObject:
   - component: {fileID: 4729128949383697161}
   - component: {fileID: 1395506584659977879}
   - component: {fileID: 2082023501300043161}
+  - component: {fileID: 4369435733732081033}
   m_Layer: 0
   m_Name: DiraVisual
   m_TagString: Untagged
@@ -411,3 +412,27 @@ MonoBehaviour:
   - {fileID: -7407036739951846532, guid: cfeaad00a6ed44b56aa6de4504f4388f, type: 3}
   walkFramesPerSecond: 10
   runFrameRateMultiplier: 1.5
+--- !u!114 &4369435733732081033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8046009779440690047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ebf105c4b0f408bbd03f2541837287, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SitPose
+  sitFrames:
+  - {fileID: 5410114715554326697, guid: 2b82658bbf51f4f0e9b744f0878734a4, type: 3}
+  - {fileID: -895656240, guid: 2b82658bbf51f4f0e9b744f0878734a4, type: 3}
+  - {fileID: 268473974, guid: 2b82658bbf51f4f0e9b744f0878734a4, type: 3}
+  framesPerSecond: 5
+  randomStart: 1
+  startSitting: 0
+  sitOffset: {x: 0, y: -1.02}
+  faceFront: 1
+  overrideSorting: 1
+  sitSortingLayer: Characters
+  sitSortingOrder: 20

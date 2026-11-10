@@ -107,6 +107,8 @@ Kirana: Okay. This is a prank. Right? Anin?
 title: Day4_Lunch
 tags: scene7 day4 cafeteria event
 ---
+// Anin is already seated with the others when the room opens.
+<<teleport_character "Anin" -5.5 "sit">>
 <<cutscene "day4_lunch_matches">>
 // The lunch from Lila's drawings plays out exactly as drawn: same seats,
 // same nasi goreng. Lila holds the sketchbook up beside the real table.
@@ -162,7 +164,8 @@ title: Day4_Library
 tags: scene7 day4 library event
 ---
 <<npc_enter "Fal">>
-<<advance_time_teleport_character "after_school" "Anin" 3 "right">>
+// Anin takes the left chair; Fal is seated on the right one (SitPose Start Sitting).
+<<advance_time_teleport_character "after_school" "Anin" -0.7 "sit">>
 Fal: You look worse than me, and I'm the one failing math.
 Fal: Can I ask you something weird?
 Fal: Do you ever feel like we keep missing tomorrow?

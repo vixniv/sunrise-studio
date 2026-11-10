@@ -1303,6 +1303,10 @@ PrefabInstance:
       propertyPath: m_FlipX
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4369435733732081033, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: startSitting
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1415,9 +1419,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.5199005
-    width: 0.27116707
-    height: 0.27163672
+    y: 0.055555556
+    width: 0.6651411
+    height: 0.66629314
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2247,6 +2251,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 404649049}
     m_Modifications:
+    - target: {fileID: 4405488706506628109, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
+      propertyPath: startSitting
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6279886795483939002, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3681,6 +3689,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 825516236}
     m_Modifications:
+    - target: {fileID: 4405488706506628109, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
+      propertyPath: startSitting
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6279886795483939002, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4208,6 +4220,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1395506584659977879, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4369435733732081033, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: startSitting
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
@@ -6081,6 +6097,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: startSitting
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7079,6 +7099,10 @@ PrefabInstance:
     - target: {fileID: 7334341685039759227, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
       propertyPath: m_Name
       value: Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: startSitting
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

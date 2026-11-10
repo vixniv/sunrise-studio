@@ -211,8 +211,9 @@ Anin: Hi Ma'am, can I have white rice with...
 Anin: Thanks, Ma'am.
 
 // Anin waits in line until it's her turn (short fade or walk-up).
-<<fade_teleport_character "Anin" -5.5 "right">>
-// Position Anin and friends at the table and play sitting animation
+// Anin sits at the table while the screen is covered (SitPose on her Visual).
+// Kirana, Dira, and Lila are already seated (SitPose Start Sitting).
+<<fade_teleport_character "Anin" -5.5 "sit">>
 <<cutscene "anin_joins_table">>
 // Anin sits down with the group.
 <<jump Lunch_Table>>
