@@ -55,7 +55,7 @@ tags: scene4 gap2 dorm
 // Double reading: first play = the notes failed to save him.
 // Replay = the notes didn't break the loop.
 Anin: The notes didn't work. Something else, then.
-<<quest_start "gap2" "Find a way to keep him off the roof. Check the lockers again">>
+<<quest_start "gap2" "Find a way to keep him off the roof">>
 // Interactables: Gap2_Dorm_Clock, Gap2_Dorm_KiranaBed, Gap2_Dorm_Door
 ===
 

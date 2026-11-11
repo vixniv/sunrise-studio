@@ -110,11 +110,23 @@ tags: scene1 dorm interactable
 title: Classroom_Start
 tags: scene1 classroom
 ---
+// Keep the Classroom map door on its Story Node until free exploration begins.
+<<set $story_exit to true>>
 // Morning class hasn't started. Students chatting, finishing homework.
 // Kirana, Dira, Lila sit at the table next to Anin's, by the window.
 // Player explores. Interactables: Classroom_Students,
 // Classroom_AninDesk, Classroom_Friends (required to continue).
 <<quest_update "scene1_morning" "Talk to your friends">>
+===
+
+title: Classroom_ExitBeforeExplore
+tags: scene1 classroom interactable
+---
+<<if $chapter_scene == 7>>
+    <<jump Day4_Classroom_BlockedExit>>
+<<else>>
+    Anin: I should talk to my friends first.
+<<endif>>
 ===
 
 title: Classroom_Students
@@ -132,12 +144,14 @@ Anin: Good old desk. I'll miss you after graduation... or not. :p
 title: Classroom_Friends
 tags: scene1 classroom interactable required
 ---
+<<face_character "DiraScene1" "left">>
 Kirana: Hi Anin, where have you been?
 -> Why didn't you wake me up?
     Kirana: You sleep like a dead body. I tried to wake you up for ten minutes straight.
 -> Thanks for leaving me this morning.
     Kirana: I didn't want to disturb Sleeping Beauty.
 
+<<face_character "DiraScene1" "right">>
 Dira: Did you guys do the homework for today's classes?
 Lila: Oh shiii, I forgot. Dira, pleaseeeee, can I copy yours?
 Dira: Classic Lila. What about you two?
@@ -148,6 +162,8 @@ Lila: Weird flex.
 
 // Classes start. Fade, fast forward to lunch.
 <<advance_time "lunch">>
+// Let the lunch bell finish before anyone speaks.
+<<delay 2.5>>
 <<jump Classroom_LunchBreak>>
 ===
 
@@ -175,23 +191,27 @@ Kirana: So, Warmus?
     Kirana: Anyway, see you there if you decide to come.
 Anin: Alright, see you there.
 <<close_dialogue_bubble>>
-<<move_character "KiranaScene1" -10 10 "walk">>
+<<start_character_move "KiranaScene1" -10 10 "walk" 0>>
+<<delay 0.5>>
+<<face_character "Anin" "left">>
+<<wait_for_character_moves>>
 
 // Kirana exits.
 <<hide "Kirana">>
 Anin: Now what should I do?
 <<quest_start "scene1_explore" "Have a lunch with your friends">>
+<<set $story_exit to false>>
 // Player can explore the school. Events that advance time:
-//   - Lunch_Friends (required): trigger by interacting with the
-//     friends at the Friends stall in the Cafeteria.
+//   - Lunch_Warmus (required): trigger by interacting with the
+//     friends at the Warmus stall in the Cafeteria.
 ===
 
 
 // ---------------------------------------------------------------------
-// CAFETERIA — LUNCH AT FRIENDS (event, advances time)
+// CAFETERIA — LUNCH AT WARMUS (event, advances time)
 // ---------------------------------------------------------------------
 
-title: Lunch_Friends
+title: Lunch_Warmus
 tags: scene1 cafeteria event
 ---
 Kirana: No, but it's weird how we've been li—
@@ -265,7 +285,7 @@ Anin: Figure of speech.
 <<hide "Dira">>
 <<hide "Lila">>
 
-<<advance_time "after_school">>
+<<advance_time_teleport_character "after_school" "Anin" -5.5 "stand">>
 <<quest_update "scene1_explore" "Meet Fal at the lockers">>
 ===
 

@@ -41,6 +41,14 @@ namespace SunriseStudio.UI
             if (!string.Equals(QuestId, Clean(questId), StringComparison.OrdinalIgnoreCase))
                 return;
 
+            ClearQuest();
+        }
+
+        public static void ClearQuest()
+        {
+            if (QuestId.Length == 0 && Objective.Length == 0)
+                return;
+
             QuestId = string.Empty;
             Objective = string.Empty;
             Changed?.Invoke();

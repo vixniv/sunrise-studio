@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Yarn.Unity;
+using SunriseStudio.UI;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere (not a drag) loads the destination scene.
 // When several interactables are in range, the InteractionCue picks the nearest and only that one takes the tap.
@@ -35,6 +36,13 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
     [SerializeField] private string storyNode = "";
+    [Tooltip("Optional. Run this door's Story Node during this $chapter_scene even when $story_exit is false. Set to 0 to disable.")]
+    [SerializeField, Min(0)] private int storyNodeChapterScene;
+    [Tooltip("Optional. Stop using the Story Node once this cutscene starts. Use with Story Node Chapter Scene.")]
+    [SerializeField] private YarnCutscene storyNodeUntilCutsceneStarts;
+    [Tooltip("Optional. Run this door's Story Node while this quest and objective are active. Set both fields; leave them empty to disable.")]
+    [SerializeField] private string storyNodeQuestId = "";
+    [SerializeField] private string storyNodeQuestObjective = "";
     [Tooltip("Plays the Story Node. Leave empty to use the one in the scene.")]
     [SerializeField] private YarnDialogPresenter yarnDialog;
     [Tooltip("World offset from the top of this object's sprite to the bottom of the dialog box.")]
@@ -77,9 +85,20 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 
     public bool DefaultEntrance => defaultEntrance;
     public SpawnFacing Facing => spawnFacing;
-    public string InteractionLabel => !string.IsNullOrWhiteSpace(interactionLabel)
-        ? interactionLabel.Trim()
-        : InteractionLabelUtility.FromYarnTitle(storyNode, name);
+    public string InteractionLabel
+    {
+        get
+        {
+            string destination = destinationScene?.Trim();
+            if (string.Equals(destination, "SchoolMap", StringComparison.OrdinalIgnoreCase))
+                return "Go to Minimap";
+            if (string.Equals(destination, "Dorm", StringComparison.OrdinalIgnoreCase))
+                return "Go to Dorm";
+            return !string.IsNullOrWhiteSpace(interactionLabel)
+                ? interactionLabel.Trim()
+                : InteractionLabelUtility.FromYarnTitle(storyNode, name);
+        }
+    }
 
     public bool LeadsTo(string scene) =>
         !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);
@@ -203,11 +222,26 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 
     private bool StoryExitActive()
     {
-        if (string.IsNullOrWhiteSpace(storyNode) || yarnDialog == null || runner == null || runner.VariableStorage == null)
+        if (string.IsNullOrWhiteSpace(storyNode) || yarnDialog == null)
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(storyNodeQuestId) &&
+            !string.IsNullOrWhiteSpace(storyNodeQuestObjective) &&
+            string.Equals(QuestTracker.QuestId, storyNodeQuestId.Trim(), StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(QuestTracker.Objective, storyNodeQuestObjective.Trim(), StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (runner == null || runner.VariableStorage == null)
             return false;
         try
         {
-            return runner.VariableStorage.TryGetValue(YarnCommands.StoryExitVariable, out bool active) && active;
+            if (runner.VariableStorage.TryGetValue(YarnCommands.StoryExitVariable, out bool active) && active)
+                return true;
+
+            bool inChapter = storyNodeChapterScene > 0 &&
+                             runner.VariableStorage.TryGetValue("$chapter_scene", out float chapterScene) &&
+                             chapterScene == storyNodeChapterScene;
+            return inChapter && (storyNodeUntilCutsceneStarts == null || !storyNodeUntilCutsceneStarts.HasStarted);
         }
         catch (Exception e)
         {

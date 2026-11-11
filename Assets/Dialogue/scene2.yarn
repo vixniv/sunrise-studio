@@ -89,6 +89,7 @@ tags: scene2 gap1 dorm interactable
     // First visit: leaving for the school.
     // Double reading: the player hears "end his death"; on replay, "end the loop".
     Anin: If I understand him, I can end this.
+    <<quest_update "gap1" "Find out why. Maybe start from the lockers?">>
     <<scene_transition "LockerRoom">>
     <<jump Gap1_Lockers_Start>>
 <<else>>
@@ -107,11 +108,25 @@ tags: scene2 gap1 dorm interactable
 title: Gap1_Lockers_Start
 tags: scene2 gap1 lockers
 ---
+// Both Locker Room exits play their Story Nodes instead of leaving during this scene.
+<<set $story_exit to true>>
 // No dialogue on entry. Let the silence play.
 // Guide the player to the janitor cabinet until they hold the master key.
 <<if $gap1_master_key is false and $gap1_key_returned is false>>
     <<quest_update "gap1" "Find a way into Fal's locker">>
 <<endif>>
+===
+
+title: Gap1_Lockers_DormExit
+tags: scene2 gap1 lockers interactable
+---
+Anin: I can't go back now.
+===
+
+title: Gap1_Lockers_MapExit
+tags: scene2 gap1 lockers interactable
+---
+Anin: No use wandering around
 ===
 
 title: Gap1_KeyHook

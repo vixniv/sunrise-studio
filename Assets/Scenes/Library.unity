@@ -1246,10 +1246,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.055555556
-    width: 0.6651411
-    height: 0.66629314
+    x: 0.29427084
+    y: 0
+    width: 0.62172073
+    height: 0.5092592
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1565,6 +1565,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &536746195
 GameObject:
   m_ObjectHideFlags: 0
@@ -2116,6 +2118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 7
   targets: []
   followChanges: 0
@@ -2437,6 +2440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 930617832}
   - component: {fileID: 930617831}
+  - component: {fileID: 930617833}
   m_Layer: 0
   m_Name: Foreground
   m_TagString: Untagged
@@ -2519,6 +2523,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &930617833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930617830}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac7e355a9f1b4de883346a4a7357953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ForegroundParallax2D
+  targetCamera: {fileID: 409442820}
+  strength: 0.15
+  pixelsPerUnit: 16
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -4028,6 +4047,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &1635050979
 GameObject:
   m_ObjectHideFlags: 0
@@ -4591,6 +4612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 5
   targets: []
   followChanges: 0

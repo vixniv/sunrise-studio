@@ -669,6 +669,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253376293}
+  - component: {fileID: 253376294}
   m_Layer: 0
   m_Name: CounterStaff
   m_TagString: Untagged
@@ -695,6 +696,24 @@ Transform:
   - {fileID: 1705050942}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &253376294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253376292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $chapter_scene
+  matchMode: 1
+  value: cafeteria
+  targets: []
+  followChanges: 0
 --- !u!1 &291719678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1418,10 +1437,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00076277653
+    x: 0.29427084
     y: 0
-    width: 0.99827105
-    height: 1
+    width: 0.62172073
+    height: 0.5092592
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1451,7 +1470,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.25223, y: 2.43647, z: -10}
+  m_LocalPosition: {x: -18.251125, y: 2.4369802, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1681,8 +1700,7 @@ MonoBehaviour:
   backgroundRenderer: {fileID: 413000635}
   dayBackground: {fileID: 21300000, guid: e20e9b67fbea04e9fa8d071f09c82f5e, type: 3}
   nightBackground: {fileID: 21300000, guid: 1c7ba8f51630840e1819d0abd014b62e, type: 3}
-  dayOnlyObjects:
-  - {fileID: 253376292}
+  dayOnlyObjects: []
 --- !u!1 &521476652
 GameObject:
   m_ObjectHideFlags: 0
@@ -2904,6 +2922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 1
   targets: []
   followChanges: 0
@@ -3118,6 +3137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $clue_location
+  matchMode: 0
   value: cafetaria
   targets: []
   followChanges: 0
@@ -3476,6 +3496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 7
   targets: []
   followChanges: 0
@@ -3797,7 +3818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
-  interactionLabel: 
+  interactionLabel: Anin's friends
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
@@ -3810,13 +3831,13 @@ MonoBehaviour:
     timeCostMinutes: 0
     locked: 0
     lockedReason: 
-    yarnNode: Lunch_Friends
+    yarnNode: Lunch_Warmus
     dialogLines: []
     onChoose:
       m_PersistentCalls:
         m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
+  approachBeforeTalking: 1
+  approachDistance: 4.5
   approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
@@ -4066,6 +4087,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1001 &1168120478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5622,6 +5645,7 @@ GameObject:
   - component: {fileID: 1637719422}
   - component: {fileID: 1637719423}
   - component: {fileID: 1637719424}
+  - component: {fileID: 1637719425}
   m_Layer: 0
   m_Name: FemaleStaff
   m_TagString: Untagged
@@ -5725,6 +5749,20 @@ MonoBehaviour:
   walkFrames: []
   walkFramesPerSecond: 10
   runFrameRateMultiplier: 1.5
+--- !u!114 &1637719425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637719421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
+  characterName: Warmus Ma'am
+  dialogOffset: {x: 0, y: 0.25}
 --- !u!1 &1642460116
 GameObject:
   m_ObjectHideFlags: 0

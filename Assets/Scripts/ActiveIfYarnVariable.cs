@@ -14,10 +14,14 @@ using Yarn.Unity;
 // Keep this object active in the scene: an inactive object never runs the check.
 public class ActiveIfYarnVariable : MonoBehaviour
 {
+    private enum MatchMode { Exact, Odd, Even }
+
     [Tooltip("Leave empty to use this scene's Dialogue Runner.")]
     [SerializeField] private DialogueRunner runner;
     [SerializeField] private string variable = "$clue_location";
-    [Tooltip("Matched as text, ignoring case: \"cafeteria\", \"true\", \"3\".")]
+    [Tooltip("Exact matches Value as text. Odd and Even match a whole-number Yarn variable, such as $chapter_scene.")]
+    [SerializeField] private MatchMode matchMode;
+    [Tooltip("Used only for Exact matching; ignores case.")]
     [SerializeField] private string value = "cafeteria";
     [Tooltip("Objects to show or hide. Leave empty to show or hide this object.")]
     [SerializeField] private List<GameObject> targets = new List<GameObject>();
@@ -84,8 +88,20 @@ public class ActiveIfYarnVariable : MonoBehaviour
     private bool Matches(object current)
     {
         string text = Convert.ToString(current, CultureInfo.InvariantCulture);
-        bool matches = string.Equals(text, value.Trim(), StringComparison.OrdinalIgnoreCase);
-        Debug.Log($"{name}: {variableName} is \"{text}\", needs \"{value.Trim()}\"; {(matches ? "showing" : "hiding")}.", this);
+        bool matches;
+        if (matchMode == MatchMode.Exact)
+        {
+            matches = string.Equals(text, value.Trim(), StringComparison.OrdinalIgnoreCase);
+        }
+        else
+        {
+            bool isWholeNumber = double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double number)
+                && !double.IsNaN(number) && !double.IsInfinity(number) && number == Math.Truncate(number);
+            matches = isWholeNumber && (matchMode == MatchMode.Odd ? number % 2 == 1 : number % 2 == 0);
+        }
+
+        string needed = matchMode == MatchMode.Exact ? $"\"{value.Trim()}\"" : matchMode.ToString().ToLowerInvariant();
+        Debug.Log($"{name}: {variableName} is \"{text}\", needs {needed}; {(matches ? "showing" : "hiding")}.", this);
         return matches;
     }
 }

@@ -61,7 +61,8 @@ public class CircleTransition : MonoBehaviour
     public void LoadScene(
         string sceneName,
         AudioClip sound = null,
-        float volume = 1f)
+        float volume = 1f,
+        System.Action whileCovered = null)
     {
         if (transitioning)
             return;
@@ -86,7 +87,7 @@ public class CircleTransition : MonoBehaviour
         if (sound != null)
             audioSource.PlayOneShot(sound, volume);
 
-        StartCoroutine(TransitionRoutine(sceneName));
+        StartCoroutine(TransitionRoutine(sceneName, whileCovered));
     }
 
     // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
@@ -130,7 +131,7 @@ public class CircleTransition : MonoBehaviour
         transitioning = false;
     }
 
-    IEnumerator TransitionRoutine(string sceneName)
+    IEnumerator TransitionRoutine(string sceneName, System.Action whileCovered)
     {
         transitioning = true;
 
@@ -143,6 +144,8 @@ public class CircleTransition : MonoBehaviour
             0f,
             coverScale,
             closeDuration);
+
+        whileCovered?.Invoke();
 
         AsyncOperation loading =
             SceneManager.LoadSceneAsync(sceneName);

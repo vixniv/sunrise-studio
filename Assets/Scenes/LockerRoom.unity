@@ -638,6 +638,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNode
+      value: Gap1_Lockers_DormExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: spawnPoint
       value: 
       objectReference: {fileID: 1571593568}
@@ -648,6 +652,18 @@ PrefabInstance:
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: destinationScene
       value: Dorm
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNodeQuestId
+      value: day4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNodeChapterScene
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNodeQuestObjective
+      value: Meet Fal at the library after school
       objectReference: {fileID: 0}
     - target: {fileID: 7333009451300224665, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: m_LocalScale.x
@@ -1860,10 +1876,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.17429444
+    x: 0.29427084
     y: 0
-    width: 0.5339012
-    height: 0.53482586
+    width: 0.62172073
+    height: 0.5092592
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1893,7 +1909,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.065851, y: 2.4359598, z: -10}
+  m_LocalPosition: {x: -11.065831, y: 2.4359598, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2258,7 +2274,7 @@ SpriteRenderer:
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: d9b81ac0e8b4242d8abaa21da6e1f693, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 90625ecd60a6b4f62b0c103879b88538, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2695,6 +2711,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNode
+      value: Gap1_Lockers_MapExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: spawnPoint
       value: 
       objectReference: {fileID: 54189685}
@@ -2993,6 +3013,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &706477575
 GameObject:
   m_ObjectHideFlags: 0
@@ -4292,6 +4314,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -7549,6 +7573,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &1776789831
 GameObject:
   m_ObjectHideFlags: 0
@@ -10358,6 +10384,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!4 &2130381993
 Transform:
   m_ObjectHideFlags: 0

@@ -18,7 +18,25 @@ public class DialogSpeaker : MonoBehaviour
     public static bool TryFind(string name, out DialogSpeaker speaker)
     {
         speaker = null;
-        return !string.IsNullOrEmpty(name) && active.TryGetValue(name, out speaker) && speaker != null;
+        if (string.IsNullOrEmpty(name)) return false;
+        if (active.TryGetValue(name, out speaker) && speaker != null && speaker.isActiveAndEnabled)
+            return true;
+
+        // Another speaker with the same name may have replaced this one, then been disabled.
+        // Recover the remaining active speaker so its dialogue still follows the correct character.
+        foreach (DialogSpeaker candidate in FindObjectsByType<DialogSpeaker>(FindObjectsInactive.Exclude))
+        {
+            if (candidate.CharacterName != name || !candidate.isActiveAndEnabled)
+                continue;
+
+            active[name] = candidate;
+            speaker = candidate;
+            return true;
+        }
+
+        active.Remove(name);
+        speaker = null;
+        return false;
     }
 
     private void OnEnable()
