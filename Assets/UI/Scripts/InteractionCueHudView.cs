@@ -22,6 +22,9 @@ namespace SunriseStudio.UI
         [SerializeField, Min(0f)] float screenMargin = 6f;
         [SerializeField] RectTransform avoidRect;
         [SerializeField, Min(0f)] float avoidanceGap = 4f;
+        [Tooltip("Raises the label above the player's sprite when they would overlap on screen.")]
+        [SerializeField] bool avoidPlayer = true;
+        [SerializeField, Min(0f)] float playerGap = 4f;
 
         [Header("Size")]
         [SerializeField, Min(1f)] float minimumWidth = 48f;
@@ -33,6 +36,7 @@ namespace SunriseStudio.UI
         Canvas parentCanvas;
         RectTransform parentRect;
         string shownText = string.Empty;
+        SpriteRenderer[] playerSprites = System.Array.Empty<SpriteRenderer>();
 
         void Awake()
         {
@@ -91,6 +95,8 @@ namespace SunriseStudio.UI
             localPoint.y = Mathf.Round(localPoint.y);
             localPoint = ClampToParent(localPoint);
             root.anchoredPosition = localPoint;
+            localPoint = AvoidPlayer(localPoint, worldCamera, uiCamera);
+            root.anchoredPosition = localPoint;
             root.anchoredPosition = AvoidInteractButton(localPoint);
             SetVisible(true);
         }
@@ -118,6 +124,70 @@ namespace SunriseStudio.UI
             position.x = Mathf.Clamp(position.x, area.xMin + halfWidth + screenMargin, area.xMax - halfWidth - screenMargin);
             position.y = Mathf.Clamp(position.y, area.yMin + screenMargin, area.yMax - height - screenMargin);
             return position;
+        }
+
+        // Moves the label up until its bottom edge clears the player's sprite (Anin), so the two never overlap.
+        // root must already be at `position` when this runs.
+        Vector2 AvoidPlayer(Vector2 position, Camera worldCamera, Camera uiCamera)
+        {
+            if (!avoidPlayer || !TryGetPlayerRect(worldCamera, uiCamera, out Rect playerRect))
+                return position;
+
+            Bounds labelBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(parentRect, root);
+            bool overlapsHorizontally = labelBounds.max.x + playerGap > playerRect.xMin
+                && labelBounds.min.x - playerGap < playerRect.xMax;
+            bool overlapsVertically = labelBounds.max.y + playerGap > playerRect.yMin
+                && labelBounds.min.y - playerGap < playerRect.yMax;
+
+            if (!overlapsHorizontally || !overlapsVertically)
+                return position;
+
+            position.y += playerRect.yMax + playerGap - labelBounds.min.y;
+            position.y = Mathf.Round(position.y);
+            return ClampToParent(position);
+        }
+
+        // The player's visible sprites as one rectangle in the label's parent space.
+        bool TryGetPlayerRect(Camera worldCamera, Camera uiCamera, out Rect rect)
+        {
+            rect = default;
+
+            if (playerSprites.Length == 0 || playerSprites[0] == null)
+            {
+                PlayerMove player = FindAnyObjectByType<PlayerMove>();
+                if (player == null)
+                    return false;
+                playerSprites = player.GetComponentsInChildren<SpriteRenderer>(true);
+            }
+
+            bool found = false;
+            Bounds combined = default;
+            foreach (SpriteRenderer sprite in playerSprites)
+            {
+                // Skip the shared world-space cue, which is a child of the player.
+                if (sprite == null || !sprite.enabled || sprite.sprite == null
+                    || sprite.GetComponentInParent<InteractionCue>() != null)
+                    continue;
+                if (!found) { combined = sprite.bounds; found = true; }
+                else combined.Encapsulate(sprite.bounds);
+            }
+            if (!found)
+                return false;
+
+            if (!TryToLocal(worldCamera, uiCamera, combined.min, out Vector2 a)
+                || !TryToLocal(worldCamera, uiCamera, combined.max, out Vector2 b))
+                return false;
+
+            rect = Rect.MinMaxRect(
+                Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y),
+                Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y));
+            return true;
+        }
+
+        bool TryToLocal(Camera worldCamera, Camera uiCamera, Vector3 worldPoint, out Vector2 local)
+        {
+            Vector2 screen = worldCamera.WorldToScreenPoint(worldPoint);
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screen, uiCamera, out local);
         }
 
         Vector2 AvoidInteractButton(Vector2 position)

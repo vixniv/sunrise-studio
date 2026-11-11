@@ -118,7 +118,7 @@ tags: scene3 day2
 ---
 // Free exploration starts. Show the event marker on the minimap.
 // These run BEFORE the transition: nothing after <<scene_transition>> runs.
-<<quest_update "day2" "Explore the school">>
+<<quest_update "day2" "Check out the lockers">>
 <<event_marker "day2_fal_notes" true>>
 // Event: Day2_Lockers_Morning (trigger: enter the Locker Room).
 // Optional day events will be added later.
@@ -242,6 +242,7 @@ tags: scene3 day2 lockers
 ---
 // Late sunlight through the high window. Anin waits beside Fal's
 // locker, two math books under her arm.
+<<quest_update "day2" "Wait for Fal and look around the lockers">>
 Anin: Today's different. He read them. Today's different.
 ===
 
@@ -312,6 +313,7 @@ Anin: But I... I helped him.
 // Make it interactable: Day2_CrumpledPaper (required to end the scene).
 // Shows the paper (ActiveIfYarnVariable with Follow Changes).
 <<set $d2_paper_dropped to true>>
+<<quest_update "day2" "Check what Fal dropped near the key hook">>
 ===
 
 title: Day2_CrumpledPaper

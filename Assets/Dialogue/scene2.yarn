@@ -89,7 +89,6 @@ tags: scene2 gap1 dorm interactable
     // First visit: leaving for the school.
     // Double reading: the player hears "end his death"; on replay, "end the loop".
     Anin: If I understand him, I can end this.
-    <<quest_update "gap1" "Find out why">>
     <<scene_transition "LockerRoom">>
     <<jump Gap1_Lockers_Start>>
 <<else>>
@@ -109,6 +108,10 @@ title: Gap1_Lockers_Start
 tags: scene2 gap1 lockers
 ---
 // No dialogue on entry. Let the silence play.
+// Guide the player to the janitor cabinet until they hold the master key.
+<<if $gap1_master_key is false and $gap1_key_returned is false>>
+    <<quest_update "gap1" "Find a way into Fal's locker">>
+<<endif>>
 ===
 
 title: Gap1_KeyHook
@@ -126,6 +129,7 @@ tags: scene2 gap1 lockers interactable
     Anin: The master key. Sorry, Pak.
     <<give_item "master_key">>
     <<set $gap1_master_key to true>>
+    <<quest_update "gap1" "Open Fal's locker with the master key">>
 <<elseif $gap1_master_key is true and $gap1_locker_closed is true>>
     <<jump Gap1_ReturnKey>>
 <<else>>
@@ -148,7 +152,7 @@ tags: scene2 gap1 lockers interactable
         // Hides the locker contents (ActiveIfYarnVariable with Follow Changes).
         <<set $gap1_locker_open to false>>
         <<set $gap1_locker_closed to true>>
-        <<quest_update "gap1" "Return the master key">>
+        <<quest_update "gap1" "Put the master key back">>
     <<endif>>
 <<elseif $gap1_locker_open is false>>
     Anin: I'm sorry, Fal. I need to know.

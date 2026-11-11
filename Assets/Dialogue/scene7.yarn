@@ -54,7 +54,7 @@ Kirana: ...I was going to tell you after graduation. My parents found work back 
 Kirana: Don't look at me like that. It's not like I'm dying.
 Kirana: Whatever. Someone's being weird. Let's just go.
 <<npc_exit "Kirana">>
-<<quest_update "day4" "Go to class">>
+<<quest_update "day4" "Walk to class with Kirana">>
 <<scene_transition "Classroom">>
 <<jump Day4_Classroom>>
 ===
@@ -83,6 +83,7 @@ Lila: Guys. Guys. Look.
 <<face_character "Anin" "left">>
 <<move_character "LilaScene7" 5.8 10 "walk">>
 Lila: I didn't draw these. I don't remember drawing these. But it's my sketchbook, and it's... us. At Warmus.
+<<quest_update "day4" "Look at Lila's sketchbook">>
 // Interactable: Day4_Sketchbook (required)
 ===
 
@@ -174,6 +175,7 @@ Fal: Do you ever feel like we keep missing tomorrow?
 Fal: Like it's always about to happen. Graduation, my dad's plan, whatever comes after. And it just... doesn't come.
 Fal: Sometimes I'm glad. Sometimes it feels like being stuck.
 <<set $truth_fal to true>>
+<<quest_update "day4" "Go back to the dorm and stay awake!">>
 <<npc_exit "Fal">>
 <<scene_transition "Dorm">>
 <<jump Day4_Dorm_Night>>
