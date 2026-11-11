@@ -136,6 +136,8 @@ tags: scene3 day2
 title: Day2_Lockers_Morning
 tags: scene3 day2 lockers event
 ---
+// Keep both Locker Room exits on their existing Story Nodes until the day ends.
+<<set $story_exit to true>>
 <<event_marker "day2_fal_notes" false>>
 Anin: It looks exactly the same as in my dream. So... it wasn't a dream?
 ===
@@ -240,6 +242,8 @@ Anin: He went quiet. That's good, right? It means it reached him.
 title: Day2_Lockers_Evening
 tags: scene3 day2 lockers
 ---
+// Keep both exits on their existing Story Nodes until the day-ending reset.
+<<set $story_exit to true>>
 // Late sunlight through the high window. Anin waits beside Fal's
 // locker, two math books under her arm.
 Anin: Today's different. He read them. Today's different.

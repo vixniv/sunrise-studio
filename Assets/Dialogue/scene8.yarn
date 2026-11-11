@@ -33,6 +33,7 @@
 title: Gap4_Start
 tags: scene8 gap4 dorm
 ---
+<<quest_clear>>
 <<set $ending_started to false>>
 // Lets the Dorm door run Gap4_Door instead of leaving freely.
 <<set $story_exit to true>>
@@ -66,6 +67,12 @@ Anin: ...Where it started.
 // Empty. Dark. Someone stands on the stage beside the flagpole, back
 // turned.
 // ---------------------------------------------------------------------
+
+title: Gap4_Auditorium_Exit
+tags: scene8 gap4 auditorium interactable
+---
+Anin: I need to end this.
+===
 
 title: Gap4_Auditorium
 tags: scene8 gap4 auditorium event

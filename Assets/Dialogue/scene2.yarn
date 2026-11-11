@@ -108,7 +108,21 @@ tags: scene2 gap1 dorm interactable
 title: Gap1_Lockers_Start
 tags: scene2 gap1 lockers
 ---
+// Both Locker Room exits play their Story Nodes instead of leaving during this scene.
+<<set $story_exit to true>>
 // No dialogue on entry. Let the silence play.
+===
+
+title: Gap1_Lockers_DormExit
+tags: scene2 gap1 lockers interactable
+---
+Anin: I can't go back now.
+===
+
+title: Gap1_Lockers_MapExit
+tags: scene2 gap1 lockers interactable
+---
+Anin: No use wandering around
 ===
 
 title: Gap1_KeyHook
