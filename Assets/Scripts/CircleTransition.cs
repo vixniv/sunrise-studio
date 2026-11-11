@@ -17,7 +17,14 @@ public class CircleTransition : MonoBehaviour
     [Min(0.05f)]
     public float openDuration = 0.35f;
 
+    [Header("Audio")]
+    [Tooltip("Plays sounds passed to LoadScene, such as a door. Left empty, one is added at runtime. " +
+             "It lives on this persistent object, so the sound is not cut off when the scene unloads.")]
+    public AudioSource audioSource;
+
     bool transitioning;
+
+    public bool IsTransitioning => transitioning;
 
     void Awake()
     {
@@ -38,9 +45,23 @@ public class CircleTransition : MonoBehaviour
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D
+        }
     }
 
-    public void LoadScene(string sceneName)
+    // sound, when given, plays as the circle starts closing.
+    public void LoadScene(
+        string sceneName,
+        AudioClip sound = null,
+        float volume = 1f)
     {
         if (transitioning)
             return;
@@ -53,7 +74,60 @@ public class CircleTransition : MonoBehaviour
             return;
         }
 
+        // LoadSceneAsync returns null for these, which would leave the screen covered.
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError(
+                $"CircleTransition: scene \"{sceneName}\" is not in the Build Profile scene list, or the name is misspelled.",
+                this);
+            return;
+        }
+
+        if (sound != null)
+            audioSource.PlayOneShot(sound, volume);
+
         StartCoroutine(TransitionRoutine(sceneName));
+    }
+
+    // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
+    // Returns false when a transition is already running or there is no circle.
+    public bool Cover(System.Action whileCovered, float holdSeconds)
+    {
+        if (transitioning || circle == null)
+            return false;
+
+        StartCoroutine(CoverRoutine(whileCovered, holdSeconds));
+        return true;
+    }
+
+    IEnumerator CoverRoutine(System.Action whileCovered, float holdSeconds)
+    {
+        transitioning = true;
+
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        float coverScale = CalculateCoverScale();
+
+        yield return AnimateCircle(
+            0f,
+            coverScale,
+            closeDuration);
+
+        whileCovered?.Invoke();
+
+        if (holdSeconds > 0f)
+            yield return new WaitForSecondsRealtime(holdSeconds);
+
+        yield return AnimateCircle(
+            coverScale,
+            0f,
+            openDuration);
+
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+
+        transitioning = false;
     }
 
     IEnumerator TransitionRoutine(string sceneName)

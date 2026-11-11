@@ -11,7 +11,7 @@ TagManager:
   - Walkable
   - Water
   - UI
-  - 
+  - WindowBacklightZone
   - 
   - 
   - 
@@ -38,11 +38,20 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3051039053
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
   - name: Characters
     uniqueID: 721941457
+    locked: 0
+  - name: Foreground
+    uniqueID: 359192023
+    locked: 0
+  - name: UI
+    uniqueID: 3085026535
     locked: 0
   m_RenderingLayers:
   - Default

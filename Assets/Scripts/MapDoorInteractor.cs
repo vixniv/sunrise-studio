@@ -62,8 +62,17 @@ public class MapDoorInteractor : MonoBehaviour
             (keyboard.eKey.wasPressedThisFrame ||
              keyboard.enterKey.wasPressedThisFrame))
         {
-            StartCoroutine(EnterDoor(nearbyDoor));
+            TryEnterNearbyDoor();
         }
+    }
+
+    // Public UI hook for the map's on-screen Enter button.
+    public void TryEnterNearbyDoor()
+    {
+        if (entering || nearbyDoor == null)
+            return;
+
+        StartCoroutine(EnterDoor(nearbyDoor));
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -150,13 +159,21 @@ public class MapDoorInteractor : MonoBehaviour
 
         rb.MovePosition(endPosition);
 
+        AudioClip transitionSound = SunriseAudio.GetClip("door_open");
+        if (transitionSound == null)
+            transitionSound = door.enterSound;
+        SunriseAudio.QueueDoorClose(door.enterVolume);
+
         if (CircleTransition.Instance != null)
         {
             CircleTransition.Instance.LoadScene(
-                door.destinationScene);
+                door.destinationScene,
+                transitionSound,
+                door.enterVolume);
         }
         else
         {
+            SunriseAudio.Play("door_open", door.enterVolume);
             SceneManager.LoadScene(door.destinationScene);
         }
     }

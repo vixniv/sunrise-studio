@@ -1,0 +1,274 @@
+// =====================================================================
+// SCENE 5 · DAY 3: RETRACING THE DREAM (MIDPOINT)
+// Anin follows her dream step by step and realizes her dream self has
+// been killing Fal. She undoes the trap, moves the session back to the
+// library, and saves him. No death, so a SOFT RESET at midnight.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - Commands used (new ones marked NEW):
+//     <<enable_control>>, <<quest_start>>, <<quest_update>>,
+//     <<scene_transition>>, <<advance_time>>, <<event_marker>>,
+//     <<npc_enter>>, <<npc_exit>>, <<remove_item>>  (same as before)
+//     <<memory_montage true/false>> NEW  screen dims, gap colour grade
+//                                    bleeds in at the edges
+//     <<stay_awake "fail">>      NEW  screen slowly dims; Anin falls
+//                                    asleep. (Scene 7 uses "success".)
+//     <<soft_reset>>             NEW  midnight loop back to Dec 10, no
+//                                    white flash
+// - Speaker "Night Anin" = Anin's own voice from the gaps, played back
+//   as memory. Same voice actor/text style as night Anin later.
+// - Speaker "Note" = text shown on screen in Anin's handwriting.
+// - World state at start: ROOFTOP KEY is in Anin's blazer (from Gap 2).
+//   Flag in the auditorium is crooked; one flagpole screw is loose.
+//   Fal has the auditorium note in his locker.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — MORNING
+// Same interactables as Day 2 (bed, poster, desk, Kirana's bed, door),
+// plus Day3_Dorm_Blazer.
+// ---------------------------------------------------------------------
+
+title: Day3_Start
+tags: scene5 day3 dorm
+---
+<<sfx "alarm_clock">>
+// Lets the Dorm door run Day3_Dorm_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<set $d3_dressed to false>>
+<<set $d3_found_key to false>>
+<<set $d3_seen_flag to false>>
+<<set $d3_seen_base to false>>
+<<set $d3_undo_base to false>>
+<<set $d3_undo_flag to false>>
+// Kirana is still asleep.
+Anin: Ugh, that dream again. What is it, anyway?
+Anin: And why does Fal always die, even when I tried to stop it the night before?
+<<enable_control>>
+<<quest_start "day3" "Get ready for school">>
+===
+
+title: Day3_Dorm_Blazer
+tags: scene5 day3 dorm interactable required
+---
+// Anin's blazer on the chair. NEW interactable today.
+<<if $d3_found_key is false>>
+    <<sfx "blazer_key">>
+    Anin: There's something in the pocket.
+    Anin: ...The rooftop key.
+    Anin: "He won't go up there tonight." I said that. In the dream, I said that.
+    Anin: I have to check.
+    <<set $d3_found_key to true>>
+    <<set $d3_dressed to true>>
+    <<quest_start "day3_event" "What did I do last night?">>
+<<else>>
+    Anin: The key's still in my pocket.
+<<endif>>
+===
+
+title: Day3_Dorm_Door
+tags: scene5 day3 dorm interactable
+---
+<<if $d3_found_key is false>>
+    Anin: Something feels off. I should look around first.
+<<else>>
+    Anin: Leave the room?
+    -> Yes
+        // The marker goes first: nothing after <<scene_transition>> runs.
+        <<event_marker "day3_auditorium" true>>
+        <<scene_transition "LockerRoom">>
+    -> Later
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// EVENT: WHAT DID I DO LAST NIGHT?
+// Trigger: enter the Auditorium. Packed with students (basketball,
+// chilling in the shade).
+// Interactables: Day3_Aud_Hoop, Day3_Aud_Stage, Day3_Aud_Flag,
+// Day3_Aud_FlagpoleBase (enabled only after the flag).
+// ---------------------------------------------------------------------
+
+title: Day3_Auditorium
+tags: scene5 day3 auditorium event
+---
+<<event_marker "day3_auditorium" false>>
+<<sfx "basketball_practice">>
+Anin: Everything looks the same as in my dream. Except for the people.
+Anin: Now... what did I do last night?
+===
+
+title: Day3_Aud_Hoop
+tags: scene5 day3 auditorium interactable
+---
+Anin: In the dream, it was so quiet in here.
+===
+
+title: Day3_Aud_Stage
+tags: scene5 day3 auditorium interactable
+---
+Anin: Ready for tomorrow. Like it was last night.
+===
+
+title: Day3_Aud_Flag
+tags: scene5 day3 auditorium interactable
+---
+<<if $d3_undo_base is true and $d3_undo_flag is false>>
+    <<sfx "flag_cloth">>
+    // Anin pulls the rope; the flag hangs straight.
+    Anin: Straight. Nothing to fix.
+    <<set $d3_undo_flag to true>>
+    <<jump Day3_Undo_Check>>
+<<elseif $d3_undo_flag is true>>
+    Anin: Straight. Nothing to fix.
+<<else>>
+    <<sfx "flag_cloth">>
+    Anin: It's crooked. Exactly like last night.
+    Anin: "He'll want to fix it."
+    Anin: ...Why would I say that?
+    <<set $d3_seen_flag to true>>
+    // Enable Day3_Aud_FlagpoleBase now.
+<<endif>>
+===
+
+title: Day3_Aud_FlagpoleBase
+tags: scene5 day3 auditorium interactable
+---
+<<if $d3_seen_flag is false>>
+    // Should not be reachable; the base is hidden until the flag is examined.
+<<elseif $d3_seen_base is false>>
+    // Anin kneels. Nobody in the hall notices.
+    Anin: One of the screws. It's loose.
+    Anin: Loose by hand. Not by time.
+    Anin: I was kneeling right here. My hands were—
+    <<set $d3_seen_base to true>>
+    <<jump Day3_Montage>>
+<<elseif $d3_undo_base is false>>
+    <<sfx "bolt_tighten">>
+    Anin: Tight. As tight as it goes.
+    <<set $d3_undo_base to true>>
+    <<jump Day3_Undo_Check>>
+<<else>>
+    Anin: Tight. As tight as it goes.
+<<endif>>
+===
+
+title: Day3_Montage
+tags: scene5 day3 auditorium cutscene
+---
+<<memory_montage true>>
+// Each line plays in night Anin's voice, the exact words from the gaps.
+Night Anin: "If I understand him, I can end this."
+Night Anin: "He has to read these. This time it'll work."
+Night Anin: "He won't go up there tonight."
+Night Anin: "He'll want to fix it."
+Night Anin: "It's done."
+// The blur from Gap 1 clears. For the first time the player sees what
+// the notes said, in Anin's handwriting. TWO LINES ONLY. Don't linger.
+Note: "You will never be enough."
+Note: "You're a disgrace to your family."
+// Anin's own line from Day 2, in her day voice.
+Anin: "Someone who believes in you."
+<<memory_montage false>>
+// Back to the noisy auditorium.
+Anin: That was me.
+Anin: The notes. The key. The screw. I did all of it.
+Anin: I've been killing him.
+// MIDPOINT: Anin now believes she sleepwalks and that her dream self is
+// a bad side of her. She does NOT know yet that it's another Anin.
+Anin: ...Then I can undo it.
+<<quest_update "day3_event" "Undo what I did">>
+// Player must now use the flagpole base again, then the flag.
+===
+
+title: Day3_Undo_Check
+tags: scene5 day3 auditorium
+---
+<<if $d3_undo_base and $d3_undo_flag>>
+    <<quest_update "day3_event" "Meet Fal at the lockers. Keep him away from here">>
+    <<advance_time "after_school">>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — AFTER SCHOOL (required)
+// Trigger: enter the Locker Room after the bell. Fal arrives on time.
+// ---------------------------------------------------------------------
+
+title: Day3_Lockers
+tags: scene5 day3 lockers event
+---
+<<npc_enter "Fal">>
+Fal: There you are. I almost went to the auditorium.
+<<close_dialogue_bubble>>
+<<move_character_to_actor "Fal" "Anin" -2.5 10 "walk">>
+// He holds up the auditorium note from Gap 2.
+Fal: You left this in my locker, right? Looks like your writing.
+-> ...Let's go to the library. Like we planned.
+-> I didn't write that. Not awake, anyway.
+    Fal: What?
+Anin: Nothing. Library. Come on.
+<<scene_transition_at_x "Library" 2.5 "right">>
+<<jump Day3_Library>>
+===
+
+
+// ---------------------------------------------------------------------
+// LIBRARY — STUDY SESSION (required)
+// Quiet table by the window. Late sunlight. The promise is kept.
+// ---------------------------------------------------------------------
+
+title: Day3_Library
+tags: scene5 day3 library event
+---
+// Anin sits on the left chair; Fal is already seated on the right one (SitPose Start Sitting).
+// The X here sets her seat, also when Play starts in the Library (Playtest Start skips the lockers transition).
+<<teleport_character "Anin" -0.7 "sit">>
+Fal: Okay. Integrals. Go easy on me.
+-> You're better at this than you think.
+-> Your dad's not here. It's just us.
+Fal: ...You'd be the first person to say that.
+Anin: What do you actually want to do? After all this.
+Fal: Medicine. That's the plan.
+Anin: I didn't ask about the plan.
+// Long pause before the next line.
+Fal: ...Rockets. Stupid, right?
+Anin: Not stupid.
+Fal: Hey. That thing I wanted to tell you.
+Fal: Tomorrow. After graduation. I'll tell you then.
+Anin: ...Tomorrow.
+<<npc_exit "Fal">>
+<<scene_transition "Dorm">>
+<<jump Day3_Dorm_Evening>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — EVENING
+// ---------------------------------------------------------------------
+
+title: Day3_Dorm_Evening
+tags: scene5 day3 dorm
+---
+// Anin on her bed, watching the window. The sky goes dark.
+// No sound from above. No screams.
+Anin: He's alive.
+Anin: He's alive, because I was there this time.
+Anin: So when I sleep... it's me.
+<<npc_enter "Kirana">>
+// Kirana drops onto her bed.
+<<sfx "bed_drop">>
+Kirana: You look like you saw a ghost.
+<<face_character "Anin" "right">>
+-> Maybe I did.
+-> Just tired.
+Anin: I can't sleep tonight. I won't.
+<<stay_awake "fail">>
+<<set $chapter_scene to 6>>
+<<soft_reset>>
+// TRANSITION → Scene 6: Gap 3
+===

@@ -1,0 +1,208 @@
+// =====================================================================
+// SCENE 4 · GAP 2: THE AUDITORIUM (00:00)
+// Night Anin takes the rooftop key, slips Fal a note moving their study
+// session to the auditorium, and "checks" the flagpole, actually
+// loosening a screw at its base.
+//
+// NOTES FOR THE PROGRAMMER
+// - Every "//" comment is a stage direction for you, not in-game text.
+// - WRITING RULE: every line night Anin says is true. She withholds,
+//   she never lies. Please don't add lines without checking with N.
+// - Same gap rules as Scene 2: no NPCs, Kirana's bed empty, clocks
+//   frozen at 00:00.
+// - NO master key, stage light or ladder in this scene (no assets yet).
+// - Commands used (new ones marked NEW):
+//     <<gap_mode true/false>>         gap visuals on/off
+//     <<quest_start "id" "Title">>    start / show a quest
+//     <<quest_update "id" "Title">>   update the quest objective
+//     <<scene_transition "Location">> fade + load a location
+//     <<give_item "id">>              add item to inventory
+//     <<remove_item "id">>            remove item from inventory
+//     <<blur_action "id">>        NEW Anin kneels; her hands blur exactly
+//                                     like <<blur_writing>> in Gap 1. Slow
+//                                     metallic squeak, a screw turning.
+//                                     The player must NOT see which way.
+//     <<end_gap>>                     second hand moves, fade to Dec 10
+// - ORDER (linear, no fail state):
+//     rooftop key -> write note -> slide it into Fal's locker
+//     -> auditorium -> flag -> flagpole base -> bed
+//   Fal's locker shows only once $gap2_rooftop_key is true, and the
+//   flagpole base only once $gap2_seen_flag is true (ActiveIfYarnVariable
+//   with Follow Changes), so the order holds.
+// - The ROOFTOP KEY stays in Anin's inventory at the end. Day 3 starts
+//   with it in her blazer pocket.
+// - World state for Day 3: the flag is still crooked, one screw at the
+//   flagpole base is loose, and the auditorium note is in Fal's locker.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00
+// ---------------------------------------------------------------------
+
+title: Gap2_Start
+tags: scene4 gap2 dorm
+---
+<<gap_mode true>>
+// Lets the Dorm door run Gap2_Dorm_Door instead of leaving freely.
+<<set $story_exit to true>>
+<<set $gap2_rooftop_key to false>>
+<<set $gap2_note_placed to false>>
+<<set $gap2_seen_flag to false>>
+<<set $gap2_pole_done to false>>
+
+// Anin opens her eyes. Kirana's bed is empty again, the blanket flat.
+// Double reading: first play = the notes failed to save him.
+// Replay = the notes didn't break the loop.
+Anin: The notes didn't work. Something else, then.
+<<quest_start "gap2" "Keep him off the roof">>
+// Interactables: Gap2_Dorm_Clock, Gap2_Dorm_KiranaBed, Gap2_Dorm_Door
+===
+
+title: Gap2_Dorm_Clock
+tags: scene4 gap2 dorm interactable
+---
+Anin: Midnight. Still.
+===
+
+title: Gap2_Dorm_KiranaBed
+tags: scene4 gap2 dorm interactable
+---
+Anin: Gone, like last time.
+===
+
+title: Gap2_Dorm_Door
+tags: scene4 gap2 dorm interactable
+---
+<<if $gap2_pole_done is false>>
+    Anin: Not the rooftop. Not tonight.
+    <<scene_transition "LockerRoom">>
+<<else>>
+    <<jump Gap2_Dorm_End>>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — 00:00
+// Interactables: Gap2_KeyHook, Gap2_FalLocker
+// ---------------------------------------------------------------------
+
+title: Gap2_KeyHook
+tags: scene4 gap2 lockers interactable
+---
+// Hook tag: ROOFTOP. Key is on the hook.
+<<if $gap2_rooftop_key is false>>
+    // Double reading: true both ways. He won't die on the roof,
+    // because he'll die in the auditorium.
+    Anin: He won't go up there tonight.
+    <<give_item "rooftop_key">>
+    <<set $gap2_rooftop_key to true>>
+<<else>>
+    Anin: Empty.
+<<endif>>
+===
+
+title: Gap2_FalLocker
+tags: scene4 gap2 lockers interactable
+---
+// Fal's locker, rocket sticker on the door. It stays LOCKED.
+<<if $gap2_note_placed is true>>
+    Anin: He'll find it.
+<<else>>
+    <<sfx "write_and_place_note">>
+    Anin: He still meets me here after school. So we'll study somewhere else.
+    // Writing animation. Unlike Gap 1, this note is READABLE and NOT
+    // blurred. Show the line below in a handwritten-note style if you
+    // can. It is harmless on its face, and unsigned.
+    Anin: "Let's study in the auditorium today instead of the library. It's quieter. Same time."
+    Anin: Somewhere quiet. Nobody goes there after school.
+    // Anin slides the note through the vent slot of Fal's locker.
+    // No key needed.
+    <<set $gap2_note_placed to true>>
+    <<quest_update "gap2" "Go to the auditorium">>
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// AUDITORIUM — 00:00
+// Dark and silent. The flag hangs still in the middle of the room.
+// Interactables: Gap2_Hoop, Gap2_MicStand, Gap2_Flag, Gap2_FlagpoleBase
+// Gap2_FlagpoleBase is only interactable after Gap2_Flag.
+// ---------------------------------------------------------------------
+
+title: Gap2_Auditorium_Enter
+tags: scene4 gap2 auditorium
+---
+Anin: Tomorrow's ceremony is supposed to happen here.
+===
+
+title: Gap2_Hoop
+tags: scene4 gap2 auditorium interactable
+---
+Anin: Nobody's played here since they started preparing for graduation.
+===
+
+title: Gap2_MicStand
+tags: scene4 gap2 auditorium interactable
+---
+// On the stage. Scene 8's confrontation happens here.
+Anin: The stage is ready. Just waiting for tomorrow.
+===
+
+title: Gap2_Flag
+tags: scene4 gap2 auditorium interactable
+---
+<<if $gap2_pole_done is true>>
+    Anin: It's done.
+<<else>>
+    <<sfx "flag_cloth">>
+    Anin: It's crooked.
+    // Double reading: first play = she knows Fal can't leave things
+    // imperfect. Replay = this is the trigger she's setting up.
+    Anin: He'll want to fix it.
+    <<set $gap2_seen_flag to true>>
+    // Enable Gap2_FlagpoleBase now.
+<<endif>>
+===
+
+title: Gap2_FlagpoleBase
+tags: scene4 gap2 auditorium interactable
+---
+<<if $gap2_seen_flag is false>>
+    // Should not be reachable; base is disabled until the flag is examined.
+<<elseif $gap2_pole_done is false>>
+    Anin: Let me check the base.
+    <<blur_action "flagpole_base">>
+    // Double reading: player hears "tightened". It's loosened.
+    Anin: It's done.
+    <<set $gap2_pole_done to true>>
+    <<quest_update "gap2" "Go back to bed">>
+    // Same as Gap 1: back to the Dorm, where Gap2_Dorm_End is the start
+    // node while $gap2_pole_done is true.
+    <<scene_transition "Dorm">>
+<<else>>
+    Anin: It's done.
+<<endif>>
+===
+
+
+// ---------------------------------------------------------------------
+// DORM — 00:00 (END)
+// Trigger: Gap2_FlagpoleBase loads the Dorm; this is its start node while
+// $gap2_pole_done is true.
+// ---------------------------------------------------------------------
+
+title: Gap2_Dorm_End
+tags: scene4 gap2 dorm
+---
+// Anin lies down. The clock still reads 00:00.
+// Double reading: true, and the worst thing she's said yet.
+Anin: He'll be safe from the roof. That's what matters.
+// The second hand moves.
+<<gap_mode false>>
+<<set $chapter_scene to 5>>
+<<end_gap>>
+// TRANSITION → Scene 5: Day 3. Keep "rooftop_key" in the inventory.
+===
