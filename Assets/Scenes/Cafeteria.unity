@@ -1419,9 +1419,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.055555556
-    width: 0.6651411
-    height: 0.66629314
+    y: 1.0287037
+    width: 0.61718756
+    height: 0.50554603
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1451,7 +1451,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.252226, y: 2.43647, z: -10}
+  m_LocalPosition: {x: -28.12595, y: 2.4365501, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3815,8 +3815,8 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
+  approachBeforeTalking: 1
+  approachDistance: 4.5
   approachSide: 0
   playInteractSound: 1
   tapMaxTravel: 0.02
@@ -4066,6 +4066,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1001 &1168120478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5622,6 +5624,7 @@ GameObject:
   - component: {fileID: 1637719422}
   - component: {fileID: 1637719423}
   - component: {fileID: 1637719424}
+  - component: {fileID: 1637719425}
   m_Layer: 0
   m_Name: FemaleStaff
   m_TagString: Untagged
@@ -5725,6 +5728,20 @@ MonoBehaviour:
   walkFrames: []
   walkFramesPerSecond: 10
   runFrameRateMultiplier: 1.5
+--- !u!114 &1637719425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637719421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
+  characterName: Warmus Ma'am
+  dialogOffset: {x: 0, y: 0.25}
 --- !u!1 &1642460116
 GameObject:
   m_ObjectHideFlags: 0
