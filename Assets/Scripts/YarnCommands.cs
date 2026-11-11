@@ -517,6 +517,9 @@ public class YarnCommands : MonoBehaviour
     {
         foreach (SitPose pose in target.GetComponentsInChildren<SitPose>(true))
             pose.Stand();
+        // Anin still in bed after her wake-up gets out of bed too.
+        foreach (WakeUpPose pose in target.GetComponentsInChildren<WakeUpPose>(true))
+            pose.GetUp();
     }
 
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.

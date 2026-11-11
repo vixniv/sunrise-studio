@@ -438,6 +438,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 827808215}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &18589153
@@ -1810,10 +1811,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.5199005
-    width: 0.27116707
-    height: 0.27163672
+    x: 0.54691076
+    y: 0
+    width: 0.05959827
+    height: 0.05970149
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2119,6 +2120,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 827808215}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &478959184
@@ -2490,6 +2492,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &562068909
@@ -3534,6 +3537,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 827808215}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!4 &799165874
@@ -3620,6 +3624,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &805562962
@@ -3942,6 +3947,40 @@ Transform:
   - {fileID: 1639088848}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &827808210 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8250812533857408771, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 2892008741172733835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &827808215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827808210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae380c7386084bdea936aedb66a1e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WakeUpPose
+  wakeFrames:
+  - {fileID: 3922642160426642108, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: 6496830721877733060, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: -8302055697067748141, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: -1865729901140089044, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: -1649437166133595875, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: -7126266800346498118, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  - {fileID: 3367462400839958388, guid: 740b40f6eb9054281a1c08ff02c28ca5, type: 3}
+  framesPerSecond: 6
+  asleepSeconds: 0.6
+  afterSeconds: 0.3
+  coverHoldSeconds: 0.5
+  poseOffset: {x: -6.715, y: 2.72}
+  flipArt: 0
+  overrideSorting: 0
+  poseSortingLayer: Default
+  poseSortingOrder: 5
 --- !u!1 &851998795
 GameObject:
   m_ObjectHideFlags: 0
@@ -4461,6 +4500,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1016151660
@@ -4693,6 +4733,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1064475396
@@ -4748,6 +4789,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1106280783
@@ -5209,6 +5251,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1150308183
@@ -5264,6 +5307,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1001 &1230267127
@@ -5496,6 +5540,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1289861777
@@ -5551,6 +5596,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 827808215}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1316545316
@@ -5606,6 +5652,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1319071890
@@ -6444,6 +6491,7 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  wakeUp: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1543805769
@@ -10468,6 +10516,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1723448987688769398, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 8250812533857408771, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 827808215}
   m_SourcePrefab: {fileID: 100100000, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
 --- !u!1 &2892008741172733836 stripped
 GameObject:
