@@ -1808,10 +1808,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.5199005
-    width: 0.27116707
-    height: 0.27163672
+    x: 0.00076277653
+    y: 0
+    width: 0.99827105
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -10297,6 +10297,10 @@ PrefabInstance:
     - target: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5274343994737457614, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_IsActive

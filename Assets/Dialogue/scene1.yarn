@@ -182,16 +182,16 @@ Anin: Alright, see you there.
 Anin: Now what should I do?
 <<quest_start "scene1_explore" "Explore the school">>
 // Player can explore the school. Events that advance time:
-//   - Lunch_Warmus (required): trigger by interacting with the
-//     friends at the Warmus stall in the Cafeteria.
+//   - Lunch_Friends (required): trigger by interacting with the
+//     friends at the Friends stall in the Cafeteria.
 ===
 
 
 // ---------------------------------------------------------------------
-// CAFETERIA — LUNCH AT WARMUS (event, advances time)
+// CAFETERIA — LUNCH AT FRIENDS (event, advances time)
 // ---------------------------------------------------------------------
 
-title: Lunch_Warmus
+title: Lunch_Friends
 tags: scene1 cafeteria event
 ---
 Kirana: No, but it's weird how we've been li—

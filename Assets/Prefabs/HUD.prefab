@@ -3785,7 +3785,7 @@ MonoBehaviour:
   verticalTextPadding: 8
   defaultTextColor: {r: 0.027, g: 0.051, b: 0.169, a: 1}
   selectedTextColor: {r: 1, g: 1, b: 1, a: 1}
-  visualScale: 0.55
+  visualScale: 0.65
   tiltDegrees: 2
 --- !u!1 &4604539534068655311
 GameObject:
@@ -4840,7 +4840,7 @@ MonoBehaviour:
   choicesRoot: {fileID: 440062407481244790}
   optionTemplate: {fileID: 7257291886739278378}
   charactersPerSecond: 42
-  visualScale: 0.5
+  visualScale: 0.65
   tiltDegrees: 2
   maximumLinesPerPage: 2
   textAreaSize: {x: 210, y: 48}
