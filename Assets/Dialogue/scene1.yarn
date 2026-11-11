@@ -285,7 +285,7 @@ Anin: Figure of speech.
 <<hide "Dira">>
 <<hide "Lila">>
 
-<<advance_time "after_school">>
+<<advance_time_teleport_character "after_school" "Anin" -5.5 "stand">>
 <<quest_update "scene1_explore" "Meet Fal at the lockers">>
 ===
 
