@@ -1811,9 +1811,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.39814815
-    width: 0.33437502
-    height: 0.2738908
+    y: 0.5199005
+    width: 0.27116707
+    height: 0.27163672
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -6162,7 +6162,7 @@ SpriteRenderer:
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 6c31068f42b1043d0bea9cd4ab0a45d6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: fb9324f1c15544b5bad93891e8caad1b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

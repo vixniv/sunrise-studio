@@ -137,6 +137,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
         runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
+        runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
+        runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
         runner.AddCommandHandler("close_dialogue_bubble", (Action)CloseDialogueBubble);
@@ -415,6 +417,8 @@ public class YarnCommands : MonoBehaviour
     }
 
     // <<teleport_character "Anin" -8 "left">>: changes world X and facing immediately, keeping Y and Z.
+    // Facing "sit" keeps the facing and sits the character down (SitPose), e.g. <<fade_teleport_character "Anin" -5.5 "sit">>
+    // seats Anin at the table while the screen is covered.
     private void TeleportCharacter(string actorName, float destinationX, string facing)
     {
         GameObject target = FindActorTarget(actorName, "teleport_character");
@@ -434,9 +438,9 @@ public class YarnCommands : MonoBehaviour
         }
 
         string facingKey = (facing ?? string.Empty).Trim().ToLowerInvariant();
-        if (facingKey != "left" && facingKey != "right" && facingKey != "keep")
+        if (facingKey != "left" && facingKey != "right" && facingKey != "keep" && facingKey != "sit")
         {
-            Debug.LogError($"<<teleport_character>>: facing must be \"left\", \"right\", or \"keep\" for \"{target.name}\".", this);
+            Debug.LogError($"<<teleport_character>>: facing must be \"left\", \"right\", \"keep\", or \"sit\" for \"{target.name}\".", this);
             return;
         }
 
@@ -445,7 +449,9 @@ public class YarnCommands : MonoBehaviour
         Rigidbody2D body = target.GetComponent<Rigidbody2D>();
         if (body != null)
             body.position = new Vector2(destinationX, body.position.y);
-        if (facingKey != "keep")
+        if (facingKey == "sit")
+            SetSitting(target, true, "teleport_character");
+        else if (facingKey != "keep")
             FaceActor(target, facingKey == "right" ? 1f : -1f);
     }
 
@@ -464,6 +470,48 @@ public class YarnCommands : MonoBehaviour
         }
 
         FaceActor(target, facingKey == "right" ? 1f : -1f);
+    }
+
+    // <<sit "Dira">> / <<stand "Dira">>: plays or stops the SitPose on the character's Visual child.
+    // Sits in place: put the character on the chair first with <<teleport_character>> or <<move_character>>.
+    // Looks for the enabled DialogSpeaker of that name first (like <<hide>>), then the Actors list.
+    private void SetSitting(string actorName, bool sit)
+    {
+        string command = sit ? "sit" : "stand";
+        string key = (actorName ?? string.Empty).Trim();
+        GameObject target = DialogSpeaker.TryFind(key, out DialogSpeaker speaker)
+            ? speaker.gameObject
+            : FindActorTarget(key, command);
+        if (target != null)
+            SetSitting(target, sit, command);
+    }
+
+    private void SetSitting(GameObject target, bool sit, string command)
+    {
+        if (sit && movingActors.Contains(target))
+        {
+            Debug.LogError($"<<{command}>>: \"{target.name}\" is still moving. Wait for its move to finish before sitting.", this);
+            return;
+        }
+
+        SitPose[] poses = target.GetComponentsInChildren<SitPose>(true);
+        if (poses.Length == 0)
+        {
+            Debug.LogError($"<<{command}>>: \"{target.name}\" has no SitPose on its Visual child.", this);
+            return;
+        }
+
+        foreach (SitPose pose in poses)
+        {
+            if (sit) pose.Sit();
+            else pose.Stand();
+        }
+    }
+
+    private static void StandUp(GameObject target)
+    {
+        foreach (SitPose pose in target.GetComponentsInChildren<SitPose>(true))
+            pose.Stand();
     }
 
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
@@ -640,6 +688,7 @@ public class YarnCommands : MonoBehaviour
     private IEnumerator MoveCharacterRoutine(GameObject target, float destinationX, float speed, MoveAnimation moveAnimation, float delay)
     {
         Animator animator = null;
+        SpriteFrameLoop[] frameLoops = null;
         bool animationStarted = false;
         PlayerMove[] playerMoves = null;
         bool[] playerMoveWasEnabled = null;
@@ -654,6 +703,9 @@ public class YarnCommands : MonoBehaviour
             if (target == null)
                 yield break;
 
+            // A seated character gets up before walking off.
+            StandUp(target);
+
             float deltaX = destinationX - target.transform.position.x;
             if (Mathf.Abs(deltaX) <= 0.0001f)
                 yield break;
@@ -662,7 +714,10 @@ public class YarnCommands : MonoBehaviour
             FaceActor(target, facingDirection);
 
             animator = target.GetComponentInChildren<Animator>(true);
-            animationStarted = TryStartMoveAnimation(target, animator, moveAnimation);
+            // NPCs without an Animator (Dira, Kirana, Lila, Fal) animate with SpriteFrameLoop instead.
+            if (animator == null)
+                frameLoops = target.GetComponentsInChildren<SpriteFrameLoop>(true);
+            animationStarted = TryStartMoveAnimation(target, animator, frameLoops, moveAnimation);
 
             // Pause player input and physics while moving by Transform so the cutscene reaches its exact X.
             playerMoves = target.GetComponentsInChildren<PlayerMove>(true);
@@ -709,7 +764,7 @@ public class YarnCommands : MonoBehaviour
             if (target != null)
             {
                 if (animationStarted)
-                    StopMoveAnimation(animator);
+                    StopMoveAnimation(animator, frameLoops);
 
                 if (bodies != null)
                 {
@@ -741,6 +796,24 @@ public class YarnCommands : MonoBehaviour
     private static void FaceActor(GameObject target, float direction)
     {
         PlayerMove playerMove = target.GetComponent<PlayerMove>();
+
+        // Seated characters keep their front-facing sit art; SitPose remembers the facing for when they stand.
+        SitPose[] poses = target.GetComponentsInChildren<SitPose>(true);
+        bool seated = false;
+        foreach (SitPose pose in poses)
+        {
+            if (pose == null || !pose.IsSitting)
+                continue;
+
+            bool flip = playerMove != null
+                ? (playerMove.artFacesLeft ? direction > 0f : direction < 0f)
+                : direction > 0f;
+            pose.SetFlipX(flip);
+            seated = true;
+        }
+        if (seated)
+            return;
+
         if (playerMove != null)
         {
             playerMove.Face(direction);
@@ -756,16 +829,13 @@ public class YarnCommands : MonoBehaviour
         }
     }
 
-    private bool TryStartMoveAnimation(GameObject target, Animator animator, MoveAnimation animation)
+    private bool TryStartMoveAnimation(GameObject target, Animator animator, SpriteFrameLoop[] frameLoops, MoveAnimation animation)
     {
         if (animation == MoveAnimation.None)
             return false;
 
         if (animator == null)
-        {
-            Debug.LogError($"<<move_character>>: \"{target.name}\" has no Animator. It will move without animation.", this);
-            return false;
-        }
+            return TryStartFrameLoopWalk(target, frameLoops, animation);
 
         bool hasWalking = HasBoolParameter(animator, IsWalkingParameter);
         bool hasRunning = HasBoolParameter(animator, IsRunningParameter);
@@ -782,8 +852,38 @@ public class YarnCommands : MonoBehaviour
         return true;
     }
 
-    private static void StopMoveAnimation(Animator animator)
+    // Walk for characters animated by SpriteFrameLoop. "run" plays the walk frames faster.
+    private bool TryStartFrameLoopWalk(GameObject target, SpriteFrameLoop[] frameLoops, MoveAnimation animation)
     {
+        bool started = false;
+        if (frameLoops != null)
+        {
+            foreach (SpriteFrameLoop frameLoop in frameLoops)
+            {
+                if (frameLoop == null || !frameLoop.HasWalkFrames)
+                    continue;
+
+                frameLoop.SetMoving(true, animation == MoveAnimation.Run);
+                started = true;
+            }
+        }
+
+        if (!started)
+            Debug.LogError($"<<move_character>>: \"{target.name}\" has no Animator and no SpriteFrameLoop with Walk Frames. It will move without animation.", this);
+        return started;
+    }
+
+    private static void StopMoveAnimation(Animator animator, SpriteFrameLoop[] frameLoops)
+    {
+        if (frameLoops != null)
+        {
+            foreach (SpriteFrameLoop frameLoop in frameLoops)
+            {
+                if (frameLoop != null)
+                    frameLoop.SetMoving(false, false);
+            }
+        }
+
         if (animator == null)
             return;
 

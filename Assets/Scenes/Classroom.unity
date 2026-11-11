@@ -1263,7 +1263,7 @@ Transform:
   m_GameObject: {fileID: 200124692}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.125, y: -4.875, z: 0}
+  m_LocalPosition: {x: 12.5, y: -4.875, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1992,10 +1992,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.39814815
-    width: 0.33437502
-    height: 0.2738908
+    x: 0.17429444
+    y: 0
+    width: 0.5339012
+    height: 0.53482586
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -4826,7 +4826,7 @@ SpriteRenderer:
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: e9ae4207acc5c47e4bd411b418ae7441, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 32d4d4be9cbb04ca2b8418d6ec61b587, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4865,8 +4865,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
   backgroundRenderer: {fileID: 1104637438}
-  dayBackground: {fileID: 21300000, guid: e9ae4207acc5c47e4bd411b418ae7441, type: 3}
-  nightBackground: {fileID: 21300000, guid: 254ebecb86bb1438ba66f02a8a15b099, type: 3}
+  dayBackground: {fileID: 21300000, guid: 32d4d4be9cbb04ca2b8418d6ec61b587, type: 3}
+  nightBackground: {fileID: 21300000, guid: c397c2cf80d524b7388696af9f58bdd8, type: 3}
+  dayOnlyObjects: []
 --- !u!1 &1114854201
 GameObject:
   m_ObjectHideFlags: 0

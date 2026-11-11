@@ -591,6 +591,7 @@ GameObject:
   - component: {fileID: 5546698152702113541}
   - component: {fileID: 8708204972718609183}
   - component: {fileID: 1361794407133064048}
+  - component: {fileID: 4323318190434503431}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -697,6 +698,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4323318190434503431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8250812533857408771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ebf105c4b0f408bbd03f2541837287, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SitPose
+  sitFrames:
+  - {fileID: 1710900155588320299, guid: bb719b214d8474582a59b855a1a4d4aa, type: 3}
+  - {fileID: -1239014189, guid: bb719b214d8474582a59b855a1a4d4aa, type: 3}
+  - {fileID: 1946200777, guid: bb719b214d8474582a59b855a1a4d4aa, type: 3}
+  framesPerSecond: 5
+  randomStart: 1
+  startSitting: 0
+  sitOffset: {x: 1.45, y: -0.35}
+  faceFront: 1
+  overrideSorting: 0
+  sitSortingLayer: Default
+  sitSortingOrder: 5
 --- !u!1001 &6697390529076107895
 PrefabInstance:
   m_ObjectHideFlags: 0

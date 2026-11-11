@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 3859405708248132063}
   - component: {fileID: 1103957328339039329}
   - component: {fileID: 2125167089279249940}
+  - component: {fileID: 8765720951215239086}
   m_Layer: 0
   m_Name: KiranaVisual
   m_TagString: Untagged
@@ -257,6 +258,41 @@ MonoBehaviour:
   - {fileID: 1659729395, guid: a319792464eba45a09226d59e87ea8ea, type: 3}
   framesPerSecond: 5
   randomStart: 1
+  walkFrames:
+  - {fileID: 768626705202597609, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -6581053661256078121, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 532621129199782263, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -5548538725665468776, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 5225238895518417889, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 5321633664626808119, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: 180523815968990069, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  - {fileID: -1636434758507469156, guid: 4c837558de5004bbfbf067dafe65109d, type: 3}
+  walkFramesPerSecond: 10
+  runFrameRateMultiplier: 1.5
+--- !u!114 &8765720951215239086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7334341685039759227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ebf105c4b0f408bbd03f2541837287, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SitPose
+  sitFrames:
+  - {fileID: 7903016075579963352, guid: 9ce6f0fa5f31d49a1b0c7510a0170fff, type: 3}
+  - {fileID: -909583126, guid: 9ce6f0fa5f31d49a1b0c7510a0170fff, type: 3}
+  - {fileID: -1479525937, guid: 9ce6f0fa5f31d49a1b0c7510a0170fff, type: 3}
+  framesPerSecond: 5
+  randomStart: 1
+  startSitting: 0
+  sitOffset: {x: 0, y: -1.02}
+  faceFront: 1
+  overrideSorting: 1
+  sitSortingLayer: Characters
+  sitSortingOrder: 20
 --- !u!1 &8413948469590168066
 GameObject:
   m_ObjectHideFlags: 0

@@ -1868,10 +1868,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.27407408
-    width: 1.4973959
-    height: 1.2265358
+    x: 0.17429444
+    y: 0
+    width: 0.5339012
+    height: 0.53482586
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2266,12 +2266,12 @@ SpriteRenderer:
   m_SortingLayer: -1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 6c146b61bf07c43c6a8f26d53bcba959, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9b81ac0e8b4242d8abaa21da6e1f693, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 73.125, y: 16.875}
+  m_Size: {x: 58.75, y: 16.875}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

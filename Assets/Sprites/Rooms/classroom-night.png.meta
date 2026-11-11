@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 254ebecb86bb1438ba66f02a8a15b099
+guid: c397c2cf80d524b7388696af9f58bdd8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2238881418586504180
-    second: classroom-night_0
+      213: 4776019842385859448
+    second: classroom-night 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,6 +97,19 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -113,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: classroom-night_0
+      name: classroom-night 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c04cdee3635ede0e0800000000000000
-      internalID: -2238881418586504180
+      spriteID: 87350a10eb4d74240800000000000000
+      internalID: 4776019842385859448
       vertices: []
       indices: 
       edges: []
@@ -148,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      classroom-night_0: -2238881418586504180
+      classroom-night 1_0: 4776019842385859448
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

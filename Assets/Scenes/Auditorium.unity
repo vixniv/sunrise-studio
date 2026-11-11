@@ -1764,10 +1764,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.39814815
-    width: 0.33437502
-    height: 0.2738908
+    x: 0.17429444
+    y: 0
+    width: 0.5339012
+    height: 0.53482586
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2915,7 +2915,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &732680878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2959,7 +2959,6 @@ GameObject:
   m_Component:
   - component: {fileID: 735187779}
   - component: {fileID: 735187777}
-  - component: {fileID: 735187776}
   - component: {fileID: 735187775}
   - component: {fileID: 735187780}
   m_Layer: 0
@@ -2983,43 +2982,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Student Next Door
   dialogOffset: {x: 0, y: 0.25}
---- !u!114 &735187776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 735187774}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
-  cue: {fileID: 0}
-  interactionLabel: 
-  wheel: {fileID: 18589155}
-  actionCarousel: {fileID: 0}
-  dialog: {fileID: 1326022622}
-  yarnDialog: {fileID: 1908947818}
-  dialogOffset: {x: 0, y: 0.25}
-  choices:
-  - label: Examine
-    icon: {fileID: 0}
-    description: 
-    timeCostMinutes: 0
-    locked: 0
-    lockedReason: 
-    yarnNode: Auditorium_NeighborStudent
-    dialogLines: []
-    onChoose:
-      m_PersistentCalls:
-        m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
-  approachSide: 0
-  playInteractSound: 1
-  tapMaxTravel: 0.02
-  tapMaxSeconds: 0.35
 --- !u!61 &735187777
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3943,7 +3905,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1114854205}
   - component: {fileID: 1114854203}
-  - component: {fileID: 1114854202}
   - component: {fileID: 1114854206}
   - component: {fileID: 1114854207}
   m_Layer: 0
@@ -3953,43 +3914,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1114854202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114854201}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
-  cue: {fileID: 0}
-  interactionLabel: 
-  wheel: {fileID: 18589155}
-  actionCarousel: {fileID: 0}
-  dialog: {fileID: 1326022622}
-  yarnDialog: {fileID: 1908947818}
-  dialogOffset: {x: 0, y: 0.25}
-  choices:
-  - label: Examine
-    icon: {fileID: 0}
-    description: 
-    timeCostMinutes: 0
-    locked: 0
-    lockedReason: 
-    yarnNode: Auditorium_BasketballStudent
-    dialogLines: []
-    onChoose:
-      m_PersistentCalls:
-        m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
-  approachSide: 0
-  playInteractSound: 1
-  tapMaxTravel: 0.02
-  tapMaxSeconds: 0.35
 --- !u!61 &1114854203
 BoxCollider2D:
   m_ObjectHideFlags: 0

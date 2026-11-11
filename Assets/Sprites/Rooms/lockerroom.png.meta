@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6c146b61bf07c43c6a8f26d53bcba959
+guid: d9b81ac0e8b4242d8abaa21da6e1f693
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7939215500317252554
-    second: lockerroom_0
+      213: 4646887273078689507
+    second: lockerroom 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: lockerroom_0
+      name: lockerroom 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 634a054f09d32d190800000000000000
-      internalID: -7939215500317252554
+      spriteID: 3ee8327ca5f0d7040800000000000000
+      internalID: 4646887273078689507
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      lockerroom_0: -7939215500317252554
+      lockerroom 1_0: 4646887273078689507
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
