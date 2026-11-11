@@ -189,7 +189,10 @@ Kirana: So, Warmus?
     Kirana: Anyway, see you there if you decide to come.
 Anin: Alright, see you there.
 <<close_dialogue_bubble>>
-<<move_character "KiranaScene1" -10 10 "walk">>
+<<start_character_move "KiranaScene1" -10 10 "walk" 0>>
+<<delay 0.5>>
+<<face_character "Anin" "left">>
+<<wait_for_character_moves>>
 
 // Kirana exits.
 <<hide "Kirana">>
