@@ -53,7 +53,7 @@ Anin: Kirana... you're leaving?
 Kirana: ...I was going to tell you after graduation. My parents found work back home. Three islands away.
 Kirana: Don't look at me like that. It's not like I'm dying.
 Kirana: Whatever. Someone's being weird. Let's just go.
-<<npc_exit "Kirana">>
+<<door_exit "Kirana" "Dorm">>
 <<quest_update "day4" "Go to class">>
 <<scene_transition "Classroom">>
 <<jump Day4_Classroom>>
