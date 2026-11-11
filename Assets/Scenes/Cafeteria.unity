@@ -3818,7 +3818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
   cue: {fileID: 0}
-  interactionLabel: 
+  interactionLabel: Anin's friends
   wheel: {fileID: 0}
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
