@@ -654,8 +654,16 @@ PrefabInstance:
       value: Dorm
       objectReference: {fileID: 0}
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNodeQuestId
+      value: day4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: storyNodeChapterScene
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: storyNodeQuestObjective
+      value: Meet Fal at the library after school
       objectReference: {fileID: 0}
     - target: {fileID: 7333009451300224665, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: m_LocalScale.x
@@ -1868,10 +1876,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.03541667
-    width: 0.1
-    height: 0.06143345
+    x: 0.29427084
+    y: 0
+    width: 0.62172073
+    height: 0.5092592
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1901,7 +1909,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.4375, z: -10}
+  m_LocalPosition: {x: -11.065831, y: 2.4359598, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3005,6 +3013,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &706477575
 GameObject:
   m_ObjectHideFlags: 0
@@ -4304,6 +4314,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -7561,6 +7573,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 1
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &1776789831
 GameObject:
   m_ObjectHideFlags: 0
@@ -10370,6 +10384,8 @@ MonoBehaviour:
   nextScene: 
   playOnce: 1
   keepPlayerPosition: 0
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!4 &2130381993
 Transform:
   m_ObjectHideFlags: 0

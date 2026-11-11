@@ -171,7 +171,7 @@ Kirana: Hi Anin, where have you been?
 // Hold on the group laughing at the window table. Warm, peaceful,
 // unchanged. This is what Anin chose, and it should feel good.
 <<fade "out">>
-<<scene_transition "Auditorium">>
+<<scene_transition_at_x "Auditorium" -36.589a "left">>
 ===
 
 title: Ending_Auditorium
