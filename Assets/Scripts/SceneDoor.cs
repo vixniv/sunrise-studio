@@ -85,9 +85,20 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
 
     public bool DefaultEntrance => defaultEntrance;
     public SpawnFacing Facing => spawnFacing;
-    public string InteractionLabel => !string.IsNullOrWhiteSpace(interactionLabel)
-        ? interactionLabel.Trim()
-        : InteractionLabelUtility.FromYarnTitle(storyNode, name);
+    public string InteractionLabel
+    {
+        get
+        {
+            string destination = destinationScene?.Trim();
+            if (string.Equals(destination, "SchoolMap", StringComparison.OrdinalIgnoreCase))
+                return "Go to Minimap";
+            if (string.Equals(destination, "Dorm", StringComparison.OrdinalIgnoreCase))
+                return "Go to Dorm";
+            return !string.IsNullOrWhiteSpace(interactionLabel)
+                ? interactionLabel.Trim()
+                : InteractionLabelUtility.FromYarnTitle(storyNode, name);
+        }
+    }
 
     public bool LeadsTo(string scene) =>
         !string.IsNullOrWhiteSpace(scene) && string.Equals(destinationScene.Trim(), scene.Trim(), StringComparison.OrdinalIgnoreCase);
