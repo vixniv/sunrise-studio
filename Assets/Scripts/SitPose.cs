@@ -10,6 +10,10 @@ public class SitPose : MonoBehaviour
 {
     [Tooltip("Sliced sit frames in play order, e.g. dira-sit_0 .. dira-sit_2.")]
     [SerializeField] private Sprite[] sitFrames;
+    [Tooltip("Optional: same sit frames with the head turned to screen-left, e.g. anin-sit-left_0 .. _2. " +
+             "Shown while seated after <<face_character \"Name\" \"left\">>; \"right\" goes back to Sit Frames. " +
+             "Needs Face Front. Keep the frame count and cell size the same as Sit Frames.")]
+    [SerializeField] private Sprite[] sitLeftFrames;
     [Tooltip("Sit frames per second. Idle loops run at 5.")]
     [Min(0.01f)] [SerializeField] private float framesPerSecond = 5f;
     [Tooltip("Start each copy at a random point in the loop so characters sitting together don't breathe in sync.")]
@@ -37,6 +41,7 @@ public class SitPose : MonoBehaviour
     private PlayerMove playerMove;
 
     private bool sitting;
+    private bool lookingLeft;
     private float sitStartTime;
     private bool animatorWasEnabled;
     private bool frameLoopWasEnabled;
@@ -78,6 +83,7 @@ public class SitPose : MonoBehaviour
         }
 
         sitting = true;
+        lookingLeft = false;
         sitStartTime = Time.time - (randomStart ? Random.Range(0, sitFrames.Length) / framesPerSecond : 0f);
 
         if (animator != null)
@@ -111,6 +117,7 @@ public class SitPose : MonoBehaviour
     {
         if (!sitting) return;
         sitting = false;
+        lookingLeft = false;
 
         transform.localPosition = standLocalPosition;
         if (faceFront) spriteRenderer.flipX = standFlipX;
@@ -142,21 +149,34 @@ public class SitPose : MonoBehaviour
         ShowFrame();
     }
 
-    // Called by <<face_character>> / <<teleport_character>> while seated. With Face Front the sit art stays unflipped
-    // and the facing is used when the character stands up; otherwise the sit art flips right away.
-    public void SetFlipX(bool flipX)
+    // Called by <<face_character>> / <<teleport_character>> while seated. direction < 0 is screen-left.
+    // With Face Front the sit art stays unflipped and the facing is used when the character stands up;
+    // if Sit Left Frames are assigned, facing left also swaps to the head-turned frames.
+    // Without Face Front the sit art flips right away.
+    public void SetFacing(float direction, bool flipX)
     {
         CacheComponents();
         if (sitting && faceFront)
+        {
             standFlipX = flipX;
+            if (direction != 0f)
+                lookingLeft = direction < 0f && HasLeftFrames;
+            ShowFrame();
+        }
         else
+        {
             spriteRenderer.flipX = flipX;
+        }
     }
+
+    private bool HasLeftFrames => sitLeftFrames != null && sitLeftFrames.Length > 0;
 
     private void ShowFrame()
     {
         // Scaled time, so the loop pauses with the game like an Animator would.
-        Sprite sprite = sitFrames[(int)((Time.time - sitStartTime) * framesPerSecond) % sitFrames.Length];
+        if (!sitting) return;
+        Sprite[] frames = lookingLeft ? sitLeftFrames : sitFrames;
+        Sprite sprite = frames[(int)((Time.time - sitStartTime) * framesPerSecond) % frames.Length];
         if (sprite != spriteRenderer.sprite)
             spriteRenderer.sprite = sprite;
     }

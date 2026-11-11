@@ -797,7 +797,7 @@ public class YarnCommands : MonoBehaviour
     {
         PlayerMove playerMove = target.GetComponent<PlayerMove>();
 
-        // Seated characters keep their front-facing sit art; SitPose remembers the facing for when they stand.
+        // Seated characters keep their front-facing sit art (or swap to look-left frames); SitPose remembers the facing for when they stand.
         SitPose[] poses = target.GetComponentsInChildren<SitPose>(true);
         bool seated = false;
         foreach (SitPose pose in poses)
@@ -808,7 +808,7 @@ public class YarnCommands : MonoBehaviour
             bool flip = playerMove != null
                 ? (playerMove.artFacesLeft ? direction > 0f : direction < 0f)
                 : direction > 0f;
-            pose.SetFlipX(flip);
+            pose.SetFacing(direction, flip);
             seated = true;
         }
         if (seated)
