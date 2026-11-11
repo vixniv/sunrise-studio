@@ -162,6 +162,8 @@ Lila: Weird flex.
 
 // Classes start. Fade, fast forward to lunch.
 <<advance_time "lunch">>
+// Let the lunch bell finish before anyone speaks.
+<<delay 2.5>>
 <<jump Classroom_LunchBreak>>
 ===
 
