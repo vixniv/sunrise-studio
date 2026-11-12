@@ -83,9 +83,9 @@ tags: scene3 day2 dorm interactable
     Anin: I should hurry.
     -> Get dressed
         <<set $d2_dressed to true>>
-        <<fade>>
         // Anin showers, rushes through her makeup, puts on her uniform.
-        // Play a short fade or outfit swap here.
+        // The casual art swaps to the uniform while the screen is covered.
+        <<fade_outfit "Anin" "uniform">>
     -> Do nothing
 <<endif>>
 ===

@@ -270,6 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   walkSpeed: 3
   runSpeed: 7
+  allowRunning: 1
   deadZone: 0.02
   runThreshold: 0.12
   visual: {fileID: 0}
@@ -592,6 +593,7 @@ GameObject:
   - component: {fileID: 8708204972718609183}
   - component: {fileID: 1361794407133064048}
   - component: {fileID: 4323318190434503431}
+  - component: {fileID: 2388372820230698586}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -726,6 +728,28 @@ MonoBehaviour:
   overrideSorting: 0
   sitSortingLayer: Default
   sitSortingOrder: 5
+--- !u!114 &2388372820230698586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8250812533857408771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e09d95e1e7bc445386fd1d4d57d1feb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterOutfit
+  characterName: Anin
+  casualOutfit: {fileID: 22100000, guid: 5c2a1f066944b4d608cb72187fe70a75, type: 2}
+  roomScene: Dorm
+  chapterSceneVariable: $chapter_scene
+  casualStartRules:
+  - chapterScene: 1
+    dressedVariable: $anin_dressed
+  - chapterScene: 3
+    dressedVariable: $d2_dressed
+  dialogueRunner: {fileID: 0}
 --- !u!1001 &6697390529076107895
 PrefabInstance:
   m_ObjectHideFlags: 0

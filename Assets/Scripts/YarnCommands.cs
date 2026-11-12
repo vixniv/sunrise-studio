@@ -136,6 +136,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
+        runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
+        runner.AddCommandHandler("fade_outfit", (Func<string, string, YarnTask>)((actor, outfit) => Fade(() => SetOutfit(actor, outfit))));
         runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
         runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
         runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
@@ -419,6 +421,19 @@ public class YarnCommands : MonoBehaviour
     private YarnTask FadeTeleportCharacter(string actorName, float destinationX, string facing)
     {
         return Fade(() => TeleportCharacter(actorName, destinationX, facing));
+    }
+
+    // <<outfit "Anin" "uniform">> / <<outfit "Anin" "casual">>: swaps the character's art right away (CharacterOutfit).
+    // <<fade_outfit "Anin" "uniform">> does the same while the screen is covered.
+    private void SetOutfit(string characterName, string outfit)
+    {
+        CharacterOutfit target = CharacterOutfit.Find(characterName);
+        if (target == null)
+        {
+            Debug.LogError($"<<outfit>>: no enabled CharacterOutfit with Character Name \"{characterName}\" in this scene.", this);
+            return;
+        }
+        target.Wear(outfit);
     }
 
     // <<teleport_character "Anin" -8 "left">>: changes world X and facing immediately, keeping Y and Z.
