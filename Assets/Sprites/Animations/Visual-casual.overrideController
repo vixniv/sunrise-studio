@@ -7,5 +7,11 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Visual-casual
-  m_Controller: {fileID: 0}
-  m_Clips: []
+  m_Controller: {fileID: 9100000, guid: 1fe651df7f49c4aee943912cfd7d6b33, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: cd57fea8588674d5ead60c5f7d245164, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 23f7a7617b16c476e81ce24d63829223, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: b8cad9ec1b1084e0e9a0db588186fec1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b0424f2acb39b48a495fc8dd8945d27d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a1b7d900f420d4a1481b6a9f511b5200, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b0424f2acb39b48a495fc8dd8945d27d, type: 2}

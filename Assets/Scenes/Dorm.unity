@@ -1811,10 +1811,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.54691076
+    x: 0
     y: 0
-    width: 0.05959827
-    height: 0.05970149
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -3637,6 +3637,7 @@ GameObject:
   m_Component:
   - component: {fileID: 805562964}
   - component: {fileID: 805562963}
+  - component: {fileID: 805562965}
   m_Layer: 0
   m_Name: Foreground
   m_TagString: Untagged
@@ -3719,6 +3720,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &805562965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805562962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbaa1e833f6fd442da9974537081b934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StorySpriteSwap
+  target: {fileID: 0}
+  swapSprite: {fileID: 21300000, guid: 25e96156814134fcaa4e4d8e2fdf1093, type: 3}
+  chapterSceneVariable: $chapter_scene
+  rules:
+  - chapterScene: 3
+    times:
+    - morning
+  - chapterScene: 5
+    times:
+    - morning
+  - chapterScene: 7
+    times:
+    - after_school
+  followChanges: 1
+  dialogueRunner: {fileID: 0}
 --- !u!1 &809762890
 GameObject:
   m_ObjectHideFlags: 0
@@ -5397,7 +5425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1271491379
 Transform:
   m_ObjectHideFlags: 0
@@ -7842,7 +7870,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1759132703
 Transform:
   m_ObjectHideFlags: 0
@@ -10488,6 +10516,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564647810717430902, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: allowRunning
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3389131182923258579, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
