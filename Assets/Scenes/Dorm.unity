@@ -621,6 +621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 7
   targets: []
   followChanges: 0
@@ -1812,9 +1813,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 1
-    height: 1
+    y: 0.10092879
+    width: 0.22361545
+    height: 0.18315917
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2981,6 +2982,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 8
   targets: []
   followChanges: 0
@@ -3495,6 +3497,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap3_lila
+  matchMode: 0
   value: true
   targets: []
   followChanges: 0
@@ -3955,6 +3958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 5
   targets: []
   followChanges: 0
@@ -4004,7 +4008,7 @@ MonoBehaviour:
   asleepSeconds: 0.6
   afterSeconds: 0.3
   coverHoldSeconds: 0.5
-  poseOffset: {x: -6.715, y: 2.72}
+  poseOffset: {x: -6.715, y: 2.32}
   flipArt: 0
   overrideSorting: 0
   poseSortingLayer: Default
@@ -6100,6 +6104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $ending_started
+  matchMode: 0
   value: true
   targets: []
   followChanges: 0
@@ -6152,6 +6157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $ending_started
+  matchMode: 0
   value: false
   targets: []
   followChanges: 0
@@ -7795,6 +7801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap2_pole_done
+  matchMode: 0
   value: true
   targets: []
   followChanges: 0
@@ -7829,6 +7836,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 1
   targets: []
   followChanges: 0
@@ -7991,6 +7999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 3
   targets: []
   followChanges: 0
@@ -9320,6 +9329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 6
   targets: []
   followChanges: 0
@@ -9732,6 +9742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 2
   targets: []
   followChanges: 0
@@ -9803,6 +9814,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap1_key_returned
+  matchMode: 0
   value: true
   targets: []
   followChanges: 0
@@ -10339,6 +10351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 4
   targets: []
   followChanges: 0
