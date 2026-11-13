@@ -151,6 +151,17 @@ public class YarnDialogPresenter : DialoguePresenterBase
     public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
     {
         if (!IsPlaying) return;
+
+        // While <<cutscene_image>> has the picture cutscene open, lines type out under the picture instead.
+        CutsceneView cutscene = CutsceneView.Active;
+        if (cutscene != null && cutscene.IsOpen)
+        {
+            cutscene.ShowLine(line.Text.Text);
+            await YarnTask.WaitUntil(() => cutscene == null || cutscene.LineFinished || !cutscene.IsOpen,
+                token.NextContentToken).SuppressCancellationThrow();
+            return;
+        }
+
         hud = ResolveActiveHud();
         Transform talker = defaultTalker;
         Vector2 offset = defaultOffset;

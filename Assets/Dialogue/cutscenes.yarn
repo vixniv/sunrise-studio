@@ -1,0 +1,82 @@
+// =====================================================================
+// PICTURE CUTSCENES
+// Full-screen pictures with typed text under them (CutsceneView).
+//
+//     <<cutscene_image "sprite_name">>  open the cutscene / change the picture
+//     <<cutscene_image_keep_text "sprite_name">>
+//                                       change the picture, the last text stays
+//                                       (next tap goes on; no line needed under it)
+//     any line                          types out under the picture
+//     <<cutscene_end>>                  fade the cutscene out
+//
+// - Tap: finish typing. Tap again: next line, or next picture.
+// - Put as many lines under a picture as you need.
+// - A picture with no line under it waits for one tap.
+// - A line with "Name: text" shows the name too ("Anin: ...Again.").
+// - No choices (->) inside a picture cutscene.
+// - Every sprite used here must be in the CutsceneView's Pictures list.
+//
+// Play from another node with <<detour Cutscene_FalFall>>: the cutscene
+// plays, then the node goes on from the next line.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// PROLOGUE: first thing the game shows after the Title Screen.
+// Played by the YarnCutscene in the Prologue scene, which loads the Dorm after it.
+// ---------------------------------------------------------------------
+
+title: Cutscene_Prologue
+tags: cutscene
+---
+<<cutscene_image "cutscene_prologue_1">>
+Today, the school held a festival to celebrate graduation tomorrow. Everyone was having fun: the band, the bazaar, the games, all the stalls the other classes set up.
+
+<<cutscene_image "cutscene_prologue_2a">>
+We were having fun too. It felt like the best day of my life. Before high school, I never had friends like this.
+
+<<cutscene_image_keep_text "cutscene_prologue_2b">>
+
+<<cutscene_image "cutscene_prologue_3a">>
+In a few hours, it all ends. I don’t want this to end.
+
+<<cutscene_image "cutscene_prologue_3b">>
+I wish I could stay in high school forever.
+
+<<cutscene_image_keep_text "cutscene_prologue_3c">>
+
+<<cutscene_end>>
+===
+
+
+// ---------------------------------------------------------------------
+// FAL FALLS: locker room, every scene where Fal falls.
+// Played with <<detour Cutscene_FalFall>> (scene1 Lockers_FriendsArrive, scene3).
+// ---------------------------------------------------------------------
+
+title: Cutscene_FalFall
+tags: cutscene
+---
+<<cutscene_image "cutscene_fals_death_1a">>
+It was peaceful evening, everyone's here and Fal will come soon.
+Until...
+
+<<cutscene_image "cutscene_fals_death_1b">>
+<<sfx "fall_impact">>
+Empty
+
+<<cutscene_image_keep_text "cutscene_fals_death_2">>
+<<sfx "distant_scream">>
+
+<<cutscene_image "cutscene_fals_death_3a">>
+There's crowd at school park. It was too packed you can't see what's happening there.
+
+<<cutscene_image_keep_text "cutscene_fals_death_3b">>
+
+<<cutscene_image_keep_text "cutscene_fals_death_3c">>
+
+<<cutscene_image "cutscene_fals_death_3d">>
+...Again
+
+<<cutscene_end>>
+===
