@@ -158,6 +158,9 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("door_enter_to", (Func<string, string, float, YarnTask>)((actor, door, x) => DoorEnter(actor, door, x)));
         runner.AddCommandHandler("door_exit", (Func<string, string, YarnTask>)DoorExit);
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
+        runner.AddCommandHandler("cutscene_image", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, false)));
+        runner.AddCommandHandler("cutscene_image_keep_text", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, true)));
+        runner.AddCommandHandler("cutscene_end", (Func<YarnTask>)EndCutsceneImages);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
@@ -1115,6 +1118,32 @@ public class YarnCommands : MonoBehaviour
         director.time = 0;
         director.Play();
         return YarnTask.WaitUntil(() => director == null || director.state != PlayState.Playing);
+    }
+
+    // <<cutscene_image "cutscene_prologue_1">>: opens the picture cutscene (CutsceneView) on that picture,
+    // or changes the picture when it is already open. Lines after it type out under the picture.
+    // <<cutscene_image_keep_text "name">>: changes the picture but leaves the last line on screen.
+    private YarnTask ShowCutsceneImage(string sprite, bool keepText)
+    {
+        CutsceneView view = CutsceneView.Active;
+        if (view == null)
+        {
+            Debug.LogWarning($"<<cutscene_image \"{sprite}\">>: this scene has no CutsceneView, so the picture is skipped.", this);
+            return YarnTask.CompletedTask;
+        }
+        // The last line would otherwise still show when the cutscene closes.
+        if (!view.IsOpen) HideDialogueLine();
+        view.ShowPicture(sprite, keepText);
+        return YarnTask.WaitUntil(() => view == null || !view.IsBusy);
+    }
+
+    // <<cutscene_end>>: fades the picture cutscene out and shows the scene again.
+    private YarnTask EndCutsceneImages()
+    {
+        CutsceneView view = CutsceneView.Active;
+        if (view == null || !view.IsOpen) return YarnTask.CompletedTask;
+        view.Close();
+        return YarnTask.WaitUntil(() => view == null || !view.IsBusy);
     }
 
     private YarnTask PlayFreezeFrame()

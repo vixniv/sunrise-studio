@@ -371,10 +371,9 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
 <<start_character_move "Kirana" -32.6 10 "walk" 0>>
 <<wait_for_character_moves>>
 
-<<cutscene "fal_fall_offscreen">>
-// OFFSCREEN ONLY. A sound from above, then screams from across the park.
+// Picture cutscene of Fal's fall (cutscenes.yarn), then back here.
+<<detour Cutscene_FalFall>>
 // Kirana runs out. Lila's locker is left hanging open. Dira freezes.
-// No visual of the fall.
 <<hide "Kirana">>
 
 // Anin doesn't move. She closes her eyes.

@@ -305,10 +305,10 @@ Kirana: ...Creepy. Okay. Bye.
 <<npc_exit "Lila">>
 
 // Anin is alone.
-<<cutscene "fal_fall_offscreen_2">>
-// OFFSCREEN ONLY. Same sounds as the prologue, held a beat longer.
-// A sound from above, then screams from across the park.
+// Same picture cutscene of Fal's fall as scene 1 (cutscenes.yarn), then back here.
+<<detour Cutscene_FalFall>>
 // This time Anin's books hit the floor. She grips the locker door.
+<<sfx "books_drop">>
 
 Anin: But I... I helped him.
 
