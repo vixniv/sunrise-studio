@@ -168,6 +168,8 @@ Lila: Weird flex.
 
 // Classes start. Fade, fast forward to lunch.
 <<advance_time "lunch">>
+// Let the lunch bell finish before anyone speaks.
+<<delay 2.5>>
 <<jump Classroom_LunchBreak>>
 ===
 
@@ -289,7 +291,7 @@ Anin: Figure of speech.
 <<hide "Dira">>
 <<hide "Lila">>
 
-<<advance_time "after_school">>
+<<advance_time_teleport_character "after_school" "Anin" -5.5 "stand">>
 <<quest_update "scene1_explore" "Meet Fal at the lockers">>
 ===
 

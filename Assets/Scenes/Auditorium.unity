@@ -1764,10 +1764,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.17429444
+    x: 0.29427084
     y: 0
-    width: 0.5339012
-    height: 0.53482586
+    width: 0.62172073
+    height: 0.5092592
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2127,6 +2127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 5
   targets: []
   followChanges: 0
@@ -2374,6 +2375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $d3_seen_flag
+  matchMode: 0
   value: true
   targets: []
   followChanges: 1
@@ -2930,6 +2932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 1
   targets: []
   followChanges: 0
@@ -3637,6 +3640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 8
   targets: []
   followChanges: 0
@@ -4201,6 +4205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1175142180}
   - component: {fileID: 1175142179}
+  - component: {fileID: 1175142181}
   m_Layer: 0
   m_Name: Foreground
   m_TagString: Untagged
@@ -4283,6 +4288,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1175142181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175142178}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac7e355a9f1b4de883346a4a7357953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ForegroundParallax2D
+  targetCamera: {fileID: 409442820}
+  strength: 0.5
+  pixelsPerUnit: 16
 --- !u!1 &1204373344
 GameObject:
   m_ObjectHideFlags: 0
@@ -6831,6 +6851,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap2_seen_flag
+  matchMode: 0
   value: true
   targets: []
   followChanges: 1
@@ -7782,6 +7803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $ending_started
+  matchMode: 0
   value: true
   targets: []
   followChanges: 0
@@ -7816,6 +7838,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 4
   targets: []
   followChanges: 0
@@ -8288,6 +8311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $ending_started
+  matchMode: 0
   value: false
   targets: []
   followChanges: 0
@@ -9008,6 +9032,8 @@ MonoBehaviour:
   storyNode: Gap4_Auditorium_Exit
   storyNodeChapterScene: 8
   storyNodeUntilCutsceneStarts: {fileID: 1640803321}
+  storyNodeQuestId: 
+  storyNodeQuestObjective: 
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   tapMaxTravel: 0.02

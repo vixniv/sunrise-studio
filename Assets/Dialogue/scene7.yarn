@@ -102,7 +102,7 @@ Anin: Page after page. The same lunch. Same table.
 Anin: I didn't draw these. She did.
 Kirana: Okay. This is a prank. Right? Anin?
 <<set $story_exit to false>>
-<<advance_time_to_scene "lunch" "Cafeteria">>
+<<advance_time_to_scene_at_x "lunch" "Cafeteria" -5.5 "sit">>
 <<jump Day4_Lunch>>
 ===
 
@@ -130,6 +130,7 @@ Kirana: Why does it feel like we've had this exact conversation before?
 Dira: What's happening to us?
 // Anin is cornered. No choice gets her out of it cleanly.
 <<quest_update "day4" "Meet Fal at the library after school">>
+<<fade_teleport_character "Anin" -5 "stand">>
 // OPTIONAL: before the bell, the player can talk to each friend alone.
 // Day4_Talk_Dira, Day4_Talk_Lila, Day4_Talk_Kirana. Each sets a truth
 // flag. Interacting with the library door advances time.
@@ -171,6 +172,8 @@ title: Day4_Library
 tags: scene7 day4 library event
 ---
 <<npc_enter "Fal">>
+Fal: There you are.
+Fal: Sit here beside me, Anin.
 // Anin takes the left chair; Fal is seated on the right one (SitPose Start Sitting).
 <<advance_time_teleport_character "after_school" "Anin" -0.7 "sit">>
 Fal: You look worse than me, and I'm the one failing math.

@@ -15,13 +15,15 @@ public static class DoorSpawn
     private static string pendingScene;
     private static float pendingX;
     private static bool pendingFaceRight;
+    private static bool pendingSit;
 
     // One-time arrival position requested by a Yarn scene transition.
-    public static void SetNextSpawn(string sceneName, float x, bool faceRight)
+    public static void SetNextSpawn(string sceneName, float x, bool faceRight, bool sit = false)
     {
         pendingScene = sceneName;
         pendingX = x;
         pendingFaceRight = faceRight;
+        pendingSit = sit;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -29,6 +31,7 @@ public static class DoorSpawn
     {
         currentScene = "";
         pendingScene = null;
+        pendingSit = false;
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -47,7 +50,9 @@ public static class DoorSpawn
         currentScene = scene.name;
         bool usePendingSpawn = pendingScene != null &&
             string.Equals(pendingScene, scene.name, System.StringComparison.OrdinalIgnoreCase);
+        bool sitOnArrival = pendingSit;
         pendingScene = null;
+        pendingSit = false;
 
         // Searched in the new scene only: the old scene's objects (such as the Dorm's player) can still exist here.
         PlayerMove[] players = InScene<PlayerMove>(scene);
@@ -76,6 +81,14 @@ public static class DoorSpawn
                 body.linearVelocity = Vector2.zero;
             }
             player.Face(pendingFaceRight ? 1f : -1f);
+            if (sitOnArrival)
+            {
+                SitPose[] poses = player.GetComponentsInChildren<SitPose>(true);
+                if (poses.Length == 0)
+                    Debug.LogError($"DoorSpawn: {scene.name} cannot seat the player because no SitPose was found.", player);
+                foreach (SitPose pose in poses)
+                    pose.Sit();
+            }
             Debug.Log($"DoorSpawn: story transition placed the player at X {pendingX} in {scene.name}, facing {(pendingFaceRight ? "Right" : "Left")}.", player);
             return;
         }

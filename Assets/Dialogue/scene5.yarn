@@ -212,7 +212,7 @@ Fal: You left this in my locker, right? Looks like your writing.
 -> I didn't write that. Not awake, anyway.
     Fal: What?
 Anin: Nothing. Library. Come on.
-<<scene_transition_at_x "Library" 2.5 "right">>
+<<scene_transition_at_x "Library" -0.7 "sit">>
 <<jump Day3_Library>>
 ===
 
