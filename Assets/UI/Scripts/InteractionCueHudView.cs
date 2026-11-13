@@ -15,6 +15,9 @@ namespace SunriseStudio.UI
         [SerializeField] Image background;
         [SerializeField] TMP_Text label;
         [SerializeField] CanvasGroup group;
+        [Tooltip("Optional Button on this label. Assign it to make the label itself interactable.")]
+        [SerializeField] Button interactionButton;
+        [SerializeField, Range(-10f, 10f)] float labelTiltDegrees = 2f;
 
         [Header("Placement")]
         [SerializeField, Min(0f)] float worldGap = 0.25f;
@@ -48,12 +51,29 @@ namespace SunriseStudio.UI
         void OnEnable()
         {
             ResolveReferences();
+            ConfigureLabel();
+            if (interactionButton != null)
+                interactionButton.onClick.AddListener(HandleInteractionClicked);
             InteractionCue.SetHudPresenterActive(true);
         }
 
         void OnDisable()
         {
+            if (interactionButton != null)
+                interactionButton.onClick.RemoveListener(HandleInteractionClicked);
             InteractionCue.SetHudPresenterActive(false);
+        }
+
+        void HandleInteractionClicked()
+        {
+            if (group == null || group.alpha <= 0f || !InteractionCue.HasCurrentTarget)
+                return;
+
+            GameplayHUDController hud = GetComponentInParent<GameplayHUDController>();
+            if (hud != null)
+                hud.HandleInteractClicked();
+            else
+                InteractionCue.TryInteractCurrent();
         }
 
         void LateUpdate()
@@ -218,6 +238,7 @@ namespace SunriseStudio.UI
             if (background == null) background = GetComponent<Image>();
             if (label == null) label = GetComponentInChildren<TMP_Text>(true);
             if (group == null) group = GetComponent<CanvasGroup>();
+            if (interactionButton == null) interactionButton = GetComponent<Button>();
             if (parentCanvas == null) parentCanvas = GetComponentInParent<Canvas>();
             if (parentRect == null && root != null) parentRect = root.parent as RectTransform;
             if (avoidRect == null && parentRect != null)
@@ -234,7 +255,8 @@ namespace SunriseStudio.UI
             label.horizontalAlignment = HorizontalAlignmentOptions.Center;
             label.verticalAlignment = VerticalAlignmentOptions.Middle;
             label.raycastTarget = false;
-            if (background != null) background.raycastTarget = false;
+            label.rectTransform.localRotation = Quaternion.Euler(0f, 0f, labelTiltDegrees);
+            if (background != null) background.raycastTarget = interactionButton != null;
         }
 
         void SetVisible(bool visible)
@@ -242,8 +264,8 @@ namespace SunriseStudio.UI
             if (group == null)
                 return;
             group.alpha = visible ? 1f : 0f;
-            group.interactable = false;
-            group.blocksRaycasts = false;
+            group.interactable = visible && interactionButton != null;
+            group.blocksRaycasts = visible && interactionButton != null;
         }
     }
 }
