@@ -158,6 +158,9 @@ public static class DoorSpawn
         }
 
         FacePlayer(scene, player, door, position.x);
+        // Only when the player really walked in through this door, not when it is just the default entrance.
+        if (door.LeadsTo(previousScene))
+            door.PlayArrival();
     }
 
     private static void PlaceMapPlayerAtPreviousDoor(

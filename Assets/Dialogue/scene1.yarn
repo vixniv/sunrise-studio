@@ -15,7 +15,13 @@
 //     <<cutscene "id">>               play a non-dialogue cutscene
 //     <<hard_reset>>                  white flash, loop back to the wish
 //     <<fade>>                        short fade out and in, same scene
+//     <<outfit "Anin" "casual">>      swap outfit now ("casual" / "uniform")
+//     <<fade_outfit "Anin" "uniform">> swap outfit while the screen is covered
 //     <<show "Name">> / <<hide "Name">>  a character enters / exits
+//     <<open_door "Dorm">> / <<close_door "Dorm">>  door animation, waits
+//     <<door_enter "Name" "Dorm">>    door opens, character walks in, door closes
+//     <<door_enter_to "Name" "Dorm" X>>  same, walks to world X
+//     <<door_exit "Name" "Dorm">>     character walks out the door, door closes
 // - Interactable nodes (Dorm_*, Classroom_*, Lockers_*) are started by
 //   the object's interact trigger. Node names match the object.
 // =====================================================================
@@ -79,9 +85,9 @@ tags: scene1 dorm interactable
     -> Get dressed
         <<sfx "getting_dressed">>
         <<set $anin_dressed to true>>
-        <<fade>>
         // Anin showers, rushes through her makeup, puts on her uniform.
-        // Play a short fade or outfit swap here.
+        // The casual art swaps to the uniform while the screen is covered.
+        <<fade_outfit "Anin" "uniform">>
     -> Do nothing
 <<endif>>
 ===

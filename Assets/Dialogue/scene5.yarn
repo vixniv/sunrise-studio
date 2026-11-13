@@ -259,7 +259,7 @@ tags: scene5 day3 dorm
 Anin: He's alive.
 Anin: He's alive, because I was there this time.
 Anin: So when I sleep... it's me.
-<<npc_enter "Kirana">>
+<<door_enter "Kirana" "Dorm">>
 // Kirana drops onto her bed.
 <<sfx "bed_drop">>
 Kirana: You look like you saw a ghost.

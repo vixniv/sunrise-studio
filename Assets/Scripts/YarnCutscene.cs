@@ -31,6 +31,10 @@ public class YarnCutscene : MonoBehaviour
     [Tooltip("On: when this cutscene plays, the player stays where they are placed in the scene. " +
              "Off: the player still starts at the door (see DoorSpawn).")]
     [SerializeField] private bool keepPlayerPosition = true;
+    [Tooltip("Optional: Anin's WakeUpPose (on her Visual child). Anin lies in bed while the scene fades in, " +
+             "plays the wake-up animation after Start Delay, a circle transition puts her back in her standing idle, " +
+             "then the node starts. Leave empty for no wake-up.")]
+    [SerializeField] private WakeUpPose wakeUp;
 
     [Header("Optional proximity start")]
     [Tooltip("When assigned, wait until the player is this close to the target on the X axis instead of starting on scene load.")]
@@ -84,7 +88,16 @@ public class YarnCutscene : MonoBehaviour
         started = true;
         // Frozen during Start Delay too, so the player cannot walk before the first line shows.
         if (player != null) player.InteractionMenuOpen = true;
+        // Runs while the transition still covers the screen, so the scene fades in on Anin asleep in bed.
+        if (wakeUp != null) wakeUp.LieDown();
         if (startDelay > 0f) yield return new WaitForSecondsRealtime(startDelay);
+        if (wakeUp != null)
+        {
+            // Waits for the transition to open fully, in case Start Delay is shorter than the fade.
+            while (CircleTransition.Instance != null && CircleTransition.Instance.IsTransitioning)
+                yield return null;
+            yield return wakeUp.PlayWakeUp();
+        }
         yarnDialog.Play(node, narrator != null ? narrator : transform, dialogOffset, player, LoadNextScene);
         // Play refuses while other dialogue runs. When that is not the presenter's own dialogue (which unfreezes
         // the player when it ends), nothing else would unfreeze the player, so do it here.

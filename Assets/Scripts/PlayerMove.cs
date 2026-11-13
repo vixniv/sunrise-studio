@@ -7,6 +7,8 @@ public class PlayerMove : MonoBehaviour
     [Header("Speed")]
     public float walkSpeed = 3f;
     public float runSpeed = 7f;
+    [Tooltip("Untick in rooms where the player may only walk, e.g. the Dorm. A long drag or Shift then walks.")]
+    public bool allowRunning = true;
 
     [Header("Drag (fraction of screen width)")]
     [Range(0f, 0.2f)] public float deadZone = 0.02f;      // ignore tiny wiggles
@@ -128,6 +130,7 @@ public class PlayerMove : MonoBehaviour
 
         ReadPointer();
         if (moveX == 0f) ReadKeyboard(); // editor fallback
+        if (!allowRunning) running = false;
 
         // Keeps the last direction when standing still.
         Face(moveX);

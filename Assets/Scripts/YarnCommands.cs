@@ -137,6 +137,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
+        runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
+        runner.AddCommandHandler("fade_outfit", (Func<string, string, YarnTask>)((actor, outfit) => Fade(() => SetOutfit(actor, outfit))));
         runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
         runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
         runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
@@ -151,6 +153,11 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
         runner.AddCommandHandler("start_character_move_to_actor", (Action<string, string, float, float, string, float>)StartCharacterMoveToActor);
         runner.AddCommandHandler("wait_for_character_moves", (Func<YarnTask>)WaitForCharacterMoves);
+        runner.AddCommandHandler("open_door", (Func<string, YarnTask>)(door => AnimateDoor(door, true)));
+        runner.AddCommandHandler("close_door", (Func<string, YarnTask>)(door => AnimateDoor(door, false)));
+        runner.AddCommandHandler("door_enter", (Func<string, string, YarnTask>)((actor, door) => DoorEnter(actor, door, null)));
+        runner.AddCommandHandler("door_enter_to", (Func<string, string, float, YarnTask>)((actor, door, x) => DoorEnter(actor, door, x)));
+        runner.AddCommandHandler("door_exit", (Func<string, string, YarnTask>)DoorExit);
         runner.AddCommandHandler("cutscene", (Func<string, YarnTask>)PlayCutscene);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
@@ -449,6 +456,19 @@ public class YarnCommands : MonoBehaviour
         return Fade(() => TeleportCharacter(actorName, destinationX, facing));
     }
 
+    // <<outfit "Anin" "uniform">> / <<outfit "Anin" "casual">>: swaps the character's art right away (CharacterOutfit).
+    // <<fade_outfit "Anin" "uniform">> does the same while the screen is covered.
+    private void SetOutfit(string characterName, string outfit)
+    {
+        CharacterOutfit target = CharacterOutfit.Find(characterName);
+        if (target == null)
+        {
+            Debug.LogError($"<<outfit>>: no enabled CharacterOutfit with Character Name \"{characterName}\" in this scene.", this);
+            return;
+        }
+        target.Wear(outfit);
+    }
+
     // <<teleport_character "Anin" -8 "left">>: changes world X and facing immediately, keeping Y and Z.
     // "sit" seats the character; "stand" gets them up without changing their facing.
     // <<fade_teleport_character>> applies either pose while the screen is covered.
@@ -547,6 +567,9 @@ public class YarnCommands : MonoBehaviour
     {
         foreach (SitPose pose in target.GetComponentsInChildren<SitPose>(true))
             pose.Stand();
+        // Anin still in bed after her wake-up gets out of bed too.
+        foreach (WakeUpPose pose in target.GetComponentsInChildren<WakeUpPose>(true))
+            pose.GetUp();
     }
 
     // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
@@ -656,6 +679,171 @@ public class YarnCommands : MonoBehaviour
     private YarnTask WaitForCharacterMoves()
     {
         return YarnTask.WaitUntil(() => this == null || movingActors.Count == 0);
+    }
+
+    // <<open_door "Dorm">> / <<close_door "Dorm">>: plays the DoorAnimator with that Door Id and waits for it.
+    private YarnTask AnimateDoor(string doorId, bool open)
+    {
+        DoorAnimator door = FindDoor(doorId, open ? "open_door" : "close_door");
+        if (door == null)
+            return YarnTask.CompletedTask;
+
+        if (open) door.Open();
+        else door.Close();
+        return YarnTask.WaitUntil(() => this == null || door == null || !door.IsAnimating);
+    }
+
+    // <<door_enter "Kirana" "Dorm">>: the door opens, Kirana appears in the doorway and walks to where she was
+    // placed in the scene (or where she stood before her last <<door_exit>>), and the door closes behind her.
+    // <<door_enter_to "Kirana" "Dorm" -6.5>> walks her to world X -6.5 instead.
+    private YarnTask DoorEnter(string actorName, string doorId, float? destinationX)
+    {
+        string command = destinationX.HasValue ? "door_enter_to" : "door_enter";
+        GameObject target = FindActorTarget(actorName, command);
+        DoorAnimator door = FindDoor(doorId, command);
+        if (target == null || !CanStartDoorWalk(target, command))
+            return YarnTask.CompletedTask;
+        if (door == null)
+        {
+            // No door set up yet: still bring the character in, like <<npc_enter>>.
+            target.SetActive(true);
+            return YarnTask.CompletedTask;
+        }
+        if (destinationX.HasValue && (float.IsNaN(destinationX.Value) || float.IsInfinity(destinationX.Value)))
+        {
+            Debug.LogError($"<<{command}>>: destination X must be finite for \"{target.name}\".", this);
+            return YarnTask.CompletedTask;
+        }
+
+        float homeX = destinationX ?? RememberDoorHome(target);
+        bool done = false;
+        StartCoroutine(DoorEnterRoutine(target, door, homeX, () => done = true));
+        return YarnTask.WaitUntil(() => this == null || done);
+    }
+
+    // <<door_exit "Kirana" "Dorm">>: Kirana walks to the doorway, the door opens, she disappears, and the door closes.
+    // Like <<hide>>, it looks for the enabled DialogSpeaker of that name first, then the Actors list.
+    private YarnTask DoorExit(string actorName, string doorId)
+    {
+        string key = (actorName ?? string.Empty).Trim();
+        GameObject target = DialogSpeaker.TryFind(key, out DialogSpeaker speaker)
+            ? speaker.gameObject
+            : FindActorTarget(key, "door_exit");
+        DoorAnimator door = FindDoor(doorId, "door_exit");
+        if (target == null || !CanStartDoorWalk(target, "door_exit"))
+            return YarnTask.CompletedTask;
+        if (door == null)
+        {
+            // No door set up yet: still take the character out, like <<npc_exit>>.
+            target.SetActive(false);
+            return YarnTask.CompletedTask;
+        }
+
+        RememberDoorHome(target);
+        bool done = false;
+        StartCoroutine(DoorExitRoutine(target, door, () => done = true));
+        return YarnTask.WaitUntil(() => this == null || done);
+    }
+
+    private IEnumerator DoorEnterRoutine(GameObject target, DoorAnimator door, float homeX, Action finished)
+    {
+        try
+        {
+            float doorX = door.WalkPointX;
+            // Out of sight while the door opens, then in the doorway.
+            target.SetActive(false);
+            PlaceActorAtX(target, doorX);
+            door.Open();
+            while (door != null && door.IsAnimating)
+                yield return null;
+            if (target == null || door == null)
+                yield break;
+
+            target.SetActive(true);
+            bool moving = Mathf.Abs(homeX - doorX) > 0.0001f &&
+                          TryStartCharacterMove(target, homeX, door.WalkSpeed, "walk", 0f);
+            // Close behind them once they are clear of the doorway.
+            while (moving && target != null && door != null && movingActors.Contains(target) &&
+                   Mathf.Abs(target.transform.position.x - doorX) < door.DoorwayDistance)
+                yield return null;
+            if (door != null)
+                door.Close();
+            while ((door != null && door.IsAnimating) || (target != null && movingActors.Contains(target)))
+                yield return null;
+        }
+        finally
+        {
+            finished();
+        }
+    }
+
+    private IEnumerator DoorExitRoutine(GameObject target, DoorAnimator door, Action finished)
+    {
+        try
+        {
+            float doorX = door.WalkPointX;
+            bool moving = Mathf.Abs(target.transform.position.x - doorX) > 0.0001f &&
+                          TryStartCharacterMove(target, doorX, door.WalkSpeed, "walk", 0f);
+            // The door starts opening as they reach it.
+            while (moving && target != null && door != null && movingActors.Contains(target) &&
+                   Mathf.Abs(target.transform.position.x - doorX) > door.DoorwayDistance)
+                yield return null;
+            if (door != null)
+                door.Open();
+            while ((door != null && door.IsAnimating) || (target != null && movingActors.Contains(target)))
+                yield return null;
+
+            if (target != null)
+                target.SetActive(false);
+            if (door == null)
+                yield break;
+            door.Close();
+            while (door != null && door.IsAnimating)
+                yield return null;
+        }
+        finally
+        {
+            finished();
+        }
+    }
+
+    // X each character walks back to on <<door_enter>>: where they first stood when a door command used them.
+    private readonly Dictionary<GameObject, float> doorHomeX = new Dictionary<GameObject, float>();
+
+    private float RememberDoorHome(GameObject target)
+    {
+        if (!doorHomeX.TryGetValue(target, out float x))
+        {
+            x = target.transform.position.x;
+            doorHomeX[target] = x;
+        }
+        return x;
+    }
+
+    private bool CanStartDoorWalk(GameObject target, string command)
+    {
+        if (!movingActors.Contains(target))
+            return true;
+        Debug.LogError($"<<{command}>>: \"{target.name}\" is still moving. Wait for its move to finish first.", this);
+        return false;
+    }
+
+    private static void PlaceActorAtX(GameObject target, float x)
+    {
+        Vector3 position = target.transform.position;
+        target.transform.position = new Vector3(x, position.y, position.z);
+        Rigidbody2D body = target.GetComponent<Rigidbody2D>();
+        if (body != null)
+            body.position = new Vector2(x, body.position.y);
+    }
+
+    private DoorAnimator FindDoor(string doorId, string commandName)
+    {
+        if (DoorAnimator.TryFind(doorId, out DoorAnimator door))
+            return door;
+        Debug.LogError($"<<{commandName}>>: no enabled DoorAnimator with Door Id \"{doorId}\" in this scene. " +
+                       $"Door Ids found: {DoorAnimator.KnownIds()}.", this);
+        return null;
     }
 
     private GameObject FindActorTarget(string actorName, string commandName)
@@ -832,7 +1020,7 @@ public class YarnCommands : MonoBehaviour
     {
         PlayerMove playerMove = target.GetComponent<PlayerMove>();
 
-        // Seated characters keep their front-facing sit art; SitPose remembers the facing for when they stand.
+        // Seated characters keep their front-facing sit art (or swap to look-left frames); SitPose remembers the facing for when they stand.
         SitPose[] poses = target.GetComponentsInChildren<SitPose>(true);
         bool seated = false;
         foreach (SitPose pose in poses)
@@ -843,7 +1031,7 @@ public class YarnCommands : MonoBehaviour
             bool flip = playerMove != null
                 ? (playerMove.artFacesLeft ? direction > 0f : direction < 0f)
                 : direction > 0f;
-            pose.SetFlipX(flip);
+            pose.SetFacing(direction, flip);
             seated = true;
         }
         if (seated)
