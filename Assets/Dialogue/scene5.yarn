@@ -27,14 +27,13 @@
 
 // ---------------------------------------------------------------------
 // DORM — MORNING
-// Same interactables as Day 2 (bed, poster, desk, Kirana's bed, door),
-// plus Day3_Dorm_Blazer.
+// Anin must get dressed at the desk and check the blazer before leaving.
+// These can happen in either order.
 // ---------------------------------------------------------------------
 
 title: Day3_Start
 tags: scene5 day3 dorm
 ---
-<<sfx "alarm_clock">>
 // Lets the Dorm door run Day3_Dorm_Door instead of leaving freely.
 <<set $story_exit to true>>
 <<set $d3_dressed to false>>
@@ -61,17 +60,33 @@ tags: scene5 day3 dorm interactable required
     Anin: "He won't go up there tonight." I said that. In the dream, I said that.
     Anin: I have to check.
     <<set $d3_found_key to true>>
-    <<set $d3_dressed to true>>
     <<quest_start "day3_event" "What did I do last night?">>
 <<else>>
     Anin: The key's still in my pocket.
 <<endif>>
 ===
 
+title: Day3_Dorm_Desk
+tags: scene5 day3 dorm interactable
+---
+<<if $d3_dressed>>
+    Anin: I'm already dressed. Time to go.
+<<else>>
+    Anin: I should hurry.
+    -> Get dressed
+        <<sfx "getting_dressed">>
+        <<set $d3_dressed to true>>
+        <<fade_outfit "Anin" "uniform">>
+    -> Do nothing
+<<endif>>
+===
+
 title: Day3_Dorm_Door
 tags: scene5 day3 dorm interactable
 ---
-<<if $d3_found_key is false>>
+<<if $d3_dressed is false>>
+    Anin: I can't go out like this.
+<<elseif $d3_found_key is false>>
     Anin: Something feels off. I should look around first.
 <<else>>
     Anin: Leave the room?

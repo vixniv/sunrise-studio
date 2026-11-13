@@ -296,17 +296,20 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up—
 // speakers or overlap the boxes if your dialogue UI allows it.
 // PAYOFF in Scene 7 lunch: Kirana says "You finish my sentences too."
 Anin: —twice.
-Kirana: ...Creepy. Okay. Bye.
-<<close_dialogue_bubble>>
-<<start_character_move "Lila" -32.6 10 "walk" 0>>
-<<start_character_move "Kirana" -32.6 10 "walk" 0>>
-<<wait_for_character_moves>>
-<<npc_exit "Kirana">>
-<<npc_exit "Lila">>
+Kirana: ...Creepy.
+// <<close_dialogue_bubble>>
+// <<start_character_move "Lila" -32.6 10 "walk" 0>>
+// <<start_character_move "Kirana" -32.6 10 "walk" 0>>
+// <<wait_for_character_moves>>
+// <<npc_exit "Kirana">>
+// <<npc_exit "Lila">>
+<<hide "Kirana">>
+<<hide "Lila">>
 
 // Anin is alone.
 // Same picture cutscene of Fal's fall as scene 1 (cutscenes.yarn), then back here.
 <<detour Cutscene_FalFall>>
+<<cutscene_end>>
 // This time Anin's books hit the floor. She grips the locker door.
 <<sfx "books_drop">>
 

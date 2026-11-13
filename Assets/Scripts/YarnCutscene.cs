@@ -36,6 +36,14 @@ public class YarnCutscene : MonoBehaviour
              "then the node starts. Leave empty for no wake-up.")]
     [SerializeField] private WakeUpPose wakeUp;
 
+    [Header("Wake-up timing (optional)")]
+    [Tooltip("Seconds Anin stays asleep after the opening transition. Set to -1 to use WakeUpPose's Asleep Seconds.")]
+    [SerializeField] private float wakeUpAsleepSeconds = 2f;
+    [Tooltip("Audio cue to play after the asleep hold. The wake animation waits until it finishes. Leave empty for no sound.")]
+    [SerializeField] private string wakeUpSound = "alarm_clock";
+    [Tooltip("Optional character already awake when the room appears. Used by Scene 7 for Kirana.")]
+    [SerializeField] private GameObject awakeOnArrival;
+
     [Header("Optional proximity start")]
     [Tooltip("When assigned, wait until the player is this close to the target on the X axis instead of starting on scene load.")]
     [SerializeField] private Transform proximityTarget;
@@ -89,14 +97,18 @@ public class YarnCutscene : MonoBehaviour
         // Frozen during Start Delay too, so the player cannot walk before the first line shows.
         if (player != null) player.InteractionMenuOpen = true;
         // Runs while the transition still covers the screen, so the scene fades in on Anin asleep in bed.
-        if (wakeUp != null) wakeUp.LieDown();
+        if (wakeUp != null)
+        {
+            wakeUp.LieDown();
+            if (awakeOnArrival != null) awakeOnArrival.SetActive(true);
+        }
         if (startDelay > 0f) yield return new WaitForSecondsRealtime(startDelay);
         if (wakeUp != null)
         {
             // Waits for the transition to open fully, in case Start Delay is shorter than the fade.
             while (CircleTransition.Instance != null && CircleTransition.Instance.IsTransitioning)
                 yield return null;
-            yield return wakeUp.PlayWakeUp();
+            yield return wakeUp.PlayWakeUp(wakeUpAsleepSeconds, wakeUpSound);
         }
         yarnDialog.Play(node, narrator != null ? narrator : transform, dialogOffset, player, LoadNextScene);
         // Play refuses while other dialogue runs. When that is not the presenter's own dialogue (which unfreezes

@@ -16,8 +16,8 @@
 // - No choices (->) inside a picture cutscene.
 // - Every sprite used here must be in the CutsceneView's Pictures list.
 //
-// Play from another node with <<detour Cutscene_FalFall>>: the cutscene
-// plays, then the node goes on from the next line.
+// Play from another node with <<detour Cutscene_FalFall>>. The caller closes
+// the picture or transitions to another scene after the final line.
 // =====================================================================
 
 
@@ -77,6 +77,4 @@ There's crowd at school park. It was too packed you can't see what's happening t
 
 <<cutscene_image "cutscene_fals_death_3d">>
 ...Again
-
-<<cutscene_end>>
 ===

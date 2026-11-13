@@ -130,6 +130,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
         runner.AddCommandHandler("scene_transition_at_x", (Func<string, float, string, YarnTask>)SceneTransitionAtX);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
+        runner.AddCommandHandler("advance_time_silent", (Func<string, YarnTask>)AdvanceTimeSilent);
         runner.AddCommandHandler("advance_time_to_scene", (Func<string, string, YarnTask>)AdvanceTimeToScene);
         runner.AddCommandHandler("advance_time_to_scene_at_x", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtX);
         runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
@@ -163,6 +164,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("cutscene_image_keep_text", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, true)));
         runner.AddCommandHandler("cutscene_end", (Func<YarnTask>)EndCutsceneImages);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
+        runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
@@ -364,6 +366,13 @@ public class YarnCommands : MonoBehaviour
         SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
             ? "night_transition"
             : "day_transition");
+        return AdvanceTimeSilent(slot);
+    }
+
+    // Covers the screen and changes time without starting a sound cue.
+    // Yarn can play a sound after the screen opens with <<sfx>>.
+    private YarnTask AdvanceTimeSilent(string slot)
+    {
         return Fade(() => ApplyTimeOfDay(slot));
     }
 
@@ -1206,6 +1215,20 @@ public class YarnCommands : MonoBehaviour
             return;
         }
         await LoadLocation(sceneAfterHardReset, "");
+    }
+
+    // Resets directly from an open picture cutscene. The scene transition covers the picture
+    // before the current room can be shown again; other hard resets keep their white flash.
+    private YarnTask HardResetFromCutscene()
+    {
+        SunriseAudio.PlaySequence("hard_reset", "night_transition");
+        StartOver(GapTimeOfDay, true);
+        if (string.IsNullOrWhiteSpace(sceneAfterHardReset))
+        {
+            Debug.LogError("<<hard_reset_from_cutscene>>: Scene After Hard Reset is not assigned.", this);
+            return YarnTask.CompletedTask;
+        }
+        return LoadLocation(sceneAfterHardReset, "");
     }
 
     // <<soft_reset>>: midnight comes without a death, so there is no white flash. The loop starts over in the Dorm at midnight.

@@ -99,15 +99,25 @@ public class WakeUpPose : MonoBehaviour
         spriteRenderer.sprite = wakeFrames[0];
     }
 
-    // Plays asleep hold, the wake-up frames, and the after hold. Yield on it to wait for the end.
-    public IEnumerator PlayWakeUp()
+    // Plays asleep hold, an optional sound, the wake-up frames, and the after hold.
+    public IEnumerator PlayWakeUp(float asleepHoldOverrideSeconds = -1f, string wakeSound = null)
     {
         if (!posed) LieDown();
         if (!posed) yield break;
 
         waking = true;
         // Scaled time, so the animation pauses with the game like an Animator would.
-        if (asleepSeconds > 0f) yield return new WaitForSeconds(asleepSeconds);
+        float asleepHold = asleepHoldOverrideSeconds >= 0f ? asleepHoldOverrideSeconds : asleepSeconds;
+        if (asleepHold > 0f) yield return new WaitForSeconds(asleepHold);
+
+        if (!string.IsNullOrWhiteSpace(wakeSound))
+        {
+            AudioClip clip = SunriseAudio.Play(wakeSound);
+            if (clip != null)
+                yield return new WaitForSecondsRealtime(clip.length);
+            else
+                Debug.LogWarning($"WakeUpPose on \"{name}\" could not play sound \"{wakeSound}\".", this);
+        }
 
         float frameTime = 1f / framesPerSecond;
         for (int i = 1; i < wakeFrames.Length && posed; i++)

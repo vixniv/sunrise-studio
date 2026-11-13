@@ -52,7 +52,6 @@ tags: setup
 title: Dorm_Start
 tags: scene1 dorm
 ---
-<<sfx "alarm_clock">>
 // Anin wakes up in her dorm room. Kirana (roommate) is not there.
 Anin: Looks like Kirana left early. Not really her thing.
 <<set $story_exit to true>>
@@ -167,8 +166,9 @@ Kirana: Ummmm, can I copy yours too?? Pretty please?
 Lila: Weird flex.
 
 // Classes start. Fade, fast forward to lunch.
-<<advance_time "lunch">>
-// Let the lunch bell finish before anyone speaks.
+<<advance_time_silent "lunch">>
+// The bell rings once the classroom is visible again.
+<<sfx "day_transition">>
 <<delay 2.5>>
 <<jump Classroom_LunchBreak>>
 ===
@@ -368,20 +368,21 @@ Kirana: She's waiting for her study date.
 -> He's just late.
 -> Don't start.
 Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
-<<close_dialogue_bubble>>
-<<start_character_move "Lila" -32.6 10 "walk" 0>>
-<<start_character_move "Kirana" -32.6 10 "walk" 0>>
-<<wait_for_character_moves>>
+// <<close_dialogue_bubble>>
+// <<start_character_move "Lila" -32.6 10 "walk" 0>>
+// <<start_character_move "Kirana" -32.6 10 "walk" 0>>
+// <<wait_for_character_moves>>
 
 // Picture cutscene of Fal's fall (cutscenes.yarn), then back here.
 <<detour Cutscene_FalFall>>
 // Kirana runs out. Lila's locker is left hanging open. Dira freezes.
 <<hide "Kirana">>
+<<hide "Lila">>
 
 // Anin doesn't move. She closes her eyes.
-Anin: ...Again.
+// Anin: ...Again.
 
 <<set $chapter_scene to 2>>
-<<hard_reset>>
+<<hard_reset_from_cutscene>>
 // TRANSITION → Scene 2: Gap 1
 ===

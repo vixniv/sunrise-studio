@@ -22,6 +22,12 @@
 //   note. Lila's sketchbook is full of Warmus lunches.
 // =====================================================================
 
+title: Scene7_Declarations
+tags: setup
+---
+<<declare $d4_dressed = false>>
+===
+
 
 // ---------------------------------------------------------------------
 // DORM — MORNING
@@ -31,12 +37,14 @@
 title: Day4_Start
 tags: scene7 day4 dorm
 ---
+<<set $d4_dressed to false>>
 <<set $truth_dira to false>>
 <<set $truth_lila to false>>
 <<set $truth_kirana to false>>
 <<set $truth_fal to false>>
 <<npc_enter "Kirana">>
 Kirana: Anin. Did you do this?
+<<face_character "Anin" "right">>
 -> Do what?
 -> ...
 Kirana: Every day. Every single day says ten. Even the weekends.
@@ -53,8 +61,11 @@ Anin: Kirana... you're leaving?
 Kirana: ...I was going to tell you after graduation. My parents found work back home. Three islands away.
 Kirana: Don't look at me like that. It's not like I'm dying.
 Kirana: Whatever. Someone's being weird. Let's just go.
+<<close_dialogue_bubble>>
 <<door_exit "Kirana" "Dorm">>
 <<quest_update "day4" "Go to class">>
+// Anin stays in casual clothes until the Classroom scene opens.
+<<set $d4_dressed to true>>
 <<scene_transition "Classroom">>
 <<jump Day4_Classroom>>
 ===
