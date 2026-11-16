@@ -83,9 +83,9 @@ tags: scene3 day2 dorm interactable
     Anin: I should hurry.
     -> Get dressed
         <<set $d2_dressed to true>>
-        <<fade>>
         // Anin showers, rushes through her makeup, puts on her uniform.
-        // Play a short fade or outfit swap here.
+        // The casual art swaps to the uniform while the screen is covered.
+        <<fade_outfit "Anin" "uniform">>
     -> Do nothing
 <<endif>>
 ===
@@ -297,19 +297,22 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up—
 // speakers or overlap the boxes if your dialogue UI allows it.
 // PAYOFF in Scene 7 lunch: Kirana says "You finish my sentences too."
 Anin: —twice.
-Kirana: ...Creepy. Okay. Bye.
-<<close_dialogue_bubble>>
-<<start_character_move "Lila" -32.6 10 "walk" 0>>
-<<start_character_move "Kirana" -32.6 10 "walk" 0>>
-<<wait_for_character_moves>>
-<<npc_exit "Kirana">>
-<<npc_exit "Lila">>
+Kirana: ...Creepy.
+// <<close_dialogue_bubble>>
+// <<start_character_move "Lila" -32.6 10 "walk" 0>>
+// <<start_character_move "Kirana" -32.6 10 "walk" 0>>
+// <<wait_for_character_moves>>
+// <<npc_exit "Kirana">>
+// <<npc_exit "Lila">>
+<<hide "Kirana">>
+<<hide "Lila">>
 
 // Anin is alone.
-<<cutscene "fal_fall_offscreen_2">>
-// OFFSCREEN ONLY. Same sounds as the prologue, held a beat longer.
-// A sound from above, then screams from across the park.
+// Same picture cutscene of Fal's fall as scene 1 (cutscenes.yarn), then back here.
+<<detour Cutscene_FalFall>>
+<<cutscene_end>>
 // This time Anin's books hit the floor. She grips the locker door.
+<<sfx "books_drop">>
 
 Anin: But I... I helped him.
 

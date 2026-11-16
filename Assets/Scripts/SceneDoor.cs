@@ -32,6 +32,9 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [Tooltip("Which way the player looks after coming in through this door. Auto faces the side of the room " +
              "with more space (the camera confiner's wider side); pick Left or Right when Auto guesses wrong.")]
     [SerializeField] private SpawnFacing spawnFacing = SpawnFacing.Auto;
+    [Tooltip("Optional. The door sprite's DoorAnimator: it opens when the player leaves through this door, " +
+             "and closes behind the player when they come back in through it.")]
+    [SerializeField] private DoorAnimator doorAnimation;
 
     [Header("Story")]
     [Tooltip("Optional. Yarn node to run instead of leaving while $story_exit is true, such as Dorm_Door.")]
@@ -98,6 +101,12 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
                 ? interactionLabel.Trim()
                 : InteractionLabelUtility.FromYarnTitle(storyNode, name);
         }
+    }
+
+    // Called by DoorSpawn when the player comes in through this door.
+    public void PlayArrival()
+    {
+        if (doorAnimation != null) doorAnimation.PlayArrival();
     }
 
     public bool LeadsTo(string scene) =>
@@ -205,6 +214,8 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
         InteractionCue.Request(this, false, ownCue != null);
         SharedCue.Set(ownCue, ref cueShown, false);
         nearbyPlayer.InteractionMenuOpen = true;
+        // Silent: the scene transition below already plays door_open.
+        if (doorAnimation != null) doorAnimation.OpenSilently();
 
         AudioClip transitionSound = SunriseAudio.GetClip("door_open");
         if (transitionSound == null)
