@@ -150,6 +150,10 @@ public class CharacterOutfit : MonoBehaviour
         // Changing the controller resets the Animator to its default (idle) state; PlayerMove sets
         // IsWalking/IsRunning again every frame, so walking picks up on the next frame.
         animator.runtimeAnimatorController = controller;
+        // A controller swap can write its idle sprite even while the Animator is disabled.
+        // Keep the wake-up art visible until WakeUpPose finishes its sequence.
+        WakeUpPose wakeUp = GetComponent<WakeUpPose>();
+        if (wakeUp != null && wakeUp.IsPosed) wakeUp.LieDown();
         return true;
     }
 
