@@ -158,8 +158,8 @@ MonoBehaviour:
   selectedSkin: {fileID: 21300000, guid: b8c01db757f6b4f2797a0470ee35377e, type: 3}
   smallDefaultSkin: {fileID: 21300000, guid: 8a500361cc7904839b73616ca060b490, type: 3}
   smallSelectedSkin: {fileID: 21300000, guid: 41a05e2183afc4dd6b90fdd863d569b2, type: 3}
-  selectedSize: {x: 43.5, y: 35.5}
-  adjacentSize: {x: 43, y: 35}
+  selectedSize: {x: 50.914772, y: 42.887325}
+  adjacentSize: {x: 58.32184, y: 51}
   selectedOffset: {x: 0, y: 23}
   adjacentOffset: {x: 0, y: 0}
   adjacentScale: 1

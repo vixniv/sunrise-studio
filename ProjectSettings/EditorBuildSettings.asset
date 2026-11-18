@@ -38,5 +38,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Kitchen.unity
     guid: 859c077002dde4774b5e8b450163925e
+  - enabled: 1
+    path: Assets/Scenes/Prologue.unity
+    guid: 6e6166fba6b144275addc9a1a1f8aaa5
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}

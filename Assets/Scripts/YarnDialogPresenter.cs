@@ -71,7 +71,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
         defaultTalker = talker;
         defaultOffset = talkerOffset;
         onFinished = finished;
-        hud = ResolveActiveHud();
+        ResolveHudForPlayback();
         RunNode(node);
     }
 
@@ -98,7 +98,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
         onFinished = finished;
         directLines = lines;
         directLineIndex = 0;
-        hud = ResolveActiveHud();
+        ResolveHudForPlayback();
 
         if (hud != null)
             ShowNextDirectLine();
@@ -162,7 +162,7 @@ public class YarnDialogPresenter : DialoguePresenterBase
             return;
         }
 
-        hud = ResolveActiveHud();
+        ResolveHudForPlayback();
         Transform talker = defaultTalker;
         Vector2 offset = defaultOffset;
         if (DialogSpeaker.TryFind(line.CharacterName, out DialogSpeaker speaker))
@@ -257,7 +257,11 @@ public class YarnDialogPresenter : DialoguePresenterBase
         if (!IsPlaying) return;
         if (wheel != null && wheel.IsOpen) wheel.Close();
         if (bubble != null) bubble.Close();
-        if (hud != null) hud.Hide();
+        if (hud != null)
+        {
+            hud.Hide();
+            hud.SetDialogueSessionActive(false);
+        }
         if (listener != null) listener.InteractionMenuOpen = false;
         Action finished = onFinished;
         playing = false;
@@ -270,6 +274,19 @@ public class YarnDialogPresenter : DialoguePresenterBase
     }
 
     private void OnDisable() => Finish();
+
+    private void ResolveHudForPlayback()
+    {
+        DialogueHudView resolved = ResolveActiveHud();
+        if (hud != null && hud != resolved)
+        {
+            hud.Hide();
+            hud.SetDialogueSessionActive(false);
+        }
+        hud = resolved;
+        if (hud != null)
+            hud.SetDialogueSessionActive(playing);
+    }
 
     // FindAnyObjectByType may return a hidden HUD from another loaded scene. Prefer the active HUD
     // that belongs to this Dialogue Runner's scene, then any active HUD, then an inactive fallback.

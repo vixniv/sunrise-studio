@@ -51,8 +51,8 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 8, y: 6, z: 8, w: 7}
+  spritePixelsToUnits: 400
+  spriteBorder: {x: 46, y: 51, z: 45, w: 52}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -129,10 +129,10 @@ TextureImporter:
       name: TAG_Speaker_9slice_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 57
-        height: 27
+        x: 3
+        y: 8
+        width: 115
+        height: 51
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TAG_Speaker_9slice_0: -5749761103211630074
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

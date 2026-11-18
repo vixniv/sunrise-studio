@@ -13,9 +13,17 @@ namespace SunriseStudio.UI
         [SerializeField] Sprite pressedSprite;
         [SerializeField] Vector2 defaultSize;
         [SerializeField] Vector2 pressedSize;
+        [Tooltip("Scales the default and pressed artwork sizes. 1 = authored size; 0.5 = half size. Does not change label font size.")]
+        [SerializeField, Min(0.01f)] float visualScale = 1f;
 
         void OnEnable() => SetPressed(false);
         void OnDisable() => SetPressed(false);
+
+        void OnValidate()
+        {
+            visualScale = Mathf.Max(0.01f, visualScale);
+            SetPressed(false);
+        }
 
         public void OnPointerDown(PointerEventData eventData)
         {
@@ -31,7 +39,8 @@ namespace SunriseStudio.UI
             if (visual == null)
                 return;
             visual.sprite = pressed && pressedSprite != null ? pressedSprite : defaultSprite;
-            visual.rectTransform.sizeDelta = pressed && pressedSize != Vector2.zero ? pressedSize : defaultSize;
+            Vector2 size = pressed && pressedSize != Vector2.zero ? pressedSize : defaultSize;
+            visual.rectTransform.sizeDelta = size * visualScale;
         }
     }
 }

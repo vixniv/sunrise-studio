@@ -576,6 +576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 3
   targets: []
   followChanges: 0
@@ -1876,10 +1877,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.79010236
-    y: 0
-    width: 2.3666666
-    height: 2.3666666
+    x: 0
+    y: 0.23134328
+    width: 0.6243326
+    height: 0.6254139
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2486,6 +2487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap2_rooftop_key
+  matchMode: 0
   value: true
   targets: []
   followChanges: 1
@@ -3014,6 +3016,9 @@ MonoBehaviour:
   playOnce: 1
   keepPlayerPosition: 0
   wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &706477575
@@ -3302,6 +3307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $d2_paper_dropped
+  matchMode: 0
   value: true
   targets: []
   followChanges: 1
@@ -3581,6 +3587,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 1
   targets: []
   followChanges: 0
@@ -4316,6 +4323,9 @@ MonoBehaviour:
   playOnce: 1
   keepPlayerPosition: 0
   wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &945857406
@@ -4658,6 +4668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 4
   targets: []
   followChanges: 0
@@ -4794,6 +4805,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 2
   targets: []
   followChanges: 0
@@ -6698,6 +6710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 5
   targets: []
   followChanges: 0
@@ -7576,6 +7589,9 @@ MonoBehaviour:
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!1 &1776789831
@@ -7609,6 +7625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $chapter_scene
+  matchMode: 0
   value: 6
   targets: []
   followChanges: 0
@@ -9655,6 +9672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
   runner: {fileID: 0}
   variable: $gap1_locker_open
+  matchMode: 0
   value: true
   targets: []
   followChanges: 1
@@ -10388,6 +10406,9 @@ MonoBehaviour:
   playOnce: 1
   keepPlayerPosition: 0
   wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
   proximityTarget: {fileID: 0}
   proximityDistance: 3
 --- !u!4 &2130381993
@@ -10606,10 +10627,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1153484439948593343, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2306019414515160900, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -10638,84 +10655,44 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4521839303071749369, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6511415533654782141, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6820495961154592701, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6820495961154592701, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
