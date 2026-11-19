@@ -25,16 +25,35 @@ namespace SunriseStudio.UI
         [Tooltip("Rotates the complete dialogue card, including its text, tag, tail, and indicator.")]
         [SerializeField, Range(-10f, 10f)] float tiltDegrees = 2f;
 
+        [Header("Painted Artwork Layout")]
+        [SerializeField, Min(1f)] float bodyWidth = 267f;
+        [SerializeField] Vector2 speakerMinimumSize = new(70f, 32f);
+        [SerializeField] Vector2 speakerTextPadding = new(12f, 5f);
+        [SerializeField, Min(0f)] float speakerLeftInset = 18f;
+        [SerializeField, Min(0f)] float speakerBodyOverlap = 8f;
+        [SerializeField] Vector2 tailPaintedSize = new(29f, 18f);
+        [SerializeField, Min(0f)] float tailBodyOverlap = 2f;
+        [SerializeField, Range(0f, 1f)] float preferredTailPosition = 0.82f;
+        [SerializeField] Vector2 indicatorPaintedSize = new(11f, 9f);
+        [SerializeField, HideInInspector] Artwork bodyArtwork = new();
+        [SerializeField, HideInInspector] Artwork speakerArtwork = new();
+        [SerializeField, HideInInspector] Artwork tailArtwork = new();
+        [SerializeField, HideInInspector] Artwork indicatorArtwork = new();
+
         [Header("Text Pages")]
         [SerializeField, Range(1, 4)] int maximumLinesPerPage = 2;
         [Tooltip("Authored BodyText size. Used when an inactive prefab reports a zero rect during Awake.")]
         [SerializeField] Vector2 textAreaSize = new(210f, 48f);
         [Tooltip("Smallest height of the 9-sliced body image for a short, one-line message.")]
         [SerializeField, Min(1f)] float minimumBodyHeight = 48f;
+        [Tooltip("Minimum content padding: left, top, right, bottom, in unscaled UI units.")]
+        [SerializeField] Vector4 bodyPadding = new(24f, 20f, 24f, 12f);
+        [SerializeField, Min(0f)] float speakerTextGap = 6f;
 
         [Header("Next Indicator")]
         [SerializeField, Min(0f)] float indicatorBobDistance = 2f;
         [SerializeField, Min(0f)] float indicatorBobCyclesPerSecond = 2.5f;
+        [SerializeField, Min(0f)] float indicatorTextGap = 6f;
 
         [Header("Speaker Tracking")]
         [SerializeField] RectTransform bubbleRoot;
@@ -45,6 +64,14 @@ namespace SunriseStudio.UI
         [Header("Choice Positioning")]
         [Tooltip("Space between the dialogue bubble and its choices.")]
         [SerializeField, Min(0f)] float choiceGap = 6f;
+
+        [Header("Dialogue Screen Presentation")]
+        [Tooltip("Optional. Automatically finds GameplayControls/PauseButton in the same HUD.")]
+        [SerializeField] GameObject pauseControl;
+        [Tooltip("Optional. Automatically finds QuestTracker in the same HUD.")]
+        [SerializeField] GameObject questTrackerControl;
+        [SerializeField, Range(0.01f, 1f)] float scrimScreenHeight = 0.25f;
+        [SerializeField, Range(0f, 1f)] float scrimTopOpacity = 0.65f;
 
         readonly List<DialogueOptionView> options = new();
         readonly List<string> pages = new();
@@ -59,38 +86,33 @@ namespace SunriseStudio.UI
         Renderer activeSpeakerRenderer;
         Vector2 speakerOffset;
         Vector2 authoredBubblePosition;
-        Vector2 authoredTailPosition;
-        Vector2 authoredBubbleSize;
-        Vector2 authoredBodySize;
         Vector2 authoredTextSize;
-        Vector2 authoredTextPosition;
-        Vector2 authoredIndicatorPosition;
         Vector2 indicatorBasePosition;
         Vector3 compactBubbleScale = Vector3.one;
         Quaternion compactBubbleRotation = Quaternion.identity;
         float textTopInset;
-        float textBottomInset;
-        float bubbleExtraHeight;
-        float tailOverlap;
+        Rect bodyPaintRect;
+        Rect speakerPaintRect;
+        Rect tailPaintRect;
+        float tailCenterX;
         Canvas canvas;
         RectTransform bubbleBody;
         RectTransform indicatorRect;
+        DialogueTopGradient screenGradient;
+        bool dialogueSessionActive;
+        bool presentationActive;
+        bool pauseWasActive;
+        bool questTrackerWasActive;
 
         public bool IsVisible => group != null && group.alpha > 0f;
 
         void Awake()
         {
-            if (bubbleRoot == null)
-                bubbleRoot = transform.Find("BubbleRoot") as RectTransform;
-            if (tail == null && bubbleRoot != null)
-                tail = bubbleRoot.Find("Tail") as RectTransform;
-            if (bubbleRoot != null)
-                bubbleBody = bubbleRoot.Find("Body") as RectTransform;
-            EnsureBodyTextIsInsideBody();
-            if (nextIndicator != null)
-                indicatorRect = nextIndicator.transform as RectTransform;
-
-            canvas = GetComponentInParent<Canvas>();
+            ResolveLayoutReferences();
+            // The procedural overlay replaces the old, texture-based scrim at runtime.
+            Transform oldScrim = transform.Find("Scrim");
+            if (oldScrim != null)
+                oldScrim.gameObject.SetActive(false);
             CaptureAuthoredLayout();
             ApplyCompactScale();
 
@@ -103,40 +125,113 @@ namespace SunriseStudio.UI
             Hide();
         }
 
-        void EnsureBodyTextIsInsideBody()
+        void ResolveLayoutReferences()
         {
-            if (bodyText == null || bubbleBody == null)
-                return;
+            if (bubbleRoot == null)
+                bubbleRoot = transform.Find("BubbleRoot") as RectTransform;
+            if (bubbleRoot == null) return;
+            bubbleBody = bubbleRoot.Find("Body") as RectTransform;
+            if (tail == null) tail = bubbleRoot.Find("Tail") as RectTransform;
+            // Hide the tail's rounded top edge underneath the body at the join.
+            if (tail != null) tail.SetAsFirstSibling();
+            if (bodyText != null && bodyText.transform.parent != bubbleBody)
+                bodyText.transform.SetParent(bubbleBody, false);
+            indicatorRect = nextIndicator != null ? nextIndicator.transform as RectTransform : null;
+            if (indicatorRect != null && bubbleBody != null && indicatorRect.parent != bubbleBody)
+                indicatorRect.SetParent(bubbleBody, false);
+            canvas = GetComponentInParent<Canvas>();
+            // This view owns tag sizing. Old fitters must not resize the padded frame
+            // after the painted background and its text have been aligned.
+            if (speakerTag != null)
+            {
+                LayoutGroup layout = speakerTag.GetComponent<LayoutGroup>();
+                if (layout != null) layout.enabled = false;
+                ContentSizeFitter fitter = speakerTag.GetComponent<ContentSizeFitter>();
+                if (fitter != null) fitter.enabled = false;
+            }
+        }
 
-            RectTransform textRect = bodyText.rectTransform;
-            if (textRect.parent == bubbleBody)
-                return;
-
-            // Some HUD prefab revisions saved BodyText beside Body. That makes its
-            // position independent from the panel being resized. Reparent it while
-            // retaining the authored top-left layout values.
-            Vector2 anchorMin = textRect.anchorMin;
-            Vector2 anchorMax = textRect.anchorMax;
-            Vector2 pivot = textRect.pivot;
-            Vector2 position = textRect.anchoredPosition;
-            Vector2 size = textRect.sizeDelta;
-            Quaternion rotation = textRect.localRotation;
-            Vector3 scale = textRect.localScale;
-
-            textRect.SetParent(bubbleBody, false);
-            textRect.anchorMin = anchorMin;
-            textRect.anchorMax = anchorMax;
-            textRect.pivot = pivot;
-            textRect.anchoredPosition = position;
-            textRect.sizeDelta = size;
-            textRect.localRotation = rotation;
-            textRect.localScale = scale;
+        // Refresh deliberately, rather than running layout continuously in Edit Mode.
+        // This stores sprite alpha bounds for builds without enabling Read/Write.
+        [ContextMenu("Refresh Artwork Layout")]
+        public void RefreshArtworkLayout()
+        {
+            ResolveLayoutReferences();
+#if UNITY_EDITOR
+            bodyArtwork.Measure(bubbleBody != null ? bubbleBody.GetComponent<Image>() : null);
+            speakerArtwork.Measure(speakerTag != null ? speakerTag.GetComponent<Image>() : null);
+            tailArtwork.Measure(tail != null ? tail.GetComponent<Image>() : null);
+            indicatorArtwork.Measure(indicatorRect != null ? indicatorRect.GetComponent<Image>() : null);
+#endif
+            CaptureAuthoredLayout();
+            ApplyCompactScale();
+            FitBubbleToPage(bodyText != null ? bodyText.text : string.Empty);
         }
 
         void OnDestroy()
         {
+            SetScreenPresentation(false);
+            if (screenGradient != null)
+                Destroy(screenGradient.gameObject);
             if (continueButton != null)
                 continueButton.onClick.RemoveListener(Continue);
+        }
+
+        void OnDisable() => SetScreenPresentation(false);
+
+        void OnEnable()
+        {
+            if (dialogueSessionActive || IsVisible)
+                SetScreenPresentation(true);
+        }
+
+        // The runner owns this hold so cutscene commands between lines cannot
+        // briefly restore the exploration HUD while the conversation still runs.
+        public void SetDialogueSessionActive(bool active)
+        {
+            if (active)
+                EnsureActive();
+            dialogueSessionActive = active;
+            SetScreenPresentation(active || IsVisible);
+        }
+
+        void SetScreenPresentation(bool active)
+        {
+            if (active && !presentationActive)
+            {
+                Transform hudArea = transform.parent;
+                if (pauseControl == null && hudArea != null)
+                    pauseControl = hudArea.Find("GameplayControls/PauseButton")?.gameObject;
+                if (questTrackerControl == null && hudArea != null)
+                    questTrackerControl = hudArea.Find("QuestTracker")?.gameObject;
+                pauseWasActive = pauseControl != null && pauseControl.activeSelf;
+                questTrackerWasActive = questTrackerControl != null && questTrackerControl.activeSelf;
+                if (pauseControl != null) pauseControl.SetActive(false);
+                if (questTrackerControl != null) questTrackerControl.SetActive(false);
+            }
+            else if (!active && presentationActive)
+            {
+                if (pauseControl != null) pauseControl.SetActive(pauseWasActive);
+                if (questTrackerControl != null) questTrackerControl.SetActive(questTrackerWasActive);
+            }
+            presentationActive = active;
+
+            if (active && screenGradient == null && canvas != null)
+            {
+                // Root canvas deliberately bypasses safe-area insets: the gradient
+                // must reach the physical top and both sides of the screen.
+                var overlay = new GameObject("DialogueTopGradient", typeof(RectTransform),
+                    typeof(CanvasRenderer), typeof(DialogueTopGradient));
+                overlay.layer = canvas.rootCanvas.gameObject.layer;
+                overlay.transform.SetParent(canvas.rootCanvas.transform, false);
+                overlay.transform.SetAsFirstSibling();
+                screenGradient = overlay.GetComponent<DialogueTopGradient>();
+            }
+            if (screenGradient != null)
+            {
+                screenGradient.Configure(scrimTopOpacity, scrimScreenHeight);
+                screenGradient.gameObject.SetActive(active);
+            }
         }
 
         void Update()
@@ -288,11 +383,11 @@ namespace SunriseStudio.UI
 
             float parentWidth = parent.rect.width;
             float parentHeight = parent.rect.height;
-            float bubbleWidth = bubbleRoot.rect.width * Mathf.Abs(bubbleRoot.localScale.x);
-            float bubbleHeight = bubbleRoot.rect.height * Mathf.Abs(bubbleRoot.localScale.y);
-            float bubbleLeft = bubbleRoot.anchoredPosition.x - bubbleRoot.pivot.x * bubbleWidth;
-            float bubbleTop = -bubbleRoot.anchoredPosition.y -
-                              (1f - bubbleRoot.pivot.y) * bubbleHeight;
+            Rect paintBounds = RotatedPaintBounds();
+            float bubbleWidth = paintBounds.width;
+            float bubbleHeight = paintBounds.height;
+            float bubbleLeft = bubbleRoot.localPosition.x + paintBounds.xMin - parent.rect.xMin;
+            float bubbleTop = parent.rect.yMax - (bubbleRoot.localPosition.y + paintBounds.yMax);
             float bubbleRight = bubbleLeft + bubbleWidth;
             float bubbleBottom = bubbleTop + bubbleHeight;
             float choiceWidth = choicesRoot.rect.width;
@@ -348,6 +443,7 @@ namespace SunriseStudio.UI
             group.alpha = 0f;
             group.interactable = false;
             group.blocksRaycasts = false;
+            SetScreenPresentation(dialogueSessionActive);
         }
 
         void ShowGroup()
@@ -355,6 +451,7 @@ namespace SunriseStudio.UI
             group.alpha = 1f;
             group.interactable = true;
             group.blocksRaycasts = true;
+            SetScreenPresentation(true);
         }
 
         // DialogueLayer is saved inactive in the HUD prefab so it cannot flash on screen
@@ -404,7 +501,7 @@ namespace SunriseStudio.UI
 
             bodyText.text = page;
             bodyText.textWrappingMode = TextWrappingModes.Normal;
-            bodyText.overflowMode = TextOverflowModes.Overflow;
+            bodyText.overflowMode = TextOverflowModes.Truncate;
             FitBubbleToPage(page);
             bodyText.ForceMeshUpdate();
             visibleCharacters = 0f;
@@ -494,8 +591,14 @@ namespace SunriseStudio.UI
                     authoredTextSize.x);
             bodyText.text = value;
             bodyText.maxVisibleCharacters = int.MaxValue;
+            // Pagination must measure every line, even if the previous page's
+            // display rectangle would truncate the candidate being measured.
+            TextOverflowModes displayOverflow = bodyText.overflowMode;
+            bodyText.overflowMode = TextOverflowModes.Overflow;
             bodyText.ForceMeshUpdate();
-            return Mathf.Max(1, bodyText.textInfo.lineCount);
+            int lineCount = Mathf.Max(1, bodyText.textInfo.lineCount);
+            bodyText.overflowMode = displayOverflow;
+            return lineCount;
         }
 
         static List<string> SplitSentences(string value)
@@ -545,127 +648,112 @@ namespace SunriseStudio.UI
 
         void CaptureAuthoredLayout()
         {
-            if (bubbleRoot != null)
-            {
-                authoredBubblePosition = bubbleRoot.anchoredPosition;
-                authoredBubbleSize = bubbleRoot.sizeDelta;
-                compactBubbleScale = bubbleRoot.localScale * visualScale;
-                compactBubbleRotation = bubbleRoot.localRotation *
-                    Quaternion.Euler(0f, 0f, tiltDegrees);
-            }
-            if (tail != null)
-                authoredTailPosition = tail.anchoredPosition;
-            if (bubbleBody != null)
-                authoredBodySize = bubbleBody.sizeDelta;
+            if (bubbleRoot == null) return;
+            authoredBubblePosition = bubbleRoot.anchoredPosition;
+            // Absolute values keep a saved preview from applying scale/tilt twice.
+            compactBubbleScale = new Vector3(visualScale, visualScale, 1f);
+            compactBubbleRotation = Quaternion.Euler(0f, 0f, tiltDegrees);
+            tailCenterX = bodyWidth * preferredTailPosition;
+            authoredTextSize = new Vector2(
+                Mathf.Max(1f, Mathf.Min(textAreaSize.x, bodyWidth - bodyPadding.x - bodyPadding.z)),
+                textAreaSize.y);
             if (bodyText != null)
             {
-                RectTransform textRect = bodyText.rectTransform;
-                textRect.anchorMin = new Vector2(0f, 1f);
-                textRect.anchorMax = new Vector2(0f, 1f);
-                textRect.pivot = new Vector2(0f, 1f);
-                authoredTextPosition = textRect.anchoredPosition;
-                authoredTextSize = bodyText.rectTransform.sizeDelta;
-                if (authoredTextSize.x <= 0f)
-                    authoredTextSize.x = textAreaSize.x;
-                if (authoredTextSize.y <= 0f)
-                    authoredTextSize.y = textAreaSize.y;
-                bodyText.rectTransform.sizeDelta = authoredTextSize;
+                bodyText.enableAutoSizing = false;
+                bodyText.horizontalAlignment = HorizontalAlignmentOptions.Left;
+                bodyText.verticalAlignment = VerticalAlignmentOptions.Top;
+                bodyText.margin = Vector4.zero;
+                bodyText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, authoredTextSize.x);
             }
-            if (indicatorRect != null)
-            {
-                authoredIndicatorPosition = indicatorRect.anchoredPosition;
-                indicatorBasePosition = authoredIndicatorPosition;
-            }
-
-            if (bubbleBody != null && bodyText != null)
-            {
-                textTopInset = Mathf.Max(0f, -bodyText.rectTransform.anchoredPosition.y);
-                textBottomInset = Mathf.Max(
-                    0f,
-                    authoredBodySize.y - textTopInset - authoredTextSize.y);
-            }
-            if (tail != null && bubbleBody != null)
-            {
-                tailOverlap = authoredBodySize.y + authoredTailPosition.y;
-                // Only include the part of the tail that extends below the body. The
-                // authored BubbleRoot currently contains extra empty height, so using
-                // BubbleRoot - Body would make short dialogue appear much too tall.
-                bubbleExtraHeight = Mathf.Max(0f, tail.rect.height - tailOverlap);
-            }
-            else if (bubbleRoot != null && bubbleBody != null)
-                bubbleExtraHeight = Mathf.Max(0f, authoredBubbleSize.y - authoredBodySize.y);
+            FitBubbleToPage(bodyText != null ? bodyText.text : string.Empty);
         }
 
         void RestoreAuthoredLayout()
         {
-            if (bubbleRoot != null)
-            {
-                bubbleRoot.anchoredPosition = authoredBubblePosition;
-                bubbleRoot.sizeDelta = authoredBubbleSize;
-                bubbleRoot.localScale = compactBubbleScale;
-                bubbleRoot.localRotation = compactBubbleRotation;
-            }
-            if (bubbleBody != null)
-                bubbleBody.sizeDelta = authoredBodySize;
-            if (bodyText != null)
-            {
-                bodyText.rectTransform.anchoredPosition = authoredTextPosition;
-                bodyText.rectTransform.sizeDelta = authoredTextSize;
-            }
-            if (tail != null)
-                tail.anchoredPosition = authoredTailPosition;
-            if (indicatorRect != null)
-            {
-                indicatorRect.anchoredPosition = authoredIndicatorPosition;
-                indicatorBasePosition = authoredIndicatorPosition;
-            }
+            if (bubbleRoot == null) return;
+            bubbleRoot.anchoredPosition = authoredBubblePosition;
+            ApplyCompactScale();
+            tailCenterX = bodyWidth * preferredTailPosition;
+            FitBubbleToPage(bodyText != null ? bodyText.text : string.Empty);
+        }
+
+        float GetTextTopInset() => Mathf.Max(bodyPadding.y,
+            speakerTag != null && speakerTag.activeSelf ? speakerBodyOverlap + speakerTextGap : 0f);
+
+        void PositionIndicatorInsideBody()
+        {
+            if (indicatorRect == null || bubbleBody == null) return;
+            Rect painted = new Rect(
+                bodyWidth - bodyPadding.z - indicatorPaintedSize.x,
+                bodyPaintRect.yMin + bodyPadding.w + indicatorBobDistance,
+                indicatorPaintedSize.x, indicatorPaintedSize.y);
+            painted.position -= bubbleBody.anchoredPosition;
+            indicatorArtwork.Place(indicatorRect.GetComponent<Image>(), painted);
+            indicatorBasePosition = indicatorRect.anchoredPosition;
+        }
+
+        void LayoutSpeakerTag()
+        {
+            speakerPaintRect = Rect.zero;
+            if (speakerTag == null || speakerText == null) return;
+            var tag = speakerTag.GetComponent<Image>();
+            if (tag == null) return;
+            speakerText.enableAutoSizing = false;
+            speakerText.textWrappingMode = TextWrappingModes.NoWrap;
+            speakerText.overflowMode = TextOverflowModes.Ellipsis;
+            speakerText.alignment = TextAlignmentOptions.Center;
+            speakerText.margin = Vector4.zero;
+            Vector2 textSize = speakerText.GetPreferredValues(speakerText.text);
+            float width = Mathf.Min(bodyWidth - speakerLeftInset, Mathf.Max(speakerMinimumSize.x,
+                textSize.x + 2f * speakerTextPadding.x));
+            float height = Mathf.Max(speakerMinimumSize.y, textSize.y + 2f * speakerTextPadding.y);
+            speakerPaintRect = new Rect(speakerLeftInset, -speakerBodyOverlap, width, height);
+            speakerArtwork.Place(tag, speakerPaintRect);
+            Rect localPaint = speakerArtwork.LocalRect(tag);
+            SetTextRect(speakerText.rectTransform, new Vector2(
+                localPaint.xMin + speakerTextPadding.x, localPaint.yMax - speakerTextPadding.y),
+                new Vector2(Mathf.Max(1f, width - 2f * speakerTextPadding.x),
+                    Mathf.Max(1f, height - 2f * speakerTextPadding.y)));
+        }
+
+        void LayoutTail()
+        {
+            if (tail == null) return;
+            tailCenterX = Mathf.Clamp(tailCenterX, tailEdgePadding, bodyWidth - tailEdgePadding);
+            tailPaintRect = new Rect(tailCenterX - tailPaintedSize.x * 0.5f,
+                bodyPaintRect.yMin + tailBodyOverlap - tailPaintedSize.y,
+                tailPaintedSize.x, tailPaintedSize.y);
+            tailArtwork.Place(tail.GetComponent<Image>(), tailPaintRect);
+        }
+
+        static void SetTextRect(RectTransform rect, Vector2 position, Vector2 size)
+        {
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
         }
 
         void FitBubbleToPage(string page)
         {
-            if (bubbleRoot == null || bubbleBody == null || bodyText == null)
-                return;
-
-            float textWidth = authoredTextSize.x > 0f
-                ? authoredTextSize.x
-                : bodyText.rectTransform.rect.width;
-            float preferredTextHeight = Mathf.Ceil(bodyText.GetPreferredValues(page, textWidth, 0f).y);
-            float bodyHeight = Mathf.Max(
-                minimumBodyHeight,
-                preferredTextHeight + textTopInset + textBottomInset);
-
-            bubbleBody.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bodyHeight);
-            RectTransform textRect = bodyText.rectTransform;
-            textRect.anchorMin = new Vector2(0f, 1f);
-            textRect.anchorMax = new Vector2(0f, 1f);
-            textRect.pivot = new Vector2(0f, 1f);
-            textRect.anchoredPosition = authoredTextPosition;
-            textRect.SetSizeWithCurrentAnchors(
-                RectTransform.Axis.Vertical,
-                Mathf.Max(1f, preferredTextHeight));
-            float bubbleHeight = bodyHeight + bubbleExtraHeight;
-            bubbleRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bubbleHeight);
-
-            if (tail != null)
-            {
-                Vector2 tailPosition = tail.anchoredPosition;
-                tailPosition.y = -bodyHeight + tailOverlap;
-                tail.anchoredPosition = tailPosition;
-            }
-
-            if (indicatorRect != null)
-            {
-                // NextIndicator is anchored to BubbleRoot's bottom. Move its baseline
-                // with the changing root height so it keeps the same distance from the
-                // top of the speech bubble.
-                indicatorBasePosition = authoredIndicatorPosition;
-                indicatorBasePosition.y += bubbleHeight - authoredBubbleSize.y;
-                indicatorRect.anchoredPosition = indicatorBasePosition;
-            }
-
-            textRect.ForceUpdateRectTransforms();
-            bubbleBody.ForceUpdateRectTransforms();
-            bubbleRoot.ForceUpdateRectTransforms();
+            if (bubbleRoot == null || bubbleBody == null || bodyText == null) return;
+            LayoutSpeakerTag();
+            textTopInset = GetTextTopInset();
+            float preferredTextHeight = Mathf.Ceil(bodyText.GetPreferredValues(page, authoredTextSize.x, 0f).y);
+            float bottomInset = Mathf.Max(0f, bodyPadding.w);
+            if (indicatorRect != null && pageIndex + 1 < pages.Count)
+                bottomInset += indicatorPaintedSize.y + indicatorBobDistance * 2f + indicatorTextGap;
+            float bodyHeight = Mathf.Max(minimumBodyHeight, preferredTextHeight + textTopInset + bottomInset);
+            bodyPaintRect = new Rect(0f, -bodyHeight, bodyWidth, bodyHeight);
+            bubbleRoot.anchorMin = bubbleRoot.anchorMax = bubbleRoot.pivot = new Vector2(0f, 1f);
+            bubbleRoot.sizeDelta = new Vector2(bodyWidth, bodyHeight + tailPaintedSize.y - tailBodyOverlap);
+            bodyArtwork.Place(bubbleBody.GetComponent<Image>(), bodyPaintRect);
+            SetTextRect(bodyText.rectTransform,
+                new Vector2(bodyPadding.x, -textTopInset) - bubbleBody.anchoredPosition,
+                new Vector2(authoredTextSize.x, Mathf.Max(1f, preferredTextHeight)));
+            LayoutTail();
+            PositionIndicatorInsideBody();
         }
 
         void SetIndicatorVisible(bool visible)
@@ -710,28 +798,60 @@ namespace SunriseStudio.UI
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPoint, uiCamera, out Vector2 point))
                 return;
 
-            float speakerX = point.x - parent.rect.xMin;
-            float speakerYFromTop = parent.rect.yMax - point.y;
-            float scaleX = Mathf.Max(0.0001f, Mathf.Abs(bubbleRoot.localScale.x));
-            float scaleY = Mathf.Max(0.0001f, Mathf.Abs(bubbleRoot.localScale.y));
-            float bubbleWidth = bubbleRoot.rect.width * scaleX;
-            float bubbleHeight = bubbleRoot.rect.height * scaleY;
-            float parentWidth = parent.rect.width;
-            float parentHeight = parent.rect.height;
+            PositionAboveSpeaker(point);
+        }
 
-            float bubbleLeft = speakerX - authoredTailPosition.x * scaleX;
-            bubbleLeft = Mathf.Clamp(bubbleLeft, screenMargin, Mathf.Max(screenMargin, parentWidth - bubbleWidth - screenMargin));
+        // Parent-local coordinates, with the actual painted tip as the attachment.
+        // All rotation and scale are included before clamping the card to the screen.
+        public void PositionAboveSpeaker(Vector2 point)
+        {
+            if (bubbleRoot == null || tail == null || bubbleRoot.parent is not RectTransform parent) return;
+            Rect safe = parent.rect;
+            safe.xMin += screenMargin; safe.xMax -= screenMargin;
+            safe.yMin += screenMargin; safe.yMax -= screenMargin;
+            for (int attempt = 0; attempt < 4; attempt++)
+            {
+                LayoutTail();
+                Vector2 tip = TailTipInBubble();
+                Vector2 desired = point - TransformBubbleOffset(tip);
+                Rect bounds = RotatedPaintBounds();
+                Vector2 clamped = new Vector2(
+                    Mathf.Clamp(desired.x, safe.xMin - bounds.xMin, Mathf.Max(safe.xMin - bounds.xMin, safe.xMax - bounds.xMax)),
+                    Mathf.Clamp(desired.y, safe.yMin - bounds.yMin, Mathf.Max(safe.yMin - bounds.yMin, safe.yMax - bounds.yMax)));
+                bubbleRoot.localPosition = new Vector3(clamped.x, clamped.y, bubbleRoot.localPosition.z);
+                if ((desired - clamped).sqrMagnitude < 0.0001f) return;
+                Vector3 localTarget = Quaternion.Inverse(bubbleRoot.localRotation) * (Vector3)(point - clamped);
+                float correctionX = localTarget.x / bubbleRoot.localScale.x - tip.x;
+                float nextX = Mathf.Clamp(tailCenterX + correctionX, tailEdgePadding, bodyWidth - tailEdgePadding);
+                if (Mathf.Abs(nextX - tailCenterX) < 0.001f) return;
+                tailCenterX = nextX;
+            }
+        }
 
-            float tailTipFromTop = (-tail.anchoredPosition.y + tail.rect.height) * scaleY;
-            float bubbleTop = speakerYFromTop - tailTipFromTop;
-            bubbleTop = Mathf.Clamp(bubbleTop, screenMargin, Mathf.Max(screenMargin, parentHeight - bubbleHeight - screenMargin));
+        Vector2 TailTipInBubble() => tail.anchoredPosition + tailArtwork.LocalTip(tail.GetComponent<Image>());
 
-            bubbleRoot.anchoredPosition = new Vector2(Mathf.Round(bubbleLeft), -Mathf.Round(bubbleTop));
-            float tailX = Mathf.Clamp(
-                (speakerX - bubbleLeft) / scaleX,
-                tailEdgePadding,
-                bubbleRoot.rect.width - tailEdgePadding);
-            tail.anchoredPosition = new Vector2(Mathf.Round(tailX), tail.anchoredPosition.y);
+        Vector2 TransformBubbleOffset(Vector2 point) =>
+            bubbleRoot.localRotation * Vector3.Scale(point, bubbleRoot.localScale);
+
+        Rect RotatedPaintBounds()
+        {
+            Rect bounds = new Rect(TransformBubbleOffset(bodyPaintRect.min), Vector2.zero);
+            IncludeRotatedRect(ref bounds, bodyPaintRect);
+            if (speakerTag != null && speakerTag.activeSelf) IncludeRotatedRect(ref bounds, speakerPaintRect);
+            if (tail != null) IncludeRotatedRect(ref bounds, tailPaintRect);
+            return bounds;
+        }
+
+        void IncludeRotatedRect(ref Rect bounds, Rect painted)
+        {
+            for (int corner = 0; corner < 4; corner++)
+            {
+                Vector2 point = TransformBubbleOffset(new Vector2(
+                    (corner & 1) == 0 ? painted.xMin : painted.xMax,
+                    (corner & 2) == 0 ? painted.yMin : painted.yMax));
+                bounds = Rect.MinMaxRect(Mathf.Min(bounds.xMin, point.x), Mathf.Min(bounds.yMin, point.y),
+                    Mathf.Max(bounds.xMax, point.x), Mathf.Max(bounds.yMax, point.y));
+            }
         }
 
         void ApplyCompactScale()
@@ -741,6 +861,107 @@ namespace SunriseStudio.UI
 
             bubbleRoot.localScale = compactBubbleScale;
             bubbleRoot.localRotation = compactBubbleRotation;
+        }
+
+        [Serializable]
+        sealed class Artwork
+        {
+            [SerializeField] Sprite measuredSprite;
+            [SerializeField] Rect alpha = new(0f, 0f, 1f, 1f);
+            [SerializeField] Vector2 tip = new(0.5f, 0f);
+
+            Rect Bounds(Image image) => image != null && image.sprite == measuredSprite ? alpha : new Rect(0f, 0f, 1f, 1f);
+
+            public Rect LocalRect(Image image)
+            {
+                Rect a = Bounds(image);
+                return Rect.MinMaxRect(Map(image, a.min).x, Map(image, a.min).y,
+                    Map(image, a.max).x, Map(image, a.max).y);
+            }
+
+            public Vector2 LocalTip(Image image) => Map(image,
+                image != null && image.sprite == measuredSprite ? tip : new Vector2(0.5f, 0f));
+
+            Vector2 Map(Image image, Vector2 normalized)
+            {
+                Rect rect = image.rectTransform.rect;
+                if (image.type != Image.Type.Sliced || image.sprite == null || image.sprite.border == Vector4.zero)
+                    return rect.min + Vector2.Scale(normalized, rect.size);
+                Vector2 pixels = image.sprite.rect.size;
+                Vector4 border = image.sprite.border;
+                float ppu = image.pixelsPerUnit * image.pixelsPerUnitMultiplier;
+                return rect.min + new Vector2(
+                    Slice(normalized.x * pixels.x, pixels.x, border.x, border.z, rect.width, ppu),
+                    Slice(normalized.y * pixels.y, pixels.y, border.y, border.w, rect.height, ppu));
+            }
+
+            static float Slice(float pixel, float pixels, float low, float high, float size, float ppu)
+            {
+                float scale = Mathf.Min(1f, size * ppu / Mathf.Max(0.001f, low + high));
+                float start = low / ppu * scale;
+                float end = high / ppu * scale;
+                if (pixel <= low && low > 0f) return pixel / low * start;
+                if (pixel >= pixels - high && high > 0f) return size - (pixels - pixel) / high * end;
+                return start + (pixel - low) / Mathf.Max(0.001f, pixels - low - high) * (size - start - end);
+            }
+
+            public void Place(Image image, Rect painted)
+            {
+                if (image == null) return;
+                Rect a = Bounds(image);
+                Vector2 size;
+                if (image.type == Image.Type.Sliced && image.sprite != null && image.sprite.border != Vector4.zero)
+                {
+                    float ppu = image.pixelsPerUnit * image.pixelsPerUnitMultiplier;
+                    Vector2 pixels = image.sprite.rect.size;
+                    size = painted.size + new Vector2((1f - a.width) * pixels.x / ppu,
+                        (1f - a.height) * pixels.y / ppu);
+                }
+                else size = new Vector2(painted.width / Mathf.Max(0.001f, a.width), painted.height / Mathf.Max(0.001f, a.height));
+                RectTransform rect = image.rectTransform;
+                rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+                rect.localScale = Vector3.one;
+                rect.localRotation = Quaternion.identity;
+                rect.sizeDelta = size;
+                image.preserveAspect = false;
+                image.useSpriteMesh = false;
+                rect.anchoredPosition = painted.min - LocalRect(image).min;
+            }
+
+#if UNITY_EDITOR
+            public void Measure(Image image)
+            {
+                if (image == null || image.sprite == null) return;
+                string path = UnityEditor.AssetDatabase.GetAssetPath(image.sprite);
+                if (!System.IO.File.Exists(path)) return;
+                var texture = new Texture2D(2, 2);
+                try
+                {
+                    if (!texture.LoadImage(System.IO.File.ReadAllBytes(path))) return;
+                    Color32[] pixels = texture.GetPixels32();
+                    Rect spriteRect = image.sprite.rect;
+                    int left = (int)spriteRect.xMax, bottom = (int)spriteRect.yMax;
+                    int right = -1, top = -1;
+                    for (int y = (int)spriteRect.yMin; y < spriteRect.yMax; y++)
+                        for (int x = (int)spriteRect.xMin; x < spriteRect.xMax; x++)
+                            if (pixels[y * texture.width + x].a > 4)
+                            {
+                                left = Mathf.Min(left, x); right = Mathf.Max(right, x);
+                                bottom = Mathf.Min(bottom, y); top = Mathf.Max(top, y);
+                            }
+                    if (right < left) return;
+                    float sumX = 0f; int count = 0;
+                    for (int x = left; x <= right; x++)
+                        if (pixels[bottom * texture.width + x].a > 4) { sumX += x + 0.5f; count++; }
+                    alpha = new Rect((left - spriteRect.x) / spriteRect.width, (bottom - spriteRect.y) / spriteRect.height,
+                        (right + 1 - left) / spriteRect.width, (top + 1 - bottom) / spriteRect.height);
+                    tip = new Vector2((sumX / Mathf.Max(1, count) - spriteRect.x) / spriteRect.width,
+                        (bottom + 0.5f - spriteRect.y) / spriteRect.height);
+                    measuredSprite = image.sprite;
+                }
+                finally { DestroyImmediate(texture); }
+            }
+#endif
         }
 
         static Renderer FindSpeakerRenderer(Transform talker)

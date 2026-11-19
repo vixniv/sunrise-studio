@@ -205,7 +205,7 @@ Anin: Alright, see you there.
 // Kirana exits.
 <<hide "Kirana">>
 Anin: Now what should I do?
-<<quest_start "scene1_explore" "Explore the school">>
+<<quest_start "scene1_explore" "Have a lunch with your friends">>
 <<set $story_exit to false>>
 // Player can explore the school. Events that advance time:
 //   - Lunch_Warmus (required): trigger by interacting with the
@@ -312,6 +312,7 @@ tags: scene1 lockers
 <<set $lockers_clock to false>>
 <<set $lockers_fal to false>>
 <<set $lockers_hook to false>>
+<<quest_update "scene1_explore" "Find clues about Fal's whereabouts around the lockers">>
 ===
 
 title: Lockers_Clock

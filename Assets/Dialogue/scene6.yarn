@@ -42,7 +42,7 @@ Night Anin: He lived.
 Night Anin: She learned how to save him. Of course she did. So did I, once.
 Night Anin: Killing him only teaches her to save him. Fine.
 Night Anin: If she won't let go for him, maybe she'll let go for them.
-<<quest_start "gap3" "Make them see it">>
+<<quest_start "gap3" "Make them notice. Start with Kirana's things">>
 ===
 
 title: Gap3_KiranaBed
@@ -61,7 +61,7 @@ tags: scene6 gap3 dorm interactable required
     <<edit_calendar>>
     Night Anin: Every day is the tenth. Let her see it.
     <<set $gap3_calendar to true>>
-    <<quest_update "gap3" "Go to the classroom">>
+    <<quest_update "gap3" "Dira keeps reading the same page">>
 <<else>>
     Night Anin: Every day is the tenth.
 <<endif>>
@@ -95,7 +95,7 @@ tags: scene6 gap3 classroom interactable required
     <<sfx "book_note">>
     Note: "You've read this before."
     <<set $gap3_dira to true>>
-    <<quest_update "gap3" "Go to the locker room">>
+    <<quest_update "gap3" "Lila's drawing is still unfinished">>
 <<else>>
     Night Anin: She'll know the handwriting.
 <<endif>>

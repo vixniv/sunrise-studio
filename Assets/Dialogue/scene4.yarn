@@ -55,7 +55,7 @@ tags: scene4 gap2 dorm
 // Double reading: first play = the notes failed to save him.
 // Replay = the notes didn't break the loop.
 Anin: The notes didn't work. Something else, then.
-<<quest_start "gap2" "Keep him off the roof">>
+<<quest_start "gap2" "Find a way to keep him off the roof">>
 // Interactables: Gap2_Dorm_Clock, Gap2_Dorm_KiranaBed, Gap2_Dorm_Door
 ===
 
@@ -120,7 +120,12 @@ tags: scene4 gap2 lockers interactable
     // Anin slides the note through the vent slot of Fal's locker.
     // No key needed.
     <<set $gap2_note_placed to true>>
-    <<quest_update "gap2" "Go to the auditorium">>
+    // If the flag was already examined, the next step is the base, not the auditorium.
+    <<if $gap2_seen_flag is true>>
+        <<quest_update "gap2" "Check the base of the flagpole">>
+    <<else>>
+        <<quest_update "gap2" "Go to the auditorium">>
+    <<endif>>
 <<endif>>
 ===
 
@@ -135,6 +140,14 @@ tags: scene4 gap2 lockers interactable
 title: Gap2_Auditorium_Enter
 tags: scene4 gap2 auditorium
 ---
+// Skipped once the pole is done, so the "Go back to bed" quest never goes backwards.
+<<if $gap2_pole_done is false>>
+    <<if $gap2_seen_flag is true>>
+        <<quest_update "gap2" "Check the base of the flagpole">>
+    <<else>>
+        <<quest_update "gap2" "Look for something Fal would fix">>
+    <<endif>>
+<<endif>>
 Anin: Tomorrow's ceremony is supposed to happen here.
 ===
 
@@ -162,6 +175,10 @@ tags: scene4 gap2 auditorium interactable
     // Double reading: first play = she knows Fal can't leave things
     // imperfect. Replay = this is the trigger she's setting up.
     Anin: He'll want to fix it.
+    // Only on the first look, so examining the flag again does not replay the quest popup.
+    <<if $gap2_seen_flag is false>>
+        <<quest_update "gap2" "Check the base of the flagpole">>
+    <<endif>>
     <<set $gap2_seen_flag to true>>
     // Enable Gap2_FlagpoleBase now.
 <<endif>>

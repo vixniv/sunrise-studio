@@ -74,9 +74,23 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
                 return interactionLabel.Trim();
             foreach (ChoiceWheel.Choice choice in choices)
                 if (choice != null && !string.IsNullOrWhiteSpace(choice.yarnNode))
+                {
+                    WarnIfNodeMissing(choice.yarnNode);
                     return InteractionLabelUtility.FromYarnTitle(choice.yarnNode, name);
+                }
             return InteractionLabelUtility.FromYarnTitle(null, name);
         }
+    }
+
+    private bool warnedMissingNode;
+
+    // The label is built from the node name, so a node that is not in the Yarn project gives a stale label (and no dialogue).
+    private void WarnIfNodeMissing(string node)
+    {
+        if (warnedMissingNode || yarnDialog == null || yarnDialog.CanPlayNode(node))
+            return;
+        warnedMissingNode = true;
+        Debug.LogWarning($"{name}: Yarn node \"{node}\" does not exist in the Yarn project, so its interaction label \"{InteractionLabelUtility.FromYarnTitle(node, name)}\" comes from a stale name. Fix the Yarn Node on this object.", this);
     }
 
     private void Awake()

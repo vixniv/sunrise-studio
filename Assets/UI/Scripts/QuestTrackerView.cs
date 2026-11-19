@@ -21,6 +21,10 @@ namespace SunriseStudio.UI
         [Tooltip("X moves right. A negative Y moves down from the safe area's top-left corner.")]
         [SerializeField] Vector2 topLeftOffset = new Vector2(12f, -12f);
 
+        [Header("Visual scale")]
+        [Tooltip("Scales the whole tracker (tab, text and padding) from its top-left corner. 1 = authored size.")]
+        [SerializeField, Range(0.25f, 3f)] float visualScale = 1f;
+
         [Header("Dynamic size")]
         [Tooltip("Smallest allowed card. Normal cards still follow the rendered text size.")]
         [SerializeField] Vector2 minimumSize = new Vector2(90f, 34f);
@@ -145,6 +149,8 @@ namespace SunriseStudio.UI
             root.anchorMax = new Vector2(0f, 1f);
             root.pivot = new Vector2(0f, 1f);
             root.anchoredPosition = topLeftOffset;
+            // Pivot is top-left, so the tracker grows and shrinks away from its corner without drifting.
+            root.localScale = new Vector3(visualScale, visualScale, 1f);
         }
 
         void StretchBackgroundToRoot()

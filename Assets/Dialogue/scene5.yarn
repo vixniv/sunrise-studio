@@ -46,7 +46,7 @@ tags: scene5 day3 dorm
 Anin: Ugh, that dream again. What is it, anyway?
 Anin: And why does Fal always die, even when I tried to stop it the night before?
 <<enable_control>>
-<<quest_start "day3" "Get ready for school">>
+<<quest_start "day3" "Get dressed for school">>
 ===
 
 title: Day3_Dorm_Blazer
@@ -112,6 +112,10 @@ tags: scene5 day3 auditorium event
 ---
 <<event_marker "day3_auditorium" false>>
 <<sfx "basketball_practice">>
+// Skipped after the base is found, so coming back never replaces "Undo what I did" or the later quests.
+<<if $d3_seen_base is false>>
+    <<quest_update "day3_event" "Search the auditorium for traces from last night">>
+<<endif>>
 Anin: Everything looks the same as in my dream. Except for the people.
 Anin: Now... what did I do last night?
 ===
@@ -218,6 +222,7 @@ title: Day3_Lockers
 tags: scene5 day3 lockers event
 ---
 <<npc_enter "Fal">>
+<<quest_update "day3_event" "Take Fal to the library">>
 Fal: There you are. I almost went to the auditorium.
 <<close_dialogue_bubble>>
 <<move_character_to_actor "Fal" "Anin" -2.5 10 "walk">>
@@ -256,6 +261,7 @@ Anin: Not stupid.
 Fal: Hey. That thing I wanted to tell you.
 Fal: Tomorrow. After graduation. I'll tell you then.
 Anin: ...Tomorrow.
+<<quest_update "day3_event" "Go back to the dorm">>
 <<npc_exit "Fal">>
 <<scene_transition "Dorm">>
 <<jump Day3_Dorm_Evening>>

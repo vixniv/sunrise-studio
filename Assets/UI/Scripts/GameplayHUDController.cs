@@ -70,7 +70,7 @@ namespace SunriseStudio.UI
             onPauseRequested.Invoke();
         }
 
-        void HandleInteractClicked()
+        public void HandleInteractClicked()
         {
             if (InteractionCue.TryInteractCurrent())
                 onInteractionRequested.Invoke();

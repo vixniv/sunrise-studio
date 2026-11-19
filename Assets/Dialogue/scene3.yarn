@@ -246,6 +246,7 @@ tags: scene3 day2 lockers
 <<set $story_exit to true>>
 // Late sunlight through the high window. Anin waits beside Fal's
 // locker, two math books under her arm.
+<<quest_update "day2" "Wait for Fal and look around the lockers">>
 Anin: Today's different. He read them. Today's different.
 ===
 
@@ -319,6 +320,7 @@ Anin: But I... I helped him.
 // Make it interactable: Day2_CrumpledPaper (required to end the scene).
 // Shows the paper (ActiveIfYarnVariable with Follow Changes).
 <<set $d2_paper_dropped to true>>
+<<quest_update "day2" "Check what Fal dropped">>
 ===
 
 title: Day2_CrumpledPaper
