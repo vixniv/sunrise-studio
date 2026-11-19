@@ -164,6 +164,9 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("cutscene_image", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, false)));
         runner.AddCommandHandler("cutscene_image_keep_text", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, true)));
         runner.AddCommandHandler("cutscene_end", (Func<YarnTask>)EndCutsceneImages);
+        runner.AddCommandHandler("story_splash", (Action<string>)ShowStorySplash);
+        runner.AddCommandHandler("story_splash_end", (Action)HideStorySplash);
+        runner.AddCommandHandler("dialogue_speed", (Action<float>)SetDialogueSpeed);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
@@ -1235,6 +1238,35 @@ public class YarnCommands : MonoBehaviour
         if (view == null || !view.IsOpen) return YarnTask.CompletedTask;
         view.Close();
         return YarnTask.WaitUntil(() => view == null || !view.IsBusy);
+    }
+
+    // Unlike CutsceneView, this centered image leaves the normal dialogue bubble in use.
+    private void ShowStorySplash(string id)
+    {
+        StorySplashOverlay overlay = FindAnyObjectByType<StorySplashOverlay>();
+        if (overlay == null)
+        {
+            Debug.LogError($"<<story_splash \"{id}\">>: no StorySplashOverlay is active in this scene.", this);
+            return;
+        }
+        overlay.Show(id);
+    }
+
+    private void HideStorySplash()
+    {
+        StorySplashOverlay overlay = FindAnyObjectByType<StorySplashOverlay>();
+        if (overlay != null) overlay.Hide();
+    }
+
+    private void SetDialogueSpeed(float charactersPerSecond)
+    {
+        SunriseStudio.UI.DialogueHudView hud = FindAnyObjectByType<SunriseStudio.UI.DialogueHudView>();
+        if (hud == null)
+        {
+            Debug.LogWarning("<<dialogue_speed>>: no DialogueHudView is active in this scene.", this);
+            return;
+        }
+        hud.SetTextSpeed(charactersPerSecond);
     }
 
     private YarnTask PlayFreezeFrame()

@@ -103,11 +103,30 @@ namespace SunriseStudio.UI
         bool presentationActive;
         bool pauseWasActive;
         bool questTrackerWasActive;
+        bool splashPresentation;
+        float normalCharactersPerSecond;
 
         public bool IsVisible => group != null && group.alpha > 0f;
 
+        // Keep normal dialogue on screen, but park its bubble below centered story art.
+        public void SetSplashPresentation(bool enabled)
+        {
+            splashPresentation = enabled;
+            if (tail != null) tail.gameObject.SetActive(!enabled);
+            if (IsVisible) FollowSpeaker();
+        }
+
+        // A speed of zero restores the Inspector's normal dialogue speed.
+        public void SetTextSpeed(float charactersPerSecondOverride)
+        {
+            charactersPerSecond = charactersPerSecondOverride > 0f
+                ? charactersPerSecondOverride
+                : normalCharactersPerSecond;
+        }
+
         void Awake()
         {
+            normalCharactersPerSecond = charactersPerSecond;
             ResolveLayoutReferences();
             // The procedural overlay replaces the old, texture-based scrim at runtime.
             Transform oldScrim = transform.Find("Scrim");
@@ -777,7 +796,25 @@ namespace SunriseStudio.UI
 
         void FollowSpeaker()
         {
-            if (activeSpeaker == null || bubbleRoot == null || tail == null)
+            if (bubbleRoot == null || tail == null)
+                return;
+
+            if (splashPresentation)
+            {
+                if (bubbleRoot.parent is RectTransform splashParent)
+                {
+                    Rect safe = splashParent.rect;
+                    safe.xMin += screenMargin; safe.yMin += screenMargin;
+                    Rect bounds = RotatedPaintBounds();
+                    bubbleRoot.localPosition = new Vector3(
+                        safe.xMin - bounds.xMin,
+                        safe.yMin - bounds.yMin,
+                        bubbleRoot.localPosition.z);
+                }
+                return;
+            }
+
+            if (activeSpeaker == null)
                 return;
 
             Camera worldCamera = Camera.main;
