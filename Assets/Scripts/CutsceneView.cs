@@ -44,6 +44,14 @@ public class CutsceneView : MonoBehaviour, IPointerClickHandler
     private float visibleCharacters;
     private int lastTypedCharacter;
     private int charactersSinceBlip;
+    private RectTransform bodyRect;
+    private Vector2 bodyAnchorMin;
+    private Vector2 bodyAnchorMax;
+    private Vector2 bodyPivot;
+    private Vector2 bodyPosition;
+    private Vector2 bodySize;
+    private TextAlignmentOptions bodyAlignment;
+    private bool blackNarration;
 
     // The cutscene panel of the loaded scene, or null when the scene has none.
     public static CutsceneView Active
@@ -65,6 +73,16 @@ public class CutsceneView : MonoBehaviour, IPointerClickHandler
     {
         active = this;
         if (group == null) group = GetComponent<CanvasGroup>();
+        if (bodyText != null)
+        {
+            bodyRect = bodyText.rectTransform;
+            bodyAnchorMin = bodyRect.anchorMin;
+            bodyAnchorMax = bodyRect.anchorMax;
+            bodyPivot = bodyRect.pivot;
+            bodyPosition = bodyRect.anchoredPosition;
+            bodySize = bodyRect.sizeDelta;
+            bodyAlignment = bodyText.alignment;
+        }
         SetClosed();
     }
 
@@ -78,10 +96,23 @@ public class CutsceneView : MonoBehaviour, IPointerClickHandler
     public void ShowPicture(string spriteName, bool keepText = false)
     {
         if (!gameObject.activeSelf) gameObject.SetActive(true);
+        RestorePictureLayout();
         Sprite sprite = FindPicture(spriteName);
         if (sprite == null)
             Debug.LogWarning($"<<cutscene_image>>: no sprite named \"{spriteName}\" in {name}'s Pictures list.", this);
         Run(ShowPictureRoutine(sprite, keepText));
+    }
+
+    // Reuses the full-screen black panel, with typed, tap-to-advance text in its center.
+    public void ShowBlackNarration()
+    {
+        if (group == null || bodyText == null)
+        {
+            Debug.LogError("CutsceneView needs its CanvasGroup and Body Text for black narration.", this);
+            return;
+        }
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
+        Run(ShowBlackNarrationRoutine());
     }
 
     // <<cutscene_end>>: fades the cutscene out.
@@ -198,6 +229,30 @@ public class CutsceneView : MonoBehaviour, IPointerClickHandler
         routine = null;
     }
 
+    private IEnumerator ShowBlackNarrationRoutine()
+    {
+        bool wasOpen = open;
+        open = true;
+        blackNarration = true;
+        ClearText();
+        lineSinceImage = true;
+        if (picture != null) picture.gameObject.SetActive(false);
+        if (bodyRect != null)
+        {
+            bodyRect.anchorMin = new Vector2(0.5f, 0.5f);
+            bodyRect.anchorMax = new Vector2(0.5f, 0.5f);
+            bodyRect.pivot = new Vector2(0.5f, 0.5f);
+            bodyRect.anchoredPosition = Vector2.zero;
+            bodyRect.sizeDelta = new Vector2(500f, 120f);
+            bodyText.alignment = TextAlignmentOptions.Center;
+        }
+        group.blocksRaycasts = true;
+        group.interactable = true;
+        if (!wasOpen) yield return FadeGroup(0f, 1f);
+        else group.alpha = 1f;
+        routine = null;
+    }
+
     private IEnumerator CloseRoutine()
     {
         if (!lineSinceImage) yield return WaitForTap();
@@ -261,6 +316,21 @@ public class CutsceneView : MonoBehaviour, IPointerClickHandler
         }
         ClearText();
         SetIndicator(false);
+        RestorePictureLayout();
+    }
+
+    private void RestorePictureLayout()
+    {
+        if (!blackNarration) return;
+        blackNarration = false;
+        if (picture != null) picture.gameObject.SetActive(true);
+        if (bodyRect == null) return;
+        bodyRect.anchorMin = bodyAnchorMin;
+        bodyRect.anchorMax = bodyAnchorMax;
+        bodyRect.pivot = bodyPivot;
+        bodyRect.anchoredPosition = bodyPosition;
+        bodyRect.sizeDelta = bodySize;
+        bodyText.alignment = bodyAlignment;
     }
 
     private void ClearText()

@@ -164,6 +164,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("cutscene_image", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, false)));
         runner.AddCommandHandler("cutscene_image_keep_text", (Func<string, YarnTask>)(sprite => ShowCutsceneImage(sprite, true)));
         runner.AddCommandHandler("cutscene_end", (Func<YarnTask>)EndCutsceneImages);
+        runner.AddCommandHandler("cutscene_black", (Func<YarnTask>)ShowBlackNarration);
         runner.AddCommandHandler("story_splash", (Action<string>)ShowStorySplash);
         runner.AddCommandHandler("story_splash_end", (Action)HideStorySplash);
         runner.AddCommandHandler("dialogue_speed", (Action<float>)SetDialogueSpeed);
@@ -1237,6 +1238,21 @@ public class YarnCommands : MonoBehaviour
         CutsceneView view = CutsceneView.Active;
         if (view == null || !view.IsOpen) return YarnTask.CompletedTask;
         view.Close();
+        return YarnTask.WaitUntil(() => view == null || !view.IsBusy);
+    }
+
+    // <<cutscene_black>>: full black screen with centered text. Subsequent Yarn lines
+    // use CutsceneView's existing typewriter and tap-to-advance behavior.
+    private YarnTask ShowBlackNarration()
+    {
+        CutsceneView view = CutsceneView.Active;
+        if (view == null)
+        {
+            Debug.LogError("<<cutscene_black>>: this scene needs a CutsceneCanvas.", this);
+            return YarnTask.CompletedTask;
+        }
+        HideDialogueLine();
+        view.ShowBlackNarration();
         return YarnTask.WaitUntil(() => view == null || !view.IsBusy);
     }
 
