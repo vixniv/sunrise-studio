@@ -133,6 +133,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("advance_time_silent", (Func<string, YarnTask>)AdvanceTimeSilent);
         runner.AddCommandHandler("advance_time_to_scene", (Func<string, string, YarnTask>)AdvanceTimeToScene);
         runner.AddCommandHandler("advance_time_to_scene_at_x", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtX);
+        runner.AddCommandHandler("advance_time_to_scene_at_x_silent", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtXSilent);
         runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
         runner.AddCommandHandler("delay", (Func<float, YarnTask>)Delay);
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
@@ -393,6 +394,17 @@ public class YarnCommands : MonoBehaviour
     // Anin before the new scene's first visible frame, using the same time-change transition.
     private YarnTask AdvanceTimeToSceneAtX(string slot, string location, float destinationX, string facing)
     {
+        return AdvanceTimeToSceneAtXInternal(slot, location, destinationX, facing, true);
+    }
+
+    // Places Anin and changes time during one room transition, without playing a time-change sound.
+    private YarnTask AdvanceTimeToSceneAtXSilent(string slot, string location, float destinationX, string facing)
+    {
+        return AdvanceTimeToSceneAtXInternal(slot, location, destinationX, facing, false);
+    }
+
+    private YarnTask AdvanceTimeToSceneAtXInternal(string slot, string location, float destinationX, string facing, bool playTimeSound)
+    {
         if (leaving)
             return YarnTask.CompletedTask;
 
@@ -417,7 +429,9 @@ public class YarnCommands : MonoBehaviour
         }
 
         DoorSpawn.SetNextSpawn(scene, destinationX, facingKey != "left", facingKey == "sit");
-        return AdvanceTimeToScene(slot, scene);
+        return playTimeSound
+            ? AdvanceTimeToScene(slot, scene)
+            : LoadLocation(scene, "", () => ApplyTimeOfDay(slot));
     }
 
     // Changes the time and places an actor while the same transition covers the screen.
