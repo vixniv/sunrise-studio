@@ -16,12 +16,9 @@ public class MapPlayerMove : MonoBehaviour
     public bool restrictToHallways = true;
     public LayerMask walkableLayer;
 
-    [Header("Walking Bob and Tilt")]
+    [Header("Walking Tilt")]
     [Tooltip("Assign a child object containing only the player's SpriteRenderer.")]
     public Transform visual;
-    [Min(1f)] public float pixelsPerUnit = 16f;
-    [Min(0f)] public float bobHeightPixels = 1f;
-    [Min(0f)] public float bobCyclesPerSecond = 4f;
     [Tooltip("Maximum left/right rotation applied while walking.")]
     [Range(0f, 15f)] public float tiltAngleDegrees = 3f;
     [Tooltip("How many complete left/right sway cycles happen each second.")]
@@ -35,7 +32,7 @@ public class MapPlayerMove : MonoBehaviour
     bool running;
     bool moving;
     Vector2 dragStart;
-    float bobTime;
+    float tiltTime;
 
     public Vector2 MoveDirection => moveDirection;
     public bool IsRunning => running;
@@ -55,7 +52,7 @@ public class MapPlayerMove : MonoBehaviour
         }
         else
             Debug.LogWarning(
-                "MapPlayerMove needs a child named Visual for walking bob. " +
+                "MapPlayerMove needs a child named Visual for walking tilt. " +
                 "Movement still works without it.",
                 this);
 
@@ -96,37 +93,21 @@ public class MapPlayerMove : MonoBehaviour
 
         if (!moving)
         {
-            bobTime = 0f;
+            tiltTime = 0f;
             visual.localPosition = visualRestPosition;
             visual.localRotation = visualRestRotation;
             return;
         }
 
-        bobTime += Time.deltaTime;
-
-        if (bobHeightPixels > 0f && bobCyclesPerSecond > 0f)
-        {
-            float heightInUnits = bobHeightPixels / pixelsPerUnit;
-            float rawOffset = Mathf.Sin(
-                bobTime * bobCyclesPerSecond * Mathf.PI * 2f) * heightInUnits;
-
-            float pixelSnappedOffset =
-                Mathf.Round(rawOffset * pixelsPerUnit) / pixelsPerUnit;
-
-            visual.localPosition =
-                visualRestPosition + Vector3.up * pixelSnappedOffset;
-        }
-        else
-        {
-            visual.localPosition = visualRestPosition;
-        }
+        tiltTime += Time.deltaTime;
+        visual.localPosition = visualRestPosition;
 
         float tilt = 0f;
 
         if (tiltAngleDegrees > 0f && tiltCyclesPerSecond > 0f)
         {
             tilt = Mathf.Sin(
-                bobTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
+                tiltTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
                 tiltAngleDegrees;
         }
 
@@ -241,7 +222,6 @@ public class MapPlayerMove : MonoBehaviour
     void OnValidate()
     {
         runThreshold = Mathf.Max(runThreshold, deadZone);
-        pixelsPerUnit = Mathf.Max(1f, pixelsPerUnit);
         tiltAngleDegrees = Mathf.Max(0f, tiltAngleDegrees);
         tiltCyclesPerSecond = Mathf.Max(0f, tiltCyclesPerSecond);
     }
