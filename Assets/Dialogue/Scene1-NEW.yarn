@@ -1,0 +1,42 @@
+// December 8 festival cutscene. Kept separate from Cutscene_Prologue for testing.
+// The Prologue scene's YarnCutscene Start Node can be set to Dec8_Festival_Cutscene
+// in Unity when this version is ready to preview.
+// All six pictures already exist in CutsceneCanvas's Pictures list.
+// AUDIO TODO: No separate student-chatter or distant-music cues were found;
+// festival_crowd is the available festival ambience.
+// AUDIO TODO: No quiet sigh cue was found. Add one at the final beat if desired.
+// VISUAL TODO: The friends-walking image is a still; no walking animation exists
+// for this cutscene. The pause below implies Anin falling behind for now.
+
+title: Dec8_Festival_Cutscene
+tags: cutscene festival december8 testing
+---
+<<ambience_start "festival_crowd">>
+<<cutscene_image "cutscene_prologue_1">>
+December 8. Our last school festival.
+
+<<cutscene_image "cutscene_prologue_2a">>
+Lila: Best festival ever!
+Dira: You say that every year.
+Kirana: She's not wrong, though.
+
+<<cutscene_image "cutscene_prologue_2b">>
+Anin: Haha, yeah. I wish we could do this again.
+
+<<cutscene_image "cutscene_prologue_3a">>
+Kirana: Come on! Only three more days until graduation!
+// Hold on the still image while the friends move ahead and Anin slows.
+<<delay 0.8>>
+
+<<cutscene_image "cutscene_prologue_3b">>
+// Muffle the crowd as Anin's attention turns inward.
+<<ambience_muffle 1.5>>
+Anin: Three days already...
+
+<<cutscene_image "cutscene_prologue_3c">>
+Anin: Why does that feel so soon?
+// AUDIO TODO: Play a quiet sigh here when its cue is added.
+<<ambience_stop 0.8>>
+// The Prologue scene behind CutsceneView is black, so closing the image fades to black.
+<<cutscene_end>>
+===

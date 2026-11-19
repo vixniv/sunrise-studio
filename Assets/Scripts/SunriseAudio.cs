@@ -17,6 +17,10 @@ public sealed class SunriseAudio : MonoBehaviour
     AudioSource oneShotSource;
     AudioSource loopSource;
     AudioSource musicSource;
+    AudioSource ambienceSource;
+    AudioLowPassFilter ambienceFilter;
+    Coroutine ambienceFade;
+    bool ambienceTransitioning;
     float musicCueVolume = 1f;
     float musicVolumeScale = 1f;
 
@@ -52,7 +56,7 @@ public sealed class SunriseAudio : MonoBehaviour
             if (stale == null || stale.gameObject.name != "Sunrise Audio")
                 continue;
 
-            foreach (AudioSource source in stale.GetComponents<AudioSource>())
+            foreach (AudioSource source in stale.GetComponentsInChildren<AudioSource>(true))
             {
                 source.Stop();
                 source.clip = null;
@@ -101,6 +105,16 @@ public sealed class SunriseAudio : MonoBehaviour
         musicSource.loop = true;
         musicSource.spatialBlend = 0f;
         musicVolumeScale = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumeKey, 1f));
+
+        // Keep the cutscene filter off the host: filtering the host would also muffle music and UI sounds.
+        var ambienceObject = new GameObject("Cutscene Ambience");
+        ambienceObject.transform.SetParent(transform, false);
+        ambienceSource = ambienceObject.AddComponent<AudioSource>();
+        ambienceSource.playOnAwake = false;
+        ambienceSource.loop = true;
+        ambienceSource.spatialBlend = 0f;
+        ambienceFilter = ambienceObject.AddComponent<AudioLowPassFilter>();
+        ambienceFilter.cutoffFrequency = 22000f;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         YarnCommands.TimeOfDayChanged += RefreshMusicForCurrentScene;
@@ -233,6 +247,92 @@ public sealed class SunriseAudio : MonoBehaviour
             return;
         instance.loopSource.Stop();
         instance.loopSource.clip = null;
+    }
+
+    public static bool IsAmbienceTransitioning => instance != null && instance.ambienceTransitioning;
+
+    public static bool StartAmbience(string key)
+    {
+        if (Library == null)
+            return false;
+
+        float volume;
+        AudioClip clip = Library.GetClip(key, out volume);
+        if (clip == null)
+            return false;
+
+        SunriseAudio audio = Instance;
+        audio.CancelAmbienceFade();
+        audio.ambienceSource.Stop();
+        audio.ambienceSource.clip = clip;
+        audio.ambienceSource.volume = Mathf.Clamp01(volume);
+        audio.ambienceFilter.cutoffFrequency = 22000f;
+        audio.ambienceSource.Play();
+        return true;
+    }
+
+    public static void MuffleAmbience(float seconds)
+    {
+        if (instance == null || instance.ambienceSource == null || !instance.ambienceSource.isPlaying)
+            return;
+        instance.BeginAmbienceFade(1000f, instance.ambienceSource.volume * 0.55f, seconds, false);
+    }
+
+    public static void StopAmbience(float seconds)
+    {
+        if (instance == null || instance.ambienceSource == null)
+            return;
+        instance.BeginAmbienceFade(instance.ambienceFilter.cutoffFrequency, 0f, seconds, true);
+    }
+
+    void CancelAmbienceFade()
+    {
+        if (ambienceFade != null)
+            StopCoroutine(ambienceFade);
+        ambienceFade = null;
+        ambienceTransitioning = false;
+    }
+
+    void BeginAmbienceFade(float cutoff, float volume, float seconds, bool stop)
+    {
+        CancelAmbienceFade();
+        if (seconds <= 0f)
+        {
+            ambienceFilter.cutoffFrequency = cutoff;
+            ambienceSource.volume = volume;
+            if (stop)
+            {
+                ambienceSource.Stop();
+                ambienceSource.clip = null;
+            }
+            return;
+        }
+
+        ambienceTransitioning = true;
+        ambienceFade = StartCoroutine(FadeAmbienceRoutine(cutoff, volume, seconds, stop));
+    }
+
+    IEnumerator FadeAmbienceRoutine(float cutoff, float volume, float seconds, bool stop)
+    {
+        float startCutoff = ambienceFilter.cutoffFrequency;
+        float startVolume = ambienceSource.volume;
+        for (float elapsed = 0f; elapsed < seconds; elapsed += Time.unscaledDeltaTime)
+        {
+            float t = Mathf.Clamp01(elapsed / seconds);
+            ambienceFilter.cutoffFrequency = Mathf.Lerp(startCutoff, cutoff, t);
+            ambienceSource.volume = Mathf.Lerp(startVolume, volume, t);
+            yield return null;
+        }
+
+        ambienceFilter.cutoffFrequency = cutoff;
+        ambienceSource.volume = volume;
+        if (stop)
+        {
+            ambienceSource.Stop();
+            ambienceSource.clip = null;
+        }
+        ambienceTransitioning = false;
+        ambienceFade = null;
     }
 
 

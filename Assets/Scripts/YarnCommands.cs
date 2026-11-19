@@ -168,6 +168,9 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
+        runner.AddCommandHandler("ambience_start", (Action<string>)StartAmbience);
+        runner.AddCommandHandler("ambience_muffle", (Func<float, YarnTask>)MuffleAmbience);
+        runner.AddCommandHandler("ambience_stop", (Func<float, YarnTask>)StopAmbience);
         runner.AddCommandHandler("sound_cut", (Action)(() => SetAudioPaused(true)));
         runner.AddCommandHandler("sound_resume", (Action)(() => SetAudioPaused(false)));
         runner.AddCommandHandler("freeze_frame", (Func<YarnTask>)PlayFreezeFrame);
@@ -451,6 +454,36 @@ public class YarnCommands : MonoBehaviour
 
         double resumeAt = Time.unscaledTimeAsDouble + seconds;
         return YarnTask.WaitUntil(() => this == null || Time.unscaledTimeAsDouble >= resumeAt);
+    }
+
+    private void StartAmbience(string cue)
+    {
+        if (!SunriseAudio.StartAmbience(cue))
+            Debug.LogWarning($"<<ambience_start>>: no audio cue named \"{cue}\".", this);
+    }
+
+    private YarnTask MuffleAmbience(float seconds)
+    {
+        if (!ValidAmbienceDuration(seconds, "ambience_muffle"))
+            return YarnTask.CompletedTask;
+        SunriseAudio.MuffleAmbience(seconds);
+        return YarnTask.WaitUntil(() => this == null || !SunriseAudio.IsAmbienceTransitioning);
+    }
+
+    private YarnTask StopAmbience(float seconds)
+    {
+        if (!ValidAmbienceDuration(seconds, "ambience_stop"))
+            return YarnTask.CompletedTask;
+        SunriseAudio.StopAmbience(seconds);
+        return YarnTask.WaitUntil(() => this == null || !SunriseAudio.IsAmbienceTransitioning);
+    }
+
+    private bool ValidAmbienceDuration(float seconds, string command)
+    {
+        if (!float.IsNaN(seconds) && !float.IsInfinity(seconds) && seconds >= 0f)
+            return true;
+        Debug.LogError($"<<{command}>>: seconds must be a finite number of 0 or greater.", this);
+        return false;
     }
 
     // <<fade>>: covers and uncovers the screen. <<fade "out">> and <<fade "in">> only log for now:
