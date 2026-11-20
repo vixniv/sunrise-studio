@@ -19,6 +19,8 @@
 //     <<npc_enter "Name">>            NPC walks into the current room
 //     <<npc_exit "Name">>             NPC walks out
 //     <<cutscene "id">>               play a non-dialogue cutscene
+//     <<cinematic_start>>             black bars slide in, gameplay HUD hides
+//     <<cinematic_end>>               bars slide out, HUD returns (also auto at node end)
 //     <<hard_reset>>                  white flash, loop back to the wish
 // - World state from Gap 1: the notes are inside Fal's math textbook.
 //   The ROOFTOP key is ON its hook in the morning, EMPTY after school.
@@ -190,6 +192,7 @@ tags: scene3 day2 lockers event
 ---
 // Footsteps. Fal comes in, bag over one shoulder, opens his locker.
 <<npc_enter "Fal">>
+<<cinematic_start>>
 Fal: Oh. Anin. You're early for once.
 <<face_character "Anin" "left">>
 <<close_dialogue_bubble>>
@@ -219,6 +222,7 @@ Fal: Let's just do the integrals after school. Lockers, like we said.
 <<move_character "Fal" 12.5 10 "walk">>
 // He leaves without looking back.
 <<npc_exit "Fal">>
+<<cinematic_end>>
 
 Anin: He went quiet. That's good, right? It means it reached him.
 <<quest_update "day2" "Meet Fal at the lockers after school">>
