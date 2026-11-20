@@ -8,6 +8,8 @@
 // - Every "//" comment is a stage direction for you, not in-game text.
 // - Commands used (same as before, plus):
 //     <<cutscene "id">>, <<npc_enter>>, <<npc_exit>>, <<advance_time>>,
+//     <<cinematic_start>>             black bars slide in, gameplay HUD hides
+//     <<cinematic_end>>               bars slide out, HUD returns (also auto at node end)
 //     <<event_marker>>, <<scene_transition>>, <<quest_start>>,
 //     <<quest_update>>, <<enable_control>>
 //     <<stay_awake "success">>  screen dims and recovers twice, the

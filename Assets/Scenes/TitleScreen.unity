@@ -1027,8 +1027,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 170, y: 0}
-  m_SizeDelta: {x: 225.66014, y: 142.65036}
+  m_AnchoredPosition: {x: 182, y: 5.6}
+  m_SizeDelta: {x: 320, y: 320}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1327916163
 MonoBehaviour:
@@ -1050,9 +1050,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ed92134173483409d9a4dd72297294ea, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 299107919099248829c1eaa4056cb4d8, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1080,6 +1080,7 @@ GameObject:
   - component: {fileID: 1529668960}
   - component: {fileID: 1529668959}
   - component: {fileID: 1529668958}
+  - component: {fileID: 1529668961}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -1119,7 +1120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 4
-  m_AspectRatio: 2.1716
+  m_AspectRatio: 3.2593
 --- !u!114 &1529668959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1140,7 +1141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 100aa0da7fd954a419f1789a71edbd19, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f665559e34573415884da185e6fd4feb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1158,6 +1159,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529668956}
   m_CullTransparentMesh: 1
+--- !u!114 &1529668961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529668956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8a515c4d38d4a46ac9ea0f1ec206b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SunriseStudio.UI.TitleBackgroundPan
+  cycleDuration: 20
+  easing: 1
+  pixelSnap: 0
+  startPosition: 0
 --- !u!1 &1561483200
 GameObject:
   m_ObjectHideFlags: 0
