@@ -348,7 +348,13 @@ public class YarnCommands : MonoBehaviour
                 SunriseAudio.QueueDoorClose();
 
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(scene, clip, 1f, whileCovered);
+            {
+                CircleTransition transition = CircleTransition.Instance;
+                if (transition.IsBlack)
+                    transition.LoadSceneFromBlack(scene, transition.openDuration, whileCovered);
+                else
+                    transition.LoadScene(scene, clip, 1f, whileCovered);
+            }
             else
             {
                 if (doorTransition)

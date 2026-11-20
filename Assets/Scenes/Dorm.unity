@@ -699,6 +699,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -715,6 +718,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -968,6 +972,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -984,6 +991,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1145,6 +1153,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -1161,6 +1172,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1488,6 +1500,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -1504,6 +1519,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1895,10 +1911,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.39778796
+    x: 0.21548437
     y: 0
-    width: 0.7052462
-    height: 0.7064677
+    width: 0.4552646
+    height: 0.45605308
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1928,7 +1944,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.6143162, y: 2.43674, z: -10}
+  m_LocalPosition: {x: 0.03125, y: 2.4375, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2264,6 +2280,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -2280,6 +2299,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2641,6 +2661,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -2657,6 +2680,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2803,6 +2827,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -2819,6 +2846,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3108,6 +3136,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -3124,6 +3155,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3337,6 +3369,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -3353,6 +3388,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3835,6 +3871,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -3851,6 +3890,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4271,6 +4311,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -4287,6 +4330,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4585,7 +4629,7 @@ Transform:
   m_GameObject: {fileID: 851998795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.41, y: -4.72, z: -10}
+  m_LocalPosition: {x: -3.41, y: -4.28, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4823,6 +4867,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -4839,6 +4886,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5061,6 +5109,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -5077,6 +5128,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5360,6 +5412,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -5376,6 +5431,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5522,6 +5578,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -5538,6 +5597,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -6546,6 +6606,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -6562,6 +6625,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -6681,6 +6745,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1360440007}
   - component: {fileID: 1360440005}
+  - component: {fileID: 1360440009}
+  - component: {fileID: 1360440008}
   m_Layer: 0
   m_Name: Kirana
   m_TagString: Untagged
@@ -6718,6 +6784,94 @@ Transform:
   - {fileID: 307143215}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1360440008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360440004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
+  cue: {fileID: 0}
+  interactionLabel: Talk
+  wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
+  dialog: {fileID: 0}
+  yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: $dec9_classroom_phase
+  availableWhenValues:
+  - night
+  availabilityRunner: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  choices:
+  - label: Talk
+    icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
+    yarnNode: Dec9_Dorm_Kirana_Night
+    dialogLines: []
+    onChoose:
+      m_PersistentCalls:
+        m_Calls: []
+  approachBeforeTalking: 1
+  approachDistance: 1.5
+  approachSide: 0
+  approachAnchor: {fileID: 0}
+  playInteractSound: 1
+  tapMaxTravel: 0.02
+  tapMaxSeconds: 0.35
+--- !u!61 &1360440009
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360440004}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.0009584427, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.6630859, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &1384904745
 GameObject:
   m_ObjectHideFlags: 0
@@ -6824,6 +6978,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -6840,6 +6997,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -7629,6 +7787,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -7645,6 +7806,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -7899,6 +8061,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -7915,6 +8080,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -8543,6 +8709,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -8559,6 +8728,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -8720,6 +8890,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -8736,6 +8909,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -9260,6 +9434,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -9276,6 +9453,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -10535,6 +10713,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -10551,6 +10732,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -11134,6 +11316,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 40070001}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -11150,6 +11335,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -11326,6 +11512,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -11342,6 +11531,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -11628,7 +11818,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.72
+      value: -4.28
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.z

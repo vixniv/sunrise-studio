@@ -27,6 +27,7 @@ public class CircleTransition : MonoBehaviour
     bool transitioning;
 
     public bool IsTransitioning => transitioning;
+    public bool IsBlack => blackFadeGroup != null && blackFadeGroup.alpha >= 0.999f;
 
     void Awake()
     {
@@ -100,7 +101,7 @@ public class CircleTransition : MonoBehaviour
 
     // The current scene has already faded to black. Keep it covered during the load,
     // then fade the new scene in without a circle reveal.
-    public void LoadSceneFromBlack(string sceneName, float fadeInDuration)
+    public void LoadSceneFromBlack(string sceneName, float fadeInDuration, System.Action whileCovered = null)
     {
         if (transitioning)
             return;
@@ -118,7 +119,7 @@ public class CircleTransition : MonoBehaviour
             return;
         }
 
-        StartCoroutine(BlackFadeSceneRoutine(sceneName, Mathf.Max(0.05f, fadeInDuration)));
+        StartCoroutine(BlackFadeSceneRoutine(sceneName, Mathf.Max(0.05f, fadeInDuration), whileCovered));
     }
 
     // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
@@ -235,7 +236,7 @@ public class CircleTransition : MonoBehaviour
         transitioning = false;
     }
 
-    IEnumerator BlackFadeSceneRoutine(string sceneName, float fadeInDuration)
+    IEnumerator BlackFadeSceneRoutine(string sceneName, float fadeInDuration, System.Action whileCovered)
     {
         transitioning = true;
         if (canvasGroup != null)
@@ -243,6 +244,8 @@ public class CircleTransition : MonoBehaviour
 
         circle.localScale = Vector3.zero;
         blackFadeGroup.alpha = 1f;
+
+        whileCovered?.Invoke();
 
         AsyncOperation loading = SceneManager.LoadSceneAsync(sceneName);
         while (!loading.isDone)

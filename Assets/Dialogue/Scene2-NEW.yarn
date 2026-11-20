@@ -69,7 +69,7 @@ tags: december9 day1 dorm interactable testing
 ---
 <<if $dec9_classroom_phase == "night">>
     // The night scene ends at the bed; do not return to the Classroom.
-    <<stop>>
+    Anin: I don't need to go outside
 <<elseif $dec9_dressed is false>>
     Anin: I can't go out like this.
 <<else>>
@@ -135,6 +135,7 @@ tags: december9 day1 classroom interactable testing
     Dira: I can help you compare some options.
     Kirana: Dira, she doesn't need to figure everything out today.
     Anin: …
+    <<close_dialogue_bubble>>
     // Place Fal just off the camera's left edge in the Classroom scene.
     <<show "FalSceneDec9">>
     <<move_character_to_actor "FalSceneDec9" "Anin" -3.5 6 "walk">>
@@ -164,10 +165,9 @@ tags: december9 day1 classroom interactable testing
     <<hide "DiraSceneDec9">>
     <<hide "LilaSceneDec9">>
     <<set_time_of_day "after_school">>
-    <<teleport_character "Anin" -18.3 "left">>
+    <<teleport_character "Anin" -16.3 "left">>
     <<sfx "day_transition">>
     <<delay 1>>
-    <<fade_black_in>>
     <<jump Dec9_Classroom_Day_End>>
 <<endif>>
 ===
@@ -201,10 +201,12 @@ tags: december9 day1 classroom interactable testing
 title: Dec9_Classroom_Day_End
 tags: december9 day1 classroom testing
 ---
-// Anin starts toward the left door as soon as the fade opens. Kirana's call
-// interrupts her halfway there, before Anin turns around.
-<<start_character_move "Anin" -23.5 2 "walk" 0>>
-<<delay 1.1>>
+// Start Anin's walk under black so she is already moving as the room fades in.
+// Kirana interrupts her after about 1.1 seconds of walking in total.
+<<hide "MemoryBox">>
+<<start_character_move "Anin" -21.5 2 "walk" 0>>
+<<fade_black_in>>
+<<delay 0.45>>
 <<stop_character_move "Anin">>
 <<teleport_character "KiranaSceneDec9" 8.6 "left">>
 <<show "KiranaSceneDec9">>
@@ -219,9 +221,11 @@ Anin: Okay… let's go.
 <<close_dialogue_bubble>>
 <<start_character_move "Anin" -24 3 "walk" 0>>
 <<start_character_move "KiranaSceneDec9" -24 3 "walk" 0.3>>
+// Fade while they walk. Keep the screen black until both reach the door.
+<<fade_black_out>>
 <<wait_for_character_moves>>
-// One transition covers the move to the Dorm and switches to the Night look.
-<<advance_time_to_scene_at_x_silent "night" "Dorm" 12.0625 "left">>
+// Load the Dorm from black and switch to the Night look during the load.
+<<advance_time_to_scene_at_x_silent "night" "Dorm" 11.03 "left">>
 ===
 
 title: Dec9_Dorm_Night
@@ -235,18 +239,28 @@ tags: december9 day1 dorm night testing
 <<hide "Anin">>
 <<hide "Kirana">>
 <<delay 0.5>>
-<<teleport_character "Kirana" 12.3 "left">>
+<<teleport_character "Kirana" 11.5 "left">>
 <<open_door "Dorm">>
 <<show "Anin">>
-<<show "Kirana">>
 <<start_character_move "Anin" -3.4 3 "walk" 0>>
-<<start_character_move "Kirana" 6.3 3 "walk" 0.5>>
+<<delay 1>>
+<<show "Kirana">>
+<<start_character_move "Kirana" 6.3 3 "walk" 0>>
 <<wait_for_character_moves>>
+<<face_character "Anin" "right">>
 <<close_door "Dorm">>
 Kirana: Last school day tomorrow. I'll wake you early.
 Anin: As usual.
 <<quest_update "dec9" "Go to bed">>
 // CONTROL ANIN. The Bed interaction starts Dec9_Dorm_Bed.
+===
+
+title: Dec9_Dorm_Kirana_Night
+tags: december9 day1 dorm night interactable testing
+---
+<<if $dec9_classroom_phase == "night">>
+    Kirana: Good Night, Anin
+<<endif>>
 ===
 
 title: Dec9_Dorm_Bed
