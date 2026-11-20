@@ -1048,6 +1048,7 @@ GameObject:
   - component: {fileID: 1529668960}
   - component: {fileID: 1529668959}
   - component: {fileID: 1529668958}
+  - component: {fileID: 1529668961}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -1126,6 +1127,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529668956}
   m_CullTransparentMesh: 1
+--- !u!114 &1529668961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529668956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8a515c4d38d4a46ac9ea0f1ec206b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SunriseStudio.UI.TitleBackgroundPan
+  cycleDuration: 20
+  easing: 1
+  pixelSnap: 0
+  startPosition: 0
 --- !u!1 &1561483200
 GameObject:
   m_ObjectHideFlags: 0
