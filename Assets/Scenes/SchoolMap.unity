@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 14365955}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -0.133, y: 0.051, z: 0}
+  m_LocalPosition: {x: -0.14, y: 0.09, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -442,6 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: Library
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 201267533}
   entryPoint: {fileID: 1968478115}
   returnPoint: {fileID: 0}
@@ -827,7 +828,7 @@ Transform:
   m_GameObject: {fileID: 273992265}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: -0.015, y: 0.052, z: 0}
+  m_LocalPosition: {x: -0.015, y: 0.07, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1021,7 +1022,7 @@ Transform:
   m_GameObject: {fileID: 396061639}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.766, y: -0.071, z: 0}
+  m_LocalPosition: {x: 0.23, y: -1.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1173,6 +1174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cdec351b989b40e5b4dc62c76cc284e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapPlayerMove
+  allowSwipeMovement: 0
   walkSpeed: 3
   runSpeed: 7
   deadZone: 0.02
@@ -1182,11 +1184,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   visual: {fileID: 835826729}
-  pixelsPerUnit: 16
-  bobHeightPixels: 1
-  bobCyclesPerSecond: 4
   tiltAngleDegrees: 6
   tiltCyclesPerSecond: 2
+  tiltWhileIdle: 1
+  idleTiltAngleDegrees: 5
+  idleTiltHoldSeconds: 0.5
 --- !u!114 &396061645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1194,11 +1196,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 396061639}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1de7e442b1f44534b80517fff645dc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoorInteractor
+  tapToEnterRooms: 1
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
   enterPrompt: {fileID: 1854310841}
   rightScreenStart: 0.6
   enterDuration: 0.45
@@ -1215,6 +1221,7 @@ GameObject:
   - component: {fileID: 399637231}
   - component: {fileID: 399637233}
   - component: {fileID: 399637232}
+  - component: {fileID: 399637234}
   m_Layer: 0
   m_Name: Auditorium
   m_TagString: Untagged
@@ -1343,6 +1350,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &399637234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399637230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &403935016
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,6 +1455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: Cafeteria
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 412458432}
   entryPoint: {fileID: 1976238116}
   returnPoint: {fileID: 0}
@@ -1939,8 +1966,9 @@ GameObject:
   - component: {fileID: 786242003}
   - component: {fileID: 786242005}
   - component: {fileID: 786242004}
+  - component: {fileID: 786242006}
   m_Layer: 0
-  m_Name: Canteen
+  m_Name: Cafeteria
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2067,6 +2095,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &786242006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786242002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &803574057
 GameObject:
   m_ObjectHideFlags: 0
@@ -2115,6 +2162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: Classroom
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 803574060}
   entryPoint: {fileID: 326704158}
   returnPoint: {fileID: 0}
@@ -2177,6 +2225,7 @@ GameObject:
   - component: {fileID: 816860963}
   - component: {fileID: 816860965}
   - component: {fileID: 816860964}
+  - component: {fileID: 816860966}
   m_Layer: 0
   m_Name: Classroom
   m_TagString: Untagged
@@ -2305,6 +2354,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &816860966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816860962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: Classroom
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &827210573
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,6 +2560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: PhotographyClub
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 834272650}
   entryPoint: {fileID: 852905518}
   returnPoint: {fileID: 0}
@@ -2622,7 +2691,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 9e42545b19e4a4fde9dda6caaca0f6e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2692,7 +2761,7 @@ Transform:
   m_GameObject: {fileID: 853314619}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.09, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3032,8 +3101,9 @@ GameObject:
   - component: {fileID: 910393454}
   - component: {fileID: 910393456}
   - component: {fileID: 910393455}
+  - component: {fileID: 910393457}
   m_Layer: 0
-  m_Name: PhotographyRoom
+  m_Name: PhotographyClub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3160,6 +3230,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &910393457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910393453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &985856319
 GameObject:
   m_ObjectHideFlags: 0
@@ -3389,6 +3478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: Auditorium
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 988513711}
   entryPoint: {fileID: 1227743371}
   returnPoint: {fileID: 0}
@@ -3451,6 +3541,7 @@ GameObject:
   - component: {fileID: 1010703848}
   - component: {fileID: 1010703850}
   - component: {fileID: 1010703849}
+  - component: {fileID: 1010703851}
   m_Layer: 0
   m_Name: Library
   m_TagString: Untagged
@@ -3579,6 +3670,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1010703851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010703847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &1037595204
 GameObject:
   m_ObjectHideFlags: 0
@@ -3606,7 +3716,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1970477064}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4079,6 +4189,7 @@ GameObject:
   - component: {fileID: 1166723599}
   - component: {fileID: 1166723601}
   - component: {fileID: 1166723600}
+  - component: {fileID: 1166723602}
   m_Layer: 0
   m_Name: MusicRoom
   m_TagString: Untagged
@@ -4207,6 +4318,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1166723602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166723598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &1227743370
 GameObject:
   m_ObjectHideFlags: 0
@@ -5058,7 +5188,7 @@ Transform:
   m_GameObject: {fileID: 1590720249}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: -0.7071068}
-  m_LocalPosition: {x: -0.030000687, y: 0.11, z: 0}
+  m_LocalPosition: {x: -0.159, y: 0.11, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5331,7 +5461,7 @@ Transform:
   m_GameObject: {fileID: 1759571758}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
-  m_LocalPosition: {x: -0.1, y: -0.02, z: 0}
+  m_LocalPosition: {x: -0.214, y: -0.012, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5445,6 +5575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: LockerRoom
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 1762930409}
   entryPoint: {fileID: 1137304721}
   returnPoint: {fileID: 0}
@@ -5969,6 +6100,7 @@ GameObject:
   - component: {fileID: 1896453160}
   - component: {fileID: 1896453162}
   - component: {fileID: 1896453161}
+  - component: {fileID: 1896453163}
   m_Layer: 0
   m_Name: LockerRoom
   m_TagString: Untagged
@@ -6097,6 +6229,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1896453163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896453159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &1942115419
 GameObject:
   m_ObjectHideFlags: 0
@@ -6108,6 +6259,7 @@ GameObject:
   - component: {fileID: 1942115420}
   - component: {fileID: 1942115422}
   - component: {fileID: 1942115421}
+  - component: {fileID: 1942115423}
   m_Layer: 0
   m_Name: Park
   m_TagString: Untagged
@@ -6236,6 +6388,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1942115423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942115419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d58167bb768f4b4ab277133c3a8ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapRoomTap
+  destinationScene: 
+  mapPlayer: {fileID: 0}
+  moveDuration: 0.35
+  returnPoint: {fileID: 0}
+  mapCamera: {fileID: 0}
+  tapMaxTravel: 0.03
+  tapMaxSeconds: 0.4
 --- !u!1 &1968478114
 GameObject:
   m_ObjectHideFlags: 0
@@ -6315,6 +6486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapDoor
   destinationScene: MusicRoom
+  tapArea: {fileID: 0}
   buildingCollider: {fileID: 1970477066}
   entryPoint: {fileID: 1037595205}
   returnPoint: {fileID: 0}
@@ -6515,7 +6687,7 @@ Transform:
   m_GameObject: {fileID: 1993894249}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0.035, y: 0.087, z: 0}
+  m_LocalPosition: {x: 0.035, y: 0.1, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

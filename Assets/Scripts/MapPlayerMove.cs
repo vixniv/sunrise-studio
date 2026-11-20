@@ -4,6 +4,10 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MapPlayerMove : MonoBehaviour
 {
+    [Header("Control")]
+    [Tooltip("When off, the map player stays at the current room marker and does not move by swiping or keyboard.")]
+    public bool allowSwipeMovement = false;
+
     [Header("Movement")]
     [Min(0f)] public float walkSpeed = 3f;
     [Min(0f)] public float runSpeed = 7f;
@@ -23,6 +27,14 @@ public class MapPlayerMove : MonoBehaviour
     [Range(0f, 15f)] public float tiltAngleDegrees = 3f;
     [Tooltip("How many complete left/right sway cycles happen each second.")]
     [Min(0f)] public float tiltCyclesPerSecond = 2f;
+
+    [Header("Idle Tilt")]
+    [Tooltip("Snappily tilt left, hold, then right, hold while idle on the map.")]
+    public bool tiltWhileIdle = true;
+    [Tooltip("Rotation angle applied left and right while idle.")]
+    [Range(0f, 25f)] public float idleTiltAngleDegrees = 8f;
+    [Tooltip("How many seconds to hold each side before snapping to the other side.")]
+    [Min(0.05f)] public float idleTiltHoldSeconds = 1f;
 
     Rigidbody2D rb;
     Vector2 moveDirection;
@@ -56,6 +68,12 @@ public class MapPlayerMove : MonoBehaviour
                 "Movement still works without it.",
                 this);
 
+        if (!allowSwipeMovement && rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+        }
+
         if (restrictToHallways && walkableLayer.value == 0)
             Debug.LogWarning(
                 "MapPlayerMove is restricted to hallways, but Walkable Layer is empty.",
@@ -67,6 +85,12 @@ public class MapPlayerMove : MonoBehaviour
         moveDirection = Vector2.zero;
         running = false;
 
+        if (!allowSwipeMovement)
+        {
+            dragging = false;
+            return;
+        }
+
         ReadPointer();
 
         if (!dragging)
@@ -75,6 +99,12 @@ public class MapPlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!allowSwipeMovement)
+        {
+            moving = false;
+            return;
+        }
+
         float speed = running ? runSpeed : walkSpeed;
         Vector2 start = rb.position;
         Vector2 target = start + moveDirection * speed * Time.fixedDeltaTime;
@@ -91,7 +121,7 @@ public class MapPlayerMove : MonoBehaviour
         if (visual == null)
             return;
 
-        if (!moving)
+        if (!moving && !tiltWhileIdle)
         {
             tiltTime = 0f;
             visual.localPosition = visualRestPosition;
@@ -104,11 +134,20 @@ public class MapPlayerMove : MonoBehaviour
 
         float tilt = 0f;
 
-        if (tiltAngleDegrees > 0f && tiltCyclesPerSecond > 0f)
+        if (moving)
         {
-            tilt = Mathf.Sin(
-                tiltTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
-                tiltAngleDegrees;
+            if (tiltAngleDegrees > 0f && tiltCyclesPerSecond > 0f)
+            {
+                tilt = Mathf.Sin(
+                    tiltTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
+                    tiltAngleDegrees;
+            }
+        }
+        else if (idleTiltAngleDegrees > 0f)
+        {
+            float hold = Mathf.Max(0.05f, idleTiltHoldSeconds);
+            int step = Mathf.FloorToInt(tiltTime / hold);
+            tilt = (step % 2 == 0) ? idleTiltAngleDegrees : -idleTiltAngleDegrees;
         }
 
         visual.localRotation =
@@ -224,5 +263,7 @@ public class MapPlayerMove : MonoBehaviour
         runThreshold = Mathf.Max(runThreshold, deadZone);
         tiltAngleDegrees = Mathf.Max(0f, tiltAngleDegrees);
         tiltCyclesPerSecond = Mathf.Max(0f, tiltCyclesPerSecond);
+        idleTiltAngleDegrees = Mathf.Max(0f, idleTiltAngleDegrees);
+        idleTiltHoldSeconds = Mathf.Max(0.05f, idleTiltHoldSeconds);
     }
 }
