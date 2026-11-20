@@ -65,6 +65,13 @@ public static class DoorSpawn
                 return;
             }
 
+            MapDoorInteractor[] mapInteractors = InScene<MapDoorInteractor>(scene);
+            if (mapInteractors.Length > 0)
+            {
+                PlaceMapPlayerAtPreviousDoor(scene, mapInteractors[0], previousScene);
+                return;
+            }
+
             Debug.Log($"DoorSpawn: {scene.name} has no active PlayerMove, so nothing to place.");
             return;
         }
@@ -165,7 +172,7 @@ public static class DoorSpawn
 
     private static void PlaceMapPlayerAtPreviousDoor(
         Scene scene,
-        MapPlayerMove player,
+        Component player,
         string previousScene)
     {
         if (string.IsNullOrWhiteSpace(previousScene))
@@ -174,25 +181,43 @@ public static class DoorSpawn
             return;
         }
 
-        MapDoor[] doors = InScene<MapDoor>(scene);
-        MapDoor matchingDoor = null;
-        foreach (MapDoor candidate in doors)
+        Vector2 position = default;
+        Component targetMarker = null;
+        bool placedInsideRoom = false;
+
+        MapRoomTap[] rooms = InScene<MapRoomTap>(scene);
+        foreach (MapRoomTap candidate in rooms)
         {
             if (!candidate.LeadsTo(previousScene))
                 continue;
 
-            matchingDoor = candidate;
+            targetMarker = candidate;
+            position = candidate.ReturnPosition;
+            placedInsideRoom = true;
             break;
         }
 
-        if (matchingDoor == null)
+        if (targetMarker == null)
         {
-            Debug.Log($"DoorSpawn: {scene.name} has no map door leading to {previousScene}, " +
+            MapDoor[] doors = InScene<MapDoor>(scene);
+            foreach (MapDoor candidate in doors)
+            {
+                if (!candidate.LeadsTo(previousScene))
+                    continue;
+
+                targetMarker = candidate;
+                position = candidate.ReturnPosition;
+                break;
+            }
+        }
+
+        if (targetMarker == null)
+        {
+            Debug.Log($"DoorSpawn: {scene.name} has no map room or door leading to {previousScene}, " +
                       "so the map player keeps the authored position.");
             return;
         }
 
-        Vector2 position = matchingDoor.ReturnPosition;
         player.transform.position = new Vector3(
             position.x,
             position.y,
@@ -203,10 +228,12 @@ public static class DoorSpawn
         {
             rb.position = position;
             rb.linearVelocity = Vector2.zero;
+            if (placedInsideRoom)
+                rb.simulated = false;
         }
 
-        Debug.Log($"DoorSpawn: map player starts at {matchingDoor.name} in {scene.name} " +
-                  $"because they came from {previousScene}.", matchingDoor);
+        Debug.Log($"DoorSpawn: map player starts at {targetMarker.name} in {scene.name} " +
+                  $"because they came from {previousScene}.", targetMarker);
     }
 
     // Active components of type T in scene only, unlike FindObjectsByType, which also returns the old scene's.

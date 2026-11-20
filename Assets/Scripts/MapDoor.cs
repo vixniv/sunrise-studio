@@ -1,11 +1,15 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Collider2D))]
 public class MapDoor : MonoBehaviour
 {
     [Header("Destination")]
     public string destinationScene = "SceneTemplate";
+
+    [Header("Tap Area")]
+    [Tooltip("Optional room collider (for example under PlayableMap/Rooms) so tapping anywhere on that room opens this destination. This object's own Collider2D is also tappable.")]
+    public Collider2D tapArea;
 
     [Header("Entry")]
     [Tooltip("Solid collider belonging to this building.")]
@@ -32,12 +36,18 @@ public class MapDoor : MonoBehaviour
             sceneName.Trim(),
             StringComparison.OrdinalIgnoreCase);
 
+    public bool ContainsCollider(Collider2D hit) =>
+        hit != null &&
+        (hit == tapArea ||
+         hit.gameObject == gameObject ||
+         (buildingCollider != null && hit == buildingCollider));
+
     public Vector2 ReturnPosition =>
         returnPoint != null ? returnPoint.position : transform.position;
 
     void Reset()
     {
-        BoxCollider2D trigger = GetComponent<BoxCollider2D>();
-        trigger.isTrigger = true;
+        if (TryGetComponent(out BoxCollider2D trigger))
+            trigger.isTrigger = true;
     }
 }
