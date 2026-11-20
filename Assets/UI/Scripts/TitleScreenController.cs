@@ -21,7 +21,7 @@ namespace SunriseStudio.UI
         void Awake()
         {
             Time.timeScale = 1f;
-            AudioListener.pause = false;
+            SunriseAudio.SetPaused(false);
             if (configRoot != null)
                 configRoot.SetActive(false);
         }
@@ -64,7 +64,7 @@ namespace SunriseStudio.UI
 
             onPlayRequested.Invoke();
             Time.timeScale = 1f;
-            AudioListener.pause = false;
+            SunriseAudio.SetPaused(false);
             SetInteractable(false);
 
             string sceneName = gameplayScene.Trim();

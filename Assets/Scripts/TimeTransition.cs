@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FMODUnity;
 using SunriseStudio.UI;
 using TMPro;
 using UnityEngine;
@@ -135,6 +136,8 @@ public class TimeTransition : MonoBehaviour
     [SerializeField] float wipeOutDuration = 0.28f;
 
     [Header("Audio (Optional)")]
+    [SerializeField] EventReference clockTickEvent;
+    [SerializeField] EventReference finalChimeEvent;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip clockTickSfx;
     [SerializeField] AudioClip finalChimeSfx;
@@ -399,7 +402,10 @@ public class TimeTransition : MonoBehaviour
             float fromTickAngle = targetAngleDeg + ((meetTickCount - (tick - 1)) * degreesPerTick);
             float toTickAngle = targetAngleDeg + ((meetTickCount - tick) * degreesPerTick);
 
-            PlayClip(isMeetingTick && finalChimeSfx != null ? finalChimeSfx : clockTickSfx);
+            if (isMeetingTick && (!finalChimeEvent.IsNull || finalChimeSfx != null))
+                PlaySfx(finalChimeEvent, finalChimeSfx);
+            else
+                PlaySfx(clockTickEvent, clockTickSfx);
 
             // Crisp mechanical snap to the next second mark
             yield return AnimateMeetingTick(
@@ -704,6 +710,13 @@ public class TimeTransition : MonoBehaviour
             watermarkBasePos = watermarkText.rectTransform.anchoredPosition;
 
         cachedBasePositions = true;
+    }
+
+    void PlaySfx(EventReference fmodEvent, AudioClip fallbackClip)
+    {
+        if (!fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(fmodEvent, sfxVolume))
+            return;
+        PlayClip(fallbackClip);
     }
 
     void PlayClip(AudioClip clip)

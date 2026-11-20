@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -100,6 +101,9 @@ public class TimeLoopResetTransition : MonoBehaviour
     [SerializeField] float ghostSplitPixels = 6.5f;
 
     [Header("Audio (Optional)")]
+    [SerializeField] EventReference quadrantCutEvent;
+    [SerializeField] EventReference finalSnapEvent;
+    [SerializeField] EventReference wakeUpEvent;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip quadrantCutSfx;
     [SerializeField] AudioClip finalSnapSfx;
@@ -273,7 +277,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             vignetteGrainImage.color = new Color(1f, 1f, 1f, 0.85f);
 
         onRewindStart?.Invoke();
-        PlayClip(quadrantCutSfx);
+        PlaySfx(quadrantCutEvent, quadrantCutSfx);
 
         if (horrorRevealHoldDuration > 0f)
         {
@@ -295,7 +299,7 @@ public class TimeLoopResetTransition : MonoBehaviour
         Vector2 q3Focus = new Vector2(-quadrantFocusOffset.x, -quadrantFocusOffset.y);
 
         // Quadrant I (Top-Right, 2s): 1.00 -> 0.75
-        PlayClip(quadrantCutSfx);
+        PlaySfx(quadrantCutEvent, quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 1.00f,
             endFill: 0.75f,
@@ -308,7 +312,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant II (Bottom-Right, 2s): 0.75 -> 0.50
-        PlayClip(quadrantCutSfx);
+        PlaySfx(quadrantCutEvent, quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.75f,
             endFill: 0.50f,
@@ -321,7 +325,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant III (Bottom-Left, 2s): 0.50 -> 0.25
-        PlayClip(quadrantCutSfx);
+        PlaySfx(quadrantCutEvent, quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.50f,
             endFill: 0.25f,
@@ -334,7 +338,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant IV (Top-Left + Zoom Out, 2s): 0.25 -> 0.00
-        PlayClip(quadrantCutSfx);
+        PlaySfx(quadrantCutEvent, quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.25f,
             endFill: 0.00f,
@@ -347,7 +351,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // 5. Sudden pitch-black cut + dead silence the instant the circle vanishes!
-        PlayClip(finalSnapSfx);
+        PlaySfx(finalSnapEvent, finalSnapSfx);
         whileCovered?.Invoke();
 
         if (dateRigGroup != null) dateRigGroup.alpha = 0f;
@@ -366,7 +370,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             yield return new WaitForSecondsRealtime(blackoutSilenceDuration);
 
         // 6. GROGGY WAKE-UP EYELID OPEN (halfway -> blink down -> full open) as scene blur clears
-        PlayClip(wakeUpSfx);
+        PlaySfx(wakeUpEvent, wakeUpSfx);
         SetSceneBlur(1f);
         SetImageAlpha(fullBackdropImage, 0f);
         SetEyelidColor(abyssInkColor);
@@ -838,6 +842,13 @@ public class TimeLoopResetTransition : MonoBehaviour
         img.fillMethod = Image.FillMethod.Radial360;
         img.fillOrigin = (int)Image.Origin360.Top;
         img.fillClockwise = false;
+    }
+
+    void PlaySfx(EventReference fmodEvent, AudioClip fallbackClip)
+    {
+        if (!fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(fmodEvent, sfxVolume))
+            return;
+        PlayClip(fallbackClip);
     }
 
     void PlayClip(AudioClip clip)

@@ -1,12 +1,15 @@
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Plays a footstep each time the walk or run animation reaches a step point,
 // so the step tempo always follows the animation playing.
-[RequireComponent(typeof(AudioSource))]
 public class PlayerFootsteps : MonoBehaviour
 {
     [Header("Sound")]
+    [Tooltip("Optional FMOD footstep event override (e.g. event:/SFX/Footsteps/Wood). " +
+             "Left empty, resolves automatically from the scene or Surface name.")]
+    public EventReference footstepEvent;
     [Tooltip("Fallback floor sound. Scene mapping from SunriseAudioLibrary takes priority when present.")]
     public FootstepSurface surface;
     [Range(0f, 1f)] public float volume = 1f;
@@ -39,6 +42,7 @@ public class PlayerFootsteps : MonoBehaviour
     [Min(0f)] public float minStepGap = 0.15f;
 
     AudioSource source;
+    string resolvedFmodEventPath;
     int walkStateHash;
     int runStateHash;
     int lastStateHash; // 0 = not walking or running
@@ -48,20 +52,30 @@ public class PlayerFootsteps : MonoBehaviour
     void Reset()
     {
         var src = GetComponent<AudioSource>();
-        src.playOnAwake = false;
-        src.spatialBlend = 0f; // 2D
+        if (src != null)
+        {
+            src.playOnAwake = false;
+            src.spatialBlend = 0f; // 2D
+        }
     }
 
     void Awake()
     {
         source = GetComponent<AudioSource>();
-        source.playOnAwake = false;
-        source.spatialBlend = 0f;
+        if (source != null)
+        {
+            source.playOnAwake = false;
+            source.spatialBlend = 0f;
+        }
 
-        FootstepSurface sceneSurface =
-            SunriseAudio.GetSurfaceForScene(SceneManager.GetActiveScene().name);
+        string sceneName = SceneManager.GetActiveScene().name;
+        FootstepSurface sceneSurface = SunriseAudio.GetSurfaceForScene(sceneName);
         if (sceneSurface != null)
             surface = sceneSurface;
+
+        resolvedFmodEventPath = SunriseAudio.GetFootstepEventPathForScene(sceneName);
+        if (string.IsNullOrEmpty(resolvedFmodEventPath))
+            resolvedFmodEventPath = SunriseAudio.GetFootstepEventPathForSurface(surface);
 
         if (animator == null)
         {
@@ -84,7 +98,8 @@ public class PlayerFootsteps : MonoBehaviour
 
     void LateUpdate()
     {
-        if (animator == null || surface == null) return;
+        if (animator == null) return;
+        if (footstepEvent.IsNull && string.IsNullOrEmpty(resolvedFmodEventPath) && surface == null) return;
 
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
         int stateHash = state.shortNameHash;
@@ -128,11 +143,36 @@ public class PlayerFootsteps : MonoBehaviour
     {
         if (Time.time - lastStepAt < minStepGap) return;
 
+        float scaledVolume = volume * volumeScale;
+        if (!footstepEvent.IsNull && SunriseAudio.TryPlayFmodEvent(footstepEvent, scaledVolume))
+        {
+            lastStepAt = Time.time;
+            return;
+        }
+
+        string eventPath = !string.IsNullOrEmpty(resolvedFmodEventPath)
+            ? resolvedFmodEventPath
+            : SunriseAudio.GetFootstepEventPathForSurface(surface);
+        if (!string.IsNullOrEmpty(eventPath) && SunriseAudio.TryPlayFmodPath(eventPath, scaledVolume))
+        {
+            lastStepAt = Time.time;
+            return;
+        }
+
+        // Legacy fallback when FMOD banks are not built/refreshed yet
+        if (surface == null) return;
         AudioClip clip = surface.PickClip();
         if (clip == null) return;
 
+        if (source == null)
+        {
+            source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.spatialBlend = 0f;
+        }
+
         lastStepAt = Time.time;
         source.pitch = Random.Range(surface.minPitch, surface.maxPitch);
-        source.PlayOneShot(clip, volume * volumeScale * Random.Range(surface.minVolume, surface.maxVolume));
+        source.PlayOneShot(clip, scaledVolume * Random.Range(surface.minVolume, surface.maxVolume));
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,8 @@ public class YarnCommands : MonoBehaviour
     {
         [Tooltip("Name used in <<sfx \"name\">>.")]
         public string name;
+        [Tooltip("Optional FMOD event override for this sound name.")]
+        public EventReference fmodEvent;
         public AudioClip clip;
     }
 
@@ -328,18 +331,23 @@ public class YarnCommands : MonoBehaviour
             leaving = true;
             HideDialogueLine();
             bool doorTransition = Key(sound) == "door";
-            AudioClip clip = doorTransition
-                ? SunriseAudio.GetClip("door_open")
-                : string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
+            string cueKey = doorTransition ? "door_open" : sound;
+            Sound customSound = !doorTransition && !string.IsNullOrWhiteSpace(sound)
+                ? sounds.Find(s => s.name == sound)
+                : null;
+            EventReference customFmod = customSound != null ? customSound.fmodEvent : default;
+            AudioClip fallbackClip = customSound != null ? customSound.clip : null;
             if (doorTransition)
                 SunriseAudio.QueueDoorClose();
 
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(scene, clip, 1f, whileCovered);
+                CircleTransition.Instance.LoadScene(scene, customFmod, cueKey, fallbackClip, 1f, whileCovered);
             else
             {
-                if (doorTransition)
-                    SunriseAudio.Play("door_open");
+                if (!customFmod.IsNull)
+                    SunriseAudio.TryPlayFmodEvent(customFmod);
+                else if (!string.IsNullOrWhiteSpace(cueKey))
+                    SunriseAudio.TryPlay(cueKey);
                 whileCovered?.Invoke();
                 SceneManager.LoadScene(scene);
             }
@@ -1145,7 +1153,7 @@ public class YarnCommands : MonoBehaviour
     private void OnDestroy()
     {
         SunriseAudio.StopLoop();
-        if (pausedAudio) AudioListener.pause = false;
+        if (pausedAudio) SunriseAudio.SetPaused(false);
     }
 
     // <<cutscene "anin_joins_table">>: plays the matching Timeline and waits for it to finish.
@@ -1296,10 +1304,13 @@ public class YarnCommands : MonoBehaviour
                 return;
         }
 
-        if (SunriseAudio.Play(soundName) != null)
+        if (SunriseAudio.TryPlay(soundName))
             return;
 
         Sound sound = sounds.Find(s => s.name == soundName);
+        if (sound != null && !sound.fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(sound.fmodEvent))
+            return;
+
         if (sound == null || sound.clip == null)
         {
             Debug.LogWarning($"<<sfx>>: no audio cue or serialized clip named \"{soundName}\".", this);
@@ -1313,10 +1324,10 @@ public class YarnCommands : MonoBehaviour
         sfxSource.PlayOneShot(sound.clip);
     }
 
-    // Pauses every Audio Source in the game. AudioListener.pause outlives the scene, so it is undone on unload.
+    // Pauses all FMOD and Unity audio. Outlives the scene, so it is undone on unload.
     private void SetAudioPaused(bool paused)
     {
-        AudioListener.pause = paused;
+        SunriseAudio.SetPaused(paused);
         pausedAudio = paused;
     }
 
