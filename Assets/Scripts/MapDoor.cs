@@ -1,5 +1,4 @@
 using System;
-using FMODUnity;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -24,10 +23,7 @@ public class MapDoor : MonoBehaviour
     public Transform returnPoint;
 
     [Header("Sound")]
-    [Tooltip("Optional FMOD event played as the transition starts closing. Defaults to event:/SFX/Door/Open when empty.")]
-    public EventReference enterEvent;
-
-    [Tooltip("Legacy fallback clip when FMOD banks are not loaded yet.")]
+    [Tooltip("Optional. Plays as the transition starts closing, after the player walks in.")]
     public AudioClip enterSound;
 
     [Range(0f, 1f)]

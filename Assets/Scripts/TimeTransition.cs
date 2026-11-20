@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using FMODUnity;
 using SunriseStudio.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum StoryTimeSlot
@@ -121,23 +121,21 @@ public class TimeTransition : MonoBehaviour
 
     [Header("Timing")]
     [Min(0.05f)]
-    [SerializeField] float wipeInDuration = 0.28f;
+    [SerializeField] float wipeInDuration = 0.65f;
     [Min(0f)]
-    [SerializeField] float layerStagger = 0.05f;
+    [SerializeField] float layerStagger = 0.10f;
     [Min(0.05f)]
-    [SerializeField] float clockIntroDuration = 0.24f;
+    [SerializeField] float clockIntroDuration = 0.55f;
     [Min(0f)]
     [SerializeField] float preTickHold = 0.50f;
     [Min(0f)]
     [SerializeField] float postTickHold = 0.85f;
     [Min(0.05f)]
-    [SerializeField] float clockOutroDuration = 0.18f;
+    [SerializeField] float clockOutroDuration = 0.55f;
     [Min(0.05f)]
-    [SerializeField] float wipeOutDuration = 0.28f;
+    [SerializeField] float wipeOutDuration = 0.65f;
 
     [Header("Audio (Optional)")]
-    [SerializeField] EventReference clockTickEvent;
-    [SerializeField] EventReference finalChimeEvent;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip clockTickSfx;
     [SerializeField] AudioClip finalChimeSfx;
@@ -172,12 +170,13 @@ public class TimeTransition : MonoBehaviour
     public bool PlayCycleTransition(
         StoryTimeSlot fromSlot,
         StoryTimeSlot toSlot,
-        Action whileCovered = null)
+        Action whileCovered = null,
+        string sceneToLoad = null)
     {
         if (transitioning || !HasRequiredReferences())
             return false;
 
-        StartCoroutine(ClockCycleRoutine(fromSlot, toSlot, whileCovered));
+        StartCoroutine(ClockCycleRoutine(fromSlot, toSlot, whileCovered, sceneToLoad));
         return true;
     }
 
@@ -194,123 +193,11 @@ public class TimeTransition : MonoBehaviour
         return PlayCycleTransition(from, to, whileCovered);
     }
 
-    [ContextMenu("Test: Morning -> Lunch (meet at 12)")]
-    void TestMorningToLunch()
-    {
-        RunTestTransition(StoryTimeSlot.Morning, StoryTimeSlot.Lunch);
-    }
-
-    [ContextMenu("Test: Lunch -> After School (meet at 4)")]
-    void TestLunchToAfterSchool()
-    {
-        RunTestTransition(StoryTimeSlot.Lunch, StoryTimeSlot.AfterSchool);
-    }
-
-    [ContextMenu("Test: After School -> Night (meet at 9pm)")]
-    void TestAfterSchoolToNight()
-    {
-        RunTestTransition(StoryTimeSlot.AfterSchool, StoryTimeSlot.Night);
-    }
-
-    void RunTestTransition(StoryTimeSlot fromSlot, StoryTimeSlot toSlot)
-    {
-        if (!Application.isPlaying)
-        {
-            Debug.LogWarning("Enter Play Mode first to test the transition.", this);
-            return;
-        }
-
-        TimeTransition target = Instance != null ? Instance : this;
-        if (!target.gameObject.scene.IsValid())
-        {
-            Debug.LogWarning("No active TimeTransitionCanvas found in the scene. Drag TimeTransitionCanvas into your scene and press Play.", this);
-            return;
-        }
-
-        target.PlayCycleTransition(fromSlot, toSlot);
-    }
-
-    [ContextMenu("Editor Preview: Morning -> Lunch")]
-    public void EditorPreviewMorningToLunch() => ApplyEditorPreview(StoryTimeSlot.Morning, StoryTimeSlot.Lunch);
-
-    [ContextMenu("Editor Preview: Lunch -> After School")]
-    public void EditorPreviewLunchToAfterSchool() => ApplyEditorPreview(StoryTimeSlot.Lunch, StoryTimeSlot.AfterSchool);
-
-    [ContextMenu("Editor Preview: After School -> Night (9pm)")]
-    public void EditorPreviewAfterSchoolToNight() => ApplyEditorPreview(StoryTimeSlot.AfterSchool, StoryTimeSlot.Night);
-
-    [ContextMenu("Save Current Layout -> Morning to Lunch")]
-    void SaveCurrentLayoutMorningToLunch() => SaveCurrentLayoutTo(ref morningToLunchFraming, "Morning -> Lunch");
-
-    [ContextMenu("Save Current Layout -> Lunch to After School")]
-    void SaveCurrentLayoutLunchToAfterSchool() => SaveCurrentLayoutTo(ref lunchToAfterSchoolFraming, "Lunch -> After School");
-
-    [ContextMenu("Save Current Layout -> After School to Night")]
-    void SaveCurrentLayoutAfterSchoolToNight() => SaveCurrentLayoutTo(ref afterSchoolToNightFraming, "After School -> Night");
-
-    [ContextMenu("Editor Preview: Hide Canvas (Alpha 0)")]
-    public void EditorHideCanvas() => ResetIdleState();
-
-    void SaveCurrentLayoutTo(ref ClockFraming target, string label)
-    {
-#if UNITY_EDITOR
-        UnityEditor.Undo.RecordObject(this, "Save TimeTransition Layout: " + label);
-#endif
-        if (clockDialRect != null)
-        {
-            target.dialAnchoredPosition = clockDialRect.anchoredPosition;
-            target.dialScale = clockDialRect.localScale.x;
-        }
-        if (typographyGroupRect != null)
-            target.textAnchoredPosition = typographyGroupRect.anchoredPosition;
-        if (accentSlashRect != null)
-            target.accentSlashPosition = accentSlashRect.anchoredPosition;
-        if (watermarkText != null)
-            target.watermarkPosition = watermarkText.rectTransform.anchoredPosition;
-
-#if UNITY_EDITOR
-        UnityEditor.EditorUtility.SetDirty(this);
-#endif
-        Debug.Log($"Saved current Scene layout into '{label}' framing preset!", this);
-    }
-
-    void ApplyEditorPreview(StoryTimeSlot fromSlot, StoryTimeSlot toSlot)
-    {
-        CacheBasePositions();
-        if (canvasGroup != null) canvasGroup.alpha = 1f;
-        if (leadWipeRect != null) leadWipeRect.anchoredPosition = Vector2.zero;
-        if (mainWipeRect != null) mainWipeRect.anchoredPosition = Vector2.zero;
-        if (accentSlashRect != null) accentSlashRect.anchoredPosition = accentSlashBasePos;
-        if (contentGroup != null) contentGroup.alpha = 1f;
-        if (contentRect != null) contentRect.anchoredPosition = Vector2.zero;
-
-        if (overridePositionsWithPresets)
-            ApplyClockFraming(GetFraming(toSlot));
-
-        Color accent = GetSlotAccentColor(toSlot);
-        if (leadWipeImage != null) leadWipeImage.color = accent;
-        if (mainWipeImage != null) mainWipeImage.color = inkColor;
-        if (accentSlashImage != null)
-        {
-            Color sc = accent;
-            sc.a = 0.22f;
-            accentSlashImage.color = sc;
-        }
-
-        int startHour = GetSlotHour24(fromSlot);
-        int endHour = GetSlotHour24(toSlot);
-        int hoursDiff = Mathf.Max(1, endHour >= startHour ? endHour - startHour : (24 - startHour) + endHour);
-        float targetAngle = GetHourAngleDeg(endHour);
-
-        ApplyHandAngles(targetAngle, targetAngle);
-        ApplyAccentVisuals(accent, toSlot, endHour);
-        SetupSweepArc(startHour, hoursDiff / 12f, accent);
-    }
-
     IEnumerator ClockCycleRoutine(
         StoryTimeSlot fromSlot,
         StoryTimeSlot toSlot,
-        Action whileCovered)
+        Action whileCovered,
+        string sceneToLoad)
     {
         CacheBasePositions();
         transitioning = true;
@@ -334,59 +221,64 @@ public class TimeTransition : MonoBehaviour
         float nearHandStartDeg = targetAngleDeg + nearTargetStartOffsetDeg;
         float tickingHandStartDeg = targetAngleDeg + (meetTickCount * degreesPerTick);
 
-        if (leadWipeImage != null) leadWipeImage.color = fromAccent;
-        if (mainWipeImage != null) mainWipeImage.color = inkColor;
+        // Keep LeadWipe hidden so only one clean background sheet glides in, stays visible, changes color, and glides out
+        if (leadWipeImage != null)
+        {
+            Color lc = leadWipeImage.color;
+            lc.a = 0f;
+            leadWipeImage.color = lc;
+        }
+        if (mainWipeImage != null) mainWipeImage.color = new Color(fromAccent.r, fromAccent.g, fromAccent.b, 0f);
         if (accentSlashImage != null)
         {
-            Color slashColor = toAccent;
-            slashColor.a = 0.22f;
+            Color slashColor = paperColor;
+            slashColor.a = 0f;
             accentSlashImage.color = slashColor;
         }
 
-        if (leadWipeRect != null) leadWipeRect.anchoredPosition = new Vector2(offscreenX, 0f);
         if (mainWipeRect != null) mainWipeRect.anchoredPosition = new Vector2(offscreenX, 0f);
-        if (accentSlashRect != null) accentSlashRect.anchoredPosition = new Vector2(offscreenX, accentSlashBasePos.y);
+        if (accentSlashRect != null) accentSlashRect.anchoredPosition = accentSlashBasePos;
 
         // Start with the hands just before the target hour, showing the old phase label
         ApplyHandAngles(nearHandStartDeg, tickingHandStartDeg);
         ApplyAccentVisuals(fromAccent, fromSlot, startHour);
-        SetupSweepArc(startHour, 0f, fromAccent);
+        SetupSweepArc(startHour, 0f, inkColor);
 
         if (contentGroup != null) contentGroup.alpha = 0f;
         if (contentRect != null)
         {
-            contentRect.anchoredPosition = new Vector2(36f, 0f);
+            contentRect.anchoredPosition = new Vector2(96f, 0f);
             contentRect.localScale = Vector3.one;
+        }
+
+        // Ensure WatermarkText starts completely hidden while the colored background comes in first
+        if (watermarkText != null)
+        {
+            Color wc = paperColor;
+            wc.a = 0f;
+            watermarkText.color = wc;
+            watermarkText.rectTransform.anchoredPosition = new Vector2(watermarkBasePos.x + 40f, watermarkBasePos.y);
         }
 
         // Skip 1 frame to avoid Inspector menu deltaTime spikes
         yield return null;
 
-        // 1. Staggered 2-layer diagonal wipe IN
-        Coroutine leadIn = leadWipeRect != null
-            ? StartCoroutine(MoveRectX(leadWipeRect, offscreenX, 0f, wipeInDuration, EaseOutExpo))
-            : null;
-        if (layerStagger > 0f)
-            yield return new WaitForSecondsRealtime(layerStagger);
-        Coroutine mainIn = mainWipeRect != null
-            ? StartCoroutine(MoveRectX(mainWipeRect, offscreenX, 0f, wipeInDuration, EaseOutExpo))
-            : null;
+        // 1. Colored background sheet glides & fades in FIRST from right -> center
+        if (mainWipeRect != null)
+            yield return MoveAndFadeRectX(mainWipeRect, mainWipeImage, fromAccent, offscreenX, 0f, 0f, 1f, wipeInDuration, EaseInOutSine);
 
-        if (leadIn != null) yield return leadIn;
-        if (mainIn != null) yield return mainIn;
-
-        float totalHoldTime = clockIntroDuration + preTickHold + (meetTickCount * secondsPerTick) + postTickHold + clockOutroDuration;
+        float totalHoldTime = clockIntroDuration + preTickHold + (meetTickCount * secondsPerTick) + postTickHold;
         Coroutine watermarkDrift = watermarkText != null
-            ? StartCoroutine(DriftWatermark(totalHoldTime))
+            ? StartCoroutine(DriftWatermark(totalHoldTime, clockIntroDuration))
             : null;
 
-        // 2. Clock Dial & Typography whip IN
-        yield return AnimateContentWhip(36f, 0f, 0f, 1f, clockIntroDuration, EaseOutExpo);
+        // 2. WatermarkText + Objects (Clock Dial & Typography) glide & fade in AFTER the background
+        yield return AnimateContentWhip(96f, 0f, 0f, 1f, clockIntroDuration, EaseInOutSine);
 
         if (preTickHold > 0f)
             yield return new WaitForSecondsRealtime(preTickHold);
 
-        // 3. Real-world 1-second quartz clock ticking (crisp 0.08s snap + ~0.92s stillness per tick)
+        // 3. Real-world 1-second quartz clock ticking (colors stay strictly at fromAccent until the hands meet!)
         float snapDur = Mathf.Min(tickSnapDuration, secondsPerTick);
         float restDur = Mathf.Max(0f, secondsPerTick - snapDur);
 
@@ -402,12 +294,9 @@ public class TimeTransition : MonoBehaviour
             float fromTickAngle = targetAngleDeg + ((meetTickCount - (tick - 1)) * degreesPerTick);
             float toTickAngle = targetAngleDeg + ((meetTickCount - tick) * degreesPerTick);
 
-            if (isMeetingTick && (!finalChimeEvent.IsNull || finalChimeSfx != null))
-                PlaySfx(finalChimeEvent, finalChimeSfx);
-            else
-                PlaySfx(clockTickEvent, clockTickSfx);
+            PlayClip(isMeetingTick && finalChimeSfx != null ? finalChimeSfx : clockTickSfx);
 
-            // Crisp mechanical snap to the next second mark
+            // Crisp mechanical snap — keep colors strictly locked to fromAccent (no gradient!)
             yield return AnimateMeetingTick(
                 fromNearAngle,
                 toNearAngle,
@@ -415,19 +304,21 @@ public class TimeTransition : MonoBehaviour
                 toTickAngle,
                 Mathf.Lerp(0f, fullArcFill, prevFrac),
                 Mathf.Lerp(0f, fullArcFill, nextFrac),
-                Color.Lerp(fromAccent, toAccent, prevFrac),
-                Color.Lerp(fromAccent, toAccent, nextFrac),
-                isMeetingTick ? endHour : startHour,
+                fromAccent,
+                startHour,
                 snapDur);
 
             if (isMeetingTick)
             {
-                // The exact moment both hands meet at the target hour, flip to the new phase!
+                // The exact moment both hands meet at the target hour (12 / 4 / 9),
+                // snap the visible background sheet and all visuals to the new phase color!
                 whileCovered?.Invoke();
+                if (mainWipeImage != null)
+                    mainWipeImage.color = toAccent;
                 ApplyAccentVisuals(toAccent, toSlot, endHour);
 
-                if (accentSlashRect != null)
-                    StartCoroutine(MoveRectX(accentSlashRect, offscreenX, accentSlashBasePos.x, 0.28f, EaseOutExpo));
+                if (accentSlashImage != null)
+                    StartCoroutine(FadeImageAlpha(accentSlashImage, paperColor, 0f, 0.22f, 0.65f));
             }
             else if (restDur > 0f)
             {
@@ -436,34 +327,36 @@ public class TimeTransition : MonoBehaviour
             }
         }
 
-        if (leadWipeImage != null) leadWipeImage.color = toAccent;
+        // 4. Post-meet hold so player reads LUNCH / AFTER SCHOOL / NIGHT (and load destination scene while covered if requested)
+        if (!string.IsNullOrWhiteSpace(sceneToLoad) && Application.CanStreamedLevelBeLoaded(sceneToLoad))
+        {
+            AsyncOperation loading = SceneManager.LoadSceneAsync(sceneToLoad);
+            while (loading != null && !loading.isDone)
+                yield return null;
+            yield return null;
+        }
 
-        // 4. Post-meet hold so player reads LUNCH / AFTER SCHOOL / NIGHT
         if (postTickHold > 0f)
             yield return new WaitForSecondsRealtime(postTickHold);
 
-        // 5. Clock rig whips OUT
-        yield return AnimateContentWhip(0f, -42f, 1f, 0f, clockOutroDuration, EaseInQuart);
-
+        // 5. WatermarkText + Objects fade & glide out FIRST (before the background leaves)
         if (watermarkDrift != null)
             StopCoroutine(watermarkDrift);
 
-        // 6. Staggered diagonal peel-off
-        Coroutine slashOut = accentSlashRect != null
-            ? StartCoroutine(MoveRectX(accentSlashRect, accentSlashRect.anchoredPosition.x, -offscreenX, wipeOutDuration, EaseInQuart))
-            : null;
-        Coroutine mainOut = mainWipeRect != null
-            ? StartCoroutine(MoveRectX(mainWipeRect, 0f, -offscreenX, wipeOutDuration, EaseInQuart))
-            : null;
-        if (layerStagger > 0f)
-            yield return new WaitForSecondsRealtime(layerStagger);
-        Coroutine leadOut = leadWipeRect != null
-            ? StartCoroutine(MoveRectX(leadWipeRect, 0f, -offscreenX, wipeOutDuration, EaseInQuart))
+        Coroutine watermarkOut = watermarkText != null
+            ? StartCoroutine(FadeWatermarkOut(clockOutroDuration))
             : null;
 
-        if (slashOut != null) yield return slashOut;
-        if (mainOut != null) yield return mainOut;
-        if (leadOut != null) yield return leadOut;
+        if (accentSlashImage != null)
+            StartCoroutine(FadeImageAlpha(accentSlashImage, paperColor, accentSlashImage.color.a, 0f, clockOutroDuration));
+        yield return AnimateContentWhip(0f, -96f, 1f, 0f, clockOutroDuration, EaseInOutSine);
+
+        if (watermarkOut != null)
+            yield return watermarkOut;
+
+        // 6. Colored background sheet glides & fades off AFTER WatermarkText and objects are gone
+        if (mainWipeRect != null)
+            yield return MoveAndFadeRectX(mainWipeRect, mainWipeImage, toAccent, 0f, -offscreenX, 1f, 0f, wipeOutDuration, EaseInOutSine);
 
         ResetIdleState();
         transitioning = false;
@@ -476,8 +369,7 @@ public class TimeTransition : MonoBehaviour
         float toTickAngle,
         float fromSweepFill,
         float toSweepFill,
-        Color fromColor,
-        Color toColor,
+        Color lockedAccent,
         int highlightHour24,
         float duration)
     {
@@ -493,14 +385,13 @@ public class TimeTransition : MonoBehaviour
             float curTick = Mathf.Lerp(fromTickAngle, toTickAngle, moveT);
             ApplyHandAngles(curNear, curTick);
 
-            Color curAccent = Color.Lerp(fromColor, toColor, rawT);
-            ApplyAccentColorOnly(curAccent, highlightHour24);
+            ApplyAccentColorOnly(lockedAccent, highlightHour24);
 
             if (clockSweepArc != null)
             {
                 clockSweepArc.fillAmount = Mathf.Lerp(fromSweepFill, toSweepFill, moveT);
-                Color arcCol = curAccent;
-                arcCol.a = 0.32f;
+                Color arcCol = inkColor;
+                arcCol.a = 0.20f;
                 clockSweepArc.color = arcCol;
             }
 
@@ -508,12 +399,12 @@ public class TimeTransition : MonoBehaviour
         }
 
         ApplyHandAngles(toNearAngle, toTickAngle);
-        ApplyAccentColorOnly(toColor, highlightHour24);
+        ApplyAccentColorOnly(lockedAccent, highlightHour24);
         if (clockSweepArc != null)
         {
             clockSweepArc.fillAmount = toSweepFill;
-            Color arcCol = toColor;
-            arcCol.a = 0.32f;
+            Color arcCol = inkColor;
+            arcCol.a = 0.20f;
             clockSweepArc.color = arcCol;
         }
     }
@@ -587,17 +478,17 @@ public class TimeTransition : MonoBehaviour
 
     void ApplyAccentColorOnly(Color accent, int activeHour24)
     {
-        if (clockOuterRing != null) clockOuterRing.color = accent;
-        if (hourHandImage != null) hourHandImage.color = accent;
+        if (clockOuterRing != null) clockOuterRing.color = paperColor;
+        if (hourHandImage != null) hourHandImage.color = paperColor;
         if (minuteHandImage != null) minuteHandImage.color = paperColor;
-        if (centerPinImage != null) centerPinImage.color = accent;
-        if (accentBadgeBar != null) accentBadgeBar.color = accent;
-        if (digitalTimeText != null) digitalTimeText.color = inkColor;
+        if (centerPinImage != null) centerPinImage.color = paperColor;
+        if (accentBadgeBar != null) accentBadgeBar.color = inkColor;
+        if (digitalTimeText != null) digitalTimeText.color = paperColor;
         if (phaseTitleText != null) phaseTitleText.color = paperColor;
 
         if (halftoneImage != null)
         {
-            Color hc = accent;
+            Color hc = inkColor;
             hc.a = 0.08f;
             halftoneImage.color = hc;
         }
@@ -610,11 +501,8 @@ public class TimeTransition : MonoBehaviour
             {
                 if (hourTickImages[i] == null) continue;
                 bool isActive = i == activeTick;
-                bool isCardinal = (i % 3) == 0;
-                hourTickImages[i].color = isActive
-                    ? accent
-                    : new Color(paperColor.r, paperColor.g, paperColor.b, isCardinal ? 0.85f : 0.35f);
-                hourTickImages[i].rectTransform.localScale = isActive ? Vector3.one * 1.35f : Vector3.one;
+                hourTickImages[i].color = isActive ? paperColor : new Color(paperColor.r, paperColor.g, paperColor.b, 0.85f);
+                hourTickImages[i].rectTransform.localScale = isActive ? Vector3.one * 1.25f : Vector3.one;
             }
         }
 
@@ -625,10 +513,72 @@ public class TimeTransition : MonoBehaviour
                 if (hourNumberTexts[i] == null) continue;
                 bool isActive = i == activeTick;
                 hourNumberTexts[i].color = isActive
-                    ? accent
-                    : new Color(paperColor.r, paperColor.g, paperColor.b, 0.55f);
+                    ? paperColor
+                    : new Color(inkColor.r, inkColor.g, inkColor.b, 0.85f);
                 hourNumberTexts[i].rectTransform.localScale = isActive ? Vector3.one * 1.2f : Vector3.one;
             }
+        }
+    }
+
+    IEnumerator FadeImageAlpha(Image img, Color baseColor, float startAlpha, float endAlpha, float duration)
+    {
+        if (img == null) yield break;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / duration));
+            Color c = baseColor;
+            c.a = Mathf.Lerp(startAlpha, endAlpha, t);
+            img.color = c;
+            yield return null;
+        }
+
+        Color finalColor = baseColor;
+        finalColor.a = endAlpha;
+        img.color = finalColor;
+    }
+
+    IEnumerator MoveAndFadeRectX(
+        RectTransform rt,
+        Image img,
+        Color baseColor,
+        float startX,
+        float endX,
+        float startAlpha,
+        float endAlpha,
+        float duration,
+        Func<float, float> ease)
+    {
+        if (rt == null) yield break;
+        float elapsed = 0f;
+        Vector2 pos = rt.anchoredPosition;
+
+        while (elapsed < duration)
+        {
+            elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float t = ease(Mathf.Clamp01(elapsed / duration));
+            pos.x = Mathf.LerpUnclamped(startX, endX, t);
+            rt.anchoredPosition = pos;
+
+            if (img != null)
+            {
+                Color c = baseColor;
+                c.a = Mathf.Lerp(startAlpha, endAlpha, t);
+                img.color = c;
+            }
+
+            yield return null;
+        }
+
+        pos.x = endX;
+        rt.anchoredPosition = pos;
+        if (img != null)
+        {
+            Color finalColor = baseColor;
+            finalColor.a = endAlpha;
+            img.color = finalColor;
         }
     }
 
@@ -680,23 +630,50 @@ public class TimeTransition : MonoBehaviour
             contentGroup.alpha = endAlpha;
     }
 
-    IEnumerator DriftWatermark(float totalDuration)
+    IEnumerator DriftWatermark(float totalDuration, float fadeInDuration)
     {
         float elapsed = 0f;
         RectTransform rt = watermarkText.rectTransform;
+        float safeFadeIn = Mathf.Max(0.05f, fadeInDuration);
 
         while (elapsed < totalDuration)
         {
             elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
             float t = Mathf.Clamp01(elapsed / Mathf.Max(0.1f, totalDuration));
-            rt.anchoredPosition = new Vector2(watermarkBasePos.x + Mathf.Lerp(40f, -40f, t), watermarkBasePos.y);
+            rt.anchoredPosition = new Vector2(watermarkBasePos.x + Mathf.Lerp(40f, -20f, t), watermarkBasePos.y);
 
-            float fadeIn = Mathf.Clamp01(elapsed / 0.25f);
+            float fadeIn = EaseInOutSine(Mathf.Clamp01(elapsed / safeFadeIn));
             Color c = paperColor;
-            c.a = 0.07f * fadeIn;
+            c.a = 0.10f * fadeIn;
             watermarkText.color = c;
             yield return null;
         }
+    }
+
+    IEnumerator FadeWatermarkOut(float duration)
+    {
+        if (watermarkText == null) yield break;
+        float elapsed = 0f;
+        RectTransform rt = watermarkText.rectTransform;
+        Vector2 startPos = rt.anchoredPosition;
+        Vector2 endPos = startPos + new Vector2(-40f, 0f);
+        float startAlpha = watermarkText.color.a;
+
+        while (elapsed < duration)
+        {
+            elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float t = EaseInOutSine(Mathf.Clamp01(elapsed / duration));
+            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+
+            Color c = paperColor;
+            c.a = Mathf.Lerp(startAlpha, 0f, t);
+            watermarkText.color = c;
+            yield return null;
+        }
+
+        Color finalCol = paperColor;
+        finalCol.a = 0f;
+        watermarkText.color = finalCol;
     }
 
     void CacheBasePositions()
@@ -710,13 +687,6 @@ public class TimeTransition : MonoBehaviour
             watermarkBasePos = watermarkText.rectTransform.anchoredPosition;
 
         cachedBasePositions = true;
-    }
-
-    void PlaySfx(EventReference fmodEvent, AudioClip fallbackClip)
-    {
-        if (!fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(fmodEvent, sfxVolume))
-            return;
-        PlayClip(fallbackClip);
     }
 
     void PlayClip(AudioClip clip)
@@ -775,6 +745,7 @@ public class TimeTransition : MonoBehaviour
 
     static float EaseOutExpo(float x) => x >= 1f ? 1f : 1f - Mathf.Pow(2f, -10f * x);
     static float EaseOutCubic(float x) => 1f - Mathf.Pow(1f - x, 3f);
+    static float EaseInOutSine(float x) => -(Mathf.Cos(Mathf.PI * x) - 1f) * 0.5f;
     static float EaseInQuart(float x) => x * x * x * x;
 
     float GetOffscreenDistance()
@@ -802,7 +773,13 @@ public class TimeTransition : MonoBehaviour
         float off = GetOffscreenDistance();
         if (leadWipeRect != null) leadWipeRect.anchoredPosition = new Vector2(off, 0f);
         if (mainWipeRect != null) mainWipeRect.anchoredPosition = new Vector2(off, 0f);
-        if (accentSlashRect != null) accentSlashRect.anchoredPosition = new Vector2(off, accentSlashBasePos.y);
+        if (accentSlashRect != null) accentSlashRect.anchoredPosition = accentSlashBasePos;
+        if (accentSlashImage != null)
+        {
+            Color c = accentSlashImage.color;
+            c.a = 0f;
+            accentSlashImage.color = c;
+        }
         if (contentGroup != null) contentGroup.alpha = 0f;
     }
 

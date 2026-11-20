@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using FMODUnity;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -20,8 +19,6 @@ public class YarnCommands : MonoBehaviour
     {
         [Tooltip("Name used in <<sfx \"name\">>.")]
         public string name;
-        [Tooltip("Optional FMOD event override for this sound name.")]
-        public EventReference fmodEvent;
         public AudioClip clip;
     }
 
@@ -169,6 +166,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
+        runner.AddCommandHandler("time_loop_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
         runner.AddCommandHandler("sound_cut", (Action)(() => SetAudioPaused(true)));
@@ -331,23 +329,18 @@ public class YarnCommands : MonoBehaviour
             leaving = true;
             HideDialogueLine();
             bool doorTransition = Key(sound) == "door";
-            string cueKey = doorTransition ? "door_open" : sound;
-            Sound customSound = !doorTransition && !string.IsNullOrWhiteSpace(sound)
-                ? sounds.Find(s => s.name == sound)
-                : null;
-            EventReference customFmod = customSound != null ? customSound.fmodEvent : default;
-            AudioClip fallbackClip = customSound != null ? customSound.clip : null;
+            AudioClip clip = doorTransition
+                ? SunriseAudio.GetClip("door_open")
+                : string.IsNullOrWhiteSpace(sound) ? null : FindClip(sound, "scene_transition");
             if (doorTransition)
                 SunriseAudio.QueueDoorClose();
 
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(scene, customFmod, cueKey, fallbackClip, 1f, whileCovered);
+                CircleTransition.Instance.LoadScene(scene, clip, 1f, whileCovered);
             else
             {
-                if (!customFmod.IsNull)
-                    SunriseAudio.TryPlayFmodEvent(customFmod);
-                else if (!string.IsNullOrWhiteSpace(cueKey))
-                    SunriseAudio.TryPlay(cueKey);
+                if (doorTransition)
+                    SunriseAudio.Play("door_open");
                 whileCovered?.Invoke();
                 SceneManager.LoadScene(scene);
             }
@@ -378,20 +371,73 @@ public class YarnCommands : MonoBehaviour
     }
 
     // Covers the screen and changes time without starting a sound cue.
-    // Yarn can play a sound after the screen opens with <<sfx>>.
+    // Uses TimeTransition (clock animation) when present; otherwise falls back to CircleTransition.
     private YarnTask AdvanceTimeSilent(string slot)
     {
+        TimeTransition clockTransition = TimeTransition.Instance;
+        if (clockTransition != null && TryParseStoryTimeSlot(slot, out StoryTimeSlot toSlot))
+        {
+            StoryTimeSlot fromSlot = TryParseStoryTimeSlot(TimeOfDay, out StoryTimeSlot parsedFrom)
+                ? parsedFrom
+                : (StoryTimeSlot)(((int)toSlot + 3) % 4);
+
+            HideDialogueLine();
+            if (clockTransition.PlayCycleTransition(fromSlot, toSlot, () => ApplyTimeOfDay(slot)))
+                return YarnTask.WaitUntil(() => clockTransition == null || !clockTransition.IsTransitioning);
+        }
+
         return Fade(() => ApplyTimeOfDay(slot));
     }
 
     // <<advance_time_to_scene "lunch" "Cafeteria">>: changes time while the screen is covered,
-    // then loads the destination before uncovering it. This uses one transition for both actions.
+    // then loads the destination before uncovering it. Uses TimeTransition when present.
     private YarnTask AdvanceTimeToScene(string slot, string location)
     {
         SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay)
             ? "night_transition"
             : "day_transition");
+
+        TimeTransition clockTransition = TimeTransition.Instance;
+        string targetScene = FindBuildScene(Key(location));
+        if (clockTransition != null && !string.IsNullOrEmpty(targetScene) && TryParseStoryTimeSlot(slot, out StoryTimeSlot toSlot))
+        {
+            StoryTimeSlot fromSlot = TryParseStoryTimeSlot(TimeOfDay, out StoryTimeSlot parsedFrom)
+                ? parsedFrom
+                : (StoryTimeSlot)(((int)toSlot + 3) % 4);
+
+            leaving = true;
+            HideDialogueLine();
+            if (clockTransition.PlayCycleTransition(fromSlot, toSlot, () => ApplyTimeOfDay(slot), targetScene))
+                return YarnTask.WaitUntil(() => this == null || clockTransition == null || !clockTransition.IsTransitioning);
+            leaving = false;
+        }
+
         return LoadLocation(location, "", () => ApplyTimeOfDay(slot));
+    }
+
+    private static bool TryParseStoryTimeSlot(string slotName, out StoryTimeSlot slot)
+    {
+        switch (Key(slotName))
+        {
+            case "morning":
+                slot = StoryTimeSlot.Morning;
+                return true;
+            case "lunch":
+                slot = StoryTimeSlot.Lunch;
+                return true;
+            case "afterschool":
+            case "afternoon":
+                slot = StoryTimeSlot.AfterSchool;
+                return true;
+            case "night":
+            case "evening":
+            case "midnight":
+                slot = StoryTimeSlot.Night;
+                return true;
+            default:
+                slot = StoryTimeSlot.Morning;
+                return false;
+        }
     }
 
     // <<advance_time_to_scene_at_x "lunch" "Cafeteria" -5.5 "sit">>: places and seats
@@ -1153,7 +1199,7 @@ public class YarnCommands : MonoBehaviour
     private void OnDestroy()
     {
         SunriseAudio.StopLoop();
-        if (pausedAudio) SunriseAudio.SetPaused(false);
+        if (pausedAudio) AudioListener.pause = false;
     }
 
     // <<cutscene "anin_joins_table">>: plays the matching Timeline and waits for it to finish.
@@ -1239,10 +1285,23 @@ public class YarnCommands : MonoBehaviour
         return LoadLocation(sceneAfterHardReset, "");
     }
 
-    // <<soft_reset>>: midnight comes without a death, so there is no white flash. The loop starts over in the Dorm at midnight.
+    // <<soft_reset>> / <<time_loop_reset>>: plays the Calendar Time Loop Reset transition when present,
+    // resetting the loop and loading the Dorm during the blackout before the eyelids open.
     private YarnTask SoftReset()
     {
         SunriseAudio.PlaySequence("soft_reset", "night_transition");
+
+        TimeLoopResetTransition loopTransition = TimeLoopResetTransition.Instance;
+        if (loopTransition != null)
+        {
+            string targetScene = FindBuildScene(Key(dormScene));
+            leaving = true;
+            HideDialogueLine();
+            if (loopTransition.PlayLoopReset("10", () => StartOver(GapTimeOfDay, true), null, targetScene))
+                return YarnTask.WaitUntil(() => this == null || loopTransition == null || !loopTransition.IsTransitioning);
+            leaving = false;
+        }
+
         StartOver(GapTimeOfDay, true);
         return LoadLocation(dormScene, "");
     }
@@ -1304,13 +1363,10 @@ public class YarnCommands : MonoBehaviour
                 return;
         }
 
-        if (SunriseAudio.TryPlay(soundName))
+        if (SunriseAudio.Play(soundName) != null)
             return;
 
         Sound sound = sounds.Find(s => s.name == soundName);
-        if (sound != null && !sound.fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(sound.fmodEvent))
-            return;
-
         if (sound == null || sound.clip == null)
         {
             Debug.LogWarning($"<<sfx>>: no audio cue or serialized clip named \"{soundName}\".", this);
@@ -1324,10 +1380,10 @@ public class YarnCommands : MonoBehaviour
         sfxSource.PlayOneShot(sound.clip);
     }
 
-    // Pauses all FMOD and Unity audio. Outlives the scene, so it is undone on unload.
+    // Pauses every Audio Source in the game. AudioListener.pause outlives the scene, so it is undone on unload.
     private void SetAudioPaused(bool paused)
     {
-        SunriseAudio.SetPaused(paused);
+        AudioListener.pause = paused;
         pausedAudio = paused;
     }
 

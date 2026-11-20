@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -52,11 +52,12 @@ public class TimeLoopResetTransition : MonoBehaviour
     [SerializeField] TMP_FontAsset horrorFont;
 
     [Header("Calm Intro Colors")]
-    [SerializeField] Color calmBackgroundColor = Color.white;
-    [SerializeField] Color calmInkColor = new Color32(0x07, 0x0D, 0x2B, 0xFF);
+    [SerializeField] Color calmBackgroundColor = new Color32(0x9E, 0xA6, 0x9B, 0xFF);
+    [SerializeField] Color calmPadPaperColor = new Color32(0xF5, 0xEF, 0xE2, 0xFF);
+    [SerializeField] Color calmInkColor = new Color32(0x1D, 0x1F, 0x1E, 0xFF);
     [SerializeField] Color calmHeaderBarColor = new Color32(0xC8, 0x28, 0x32, 0xFF);
-    [SerializeField] Color calmGridLineColor = new Color32(0x07, 0x0D, 0x2B, 0x44);
-    [SerializeField] Color calmNeighborDayColor = new Color32(0x07, 0x0D, 0x2B, 0x55);
+    [SerializeField] Color calmGridLineColor = new Color32(0x1D, 0x1F, 0x1E, 0xFF);
+    [SerializeField] Color calmNeighborDayColor = new Color32(0x1D, 0x1F, 0x1E, 0xFF);
 
     [Header("Horror Palette")]
     [SerializeField] Color abyssInkColor = new Color32(0x05, 0x04, 0x08, 0xFF);
@@ -101,9 +102,6 @@ public class TimeLoopResetTransition : MonoBehaviour
     [SerializeField] float ghostSplitPixels = 6.5f;
 
     [Header("Audio (Optional)")]
-    [SerializeField] EventReference quadrantCutEvent;
-    [SerializeField] EventReference finalSnapEvent;
-    [SerializeField] EventReference wakeUpEvent;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip quadrantCutSfx;
     [SerializeField] AudioClip finalSnapSfx;
@@ -163,70 +161,21 @@ public class TimeLoopResetTransition : MonoBehaviour
     public bool PlayLoopReset(
         string dayLabel = "10",
         Action whileCovered = null,
-        Action onRewindStart = null)
+        Action onRewindStart = null,
+        string sceneToLoad = null)
     {
         if (transitioning || !HasRequiredReferences())
             return false;
 
-        StartCoroutine(LoopResetRoutine(dayLabel, whileCovered, onRewindStart));
+        StartCoroutine(LoopResetRoutine(dayLabel, whileCovered, onRewindStart, sceneToLoad));
         return true;
-    }
-
-    [ContextMenu("Test Visual Time Loop Reset (Dec 10)")]
-    void TestVisualLoopReset()
-    {
-        if (Application.isPlaying)
-            PlayLoopReset("10");
-    }
-
-    [ContextMenu("Editor Preview: Calm Calendar")]
-    public void EditorPreviewCalmCalendar()
-    {
-        if (canvasGroup != null) canvasGroup.alpha = 1f;
-        if (dateRigGroup != null) dateRigGroup.alpha = 1f;
-        SetEyelidHeight(0f);
-        SetImageAlpha(flashOverlayImage, 0f);
-        SetImageAlpha(halftoneImage, 0f);
-        SetImageAlpha(vignetteGrainImage, 0f);
-        if (fullBackdropImage != null)
-        {
-            fullBackdropImage.color = calmBackgroundColor;
-            SetImageAlpha(fullBackdropImage, 1f);
-        }
-        ApplyCalmCalendarStyle();
-        ApplyCameraFraming(Vector2.zero, 1f, 0f, Vector2.zero);
-    }
-
-    [ContextMenu("Editor Preview: Horror Calendar")]
-    public void EditorPreviewHorrorCalendar()
-    {
-        if (canvasGroup != null) canvasGroup.alpha = 1f;
-        if (dateRigGroup != null) dateRigGroup.alpha = 1f;
-        SetEyelidHeight(0f);
-        SetImageAlpha(flashOverlayImage, 0f);
-        if (fullBackdropImage != null)
-        {
-            fullBackdropImage.color = abyssInkColor;
-            SetImageAlpha(fullBackdropImage, 1f);
-        }
-        if (halftoneImage != null)
-            halftoneImage.color = new Color(bloodCrimsonColor.r, bloodCrimsonColor.g, bloodCrimsonColor.b, 0.12f);
-        ApplyHorrorCalendarStyle(0.75f, false);
-        if (dateCircleImage != null) dateCircleImage.color = bloodCrimsonColor;
-        if (dayNumberText != null) dayNumberText.color = bonePaperColor;
-        ApplyCameraFraming(Vector2.zero, 1f, 0f, Vector2.zero);
-    }
-
-    [ContextMenu("Editor Preview: Hide Canvas (Alpha 0)")]
-    public void EditorHideCanvas()
-    {
-        ResetIdleState();
     }
 
     IEnumerator LoopResetRoutine(
         string dayLabel,
         Action whileCovered,
-        Action onRewindStart)
+        Action onRewindStart,
+        string sceneToLoad)
     {
         EnsureProceduralTextures();
         EnsureBlurVolume();
@@ -277,7 +226,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             vignetteGrainImage.color = new Color(1f, 1f, 1f, 0.85f);
 
         onRewindStart?.Invoke();
-        PlaySfx(quadrantCutEvent, quadrantCutSfx);
+        PlayClip(quadrantCutSfx);
 
         if (horrorRevealHoldDuration > 0f)
         {
@@ -299,7 +248,7 @@ public class TimeLoopResetTransition : MonoBehaviour
         Vector2 q3Focus = new Vector2(-quadrantFocusOffset.x, -quadrantFocusOffset.y);
 
         // Quadrant I (Top-Right, 2s): 1.00 -> 0.75
-        PlaySfx(quadrantCutEvent, quadrantCutSfx);
+        PlayClip(quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 1.00f,
             endFill: 0.75f,
@@ -312,7 +261,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant II (Bottom-Right, 2s): 0.75 -> 0.50
-        PlaySfx(quadrantCutEvent, quadrantCutSfx);
+        PlayClip(quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.75f,
             endFill: 0.50f,
@@ -325,7 +274,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant III (Bottom-Left, 2s): 0.50 -> 0.25
-        PlaySfx(quadrantCutEvent, quadrantCutSfx);
+        PlayClip(quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.50f,
             endFill: 0.25f,
@@ -338,7 +287,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant IV (Top-Left + Zoom Out, 2s): 0.25 -> 0.00
-        PlaySfx(quadrantCutEvent, quadrantCutSfx);
+        PlayClip(quadrantCutSfx);
         yield return RunHorrorQuadrant(
             startFill: 0.25f,
             endFill: 0.00f,
@@ -351,7 +300,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // 5. Sudden pitch-black cut + dead silence the instant the circle vanishes!
-        PlaySfx(finalSnapEvent, finalSnapSfx);
+        PlayClip(finalSnapSfx);
         whileCovered?.Invoke();
 
         if (dateRigGroup != null) dateRigGroup.alpha = 0f;
@@ -370,7 +319,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             yield return new WaitForSecondsRealtime(blackoutSilenceDuration);
 
         // 6. GROGGY WAKE-UP EYELID OPEN (halfway -> blink down -> full open) as scene blur clears
-        PlaySfx(wakeUpEvent, wakeUpSfx);
+        PlayClip(wakeUpSfx);
         SetSceneBlur(1f);
         SetImageAlpha(fullBackdropImage, 0f);
         SetEyelidColor(abyssInkColor);
@@ -401,15 +350,15 @@ public class TimeLoopResetTransition : MonoBehaviour
             dateCircleGhostImage.gameObject.SetActive(false);
 
         if (calendarHeaderBar != null)
-            calendarHeaderBar.color = calmHeaderBarColor;
+            calendarHeaderBar.color = calmPadPaperColor;
         if (monthHeaderText != null)
-            monthHeaderText.color = Color.white;
+            monthHeaderText.color = calmInkColor;
 
         if (calendarGridLines != null)
         {
             for (int i = 0; i < calendarGridLines.Length; i++)
                 if (calendarGridLines[i] != null)
-                    calendarGridLines[i].color = calmGridLineColor;
+                    calendarGridLines[i].color = calmInkColor;
         }
 
         if (weekdayTexts != null)
@@ -453,9 +402,9 @@ public class TimeLoopResetTransition : MonoBehaviour
         }
 
         Color gridCol = inImpactFlash
-            ? new Color(abyssInkColor.r, abyssInkColor.g, abyssInkColor.b, 0.7f)
-            : Color.Lerp(new Color(bonePaperColor.r, bonePaperColor.g, bonePaperColor.b, 0.25f),
-                         new Color(bloodCrimsonColor.r, bloodCrimsonColor.g, bloodCrimsonColor.b, 0.55f),
+            ? abyssInkColor
+            : Color.Lerp(new Color(bonePaperColor.r, bonePaperColor.g, bonePaperColor.b, 0.75f),
+                         new Color(bloodCrimsonColor.r, bloodCrimsonColor.g, bloodCrimsonColor.b, 0.95f),
                          dreadLevel);
 
         if (calendarGridLines != null)
@@ -467,11 +416,11 @@ public class TimeLoopResetTransition : MonoBehaviour
 
         if (calendarHeaderBar != null)
             calendarHeaderBar.color = inImpactFlash
-                ? abyssInkColor
-                : Color.Lerp(deepRustColor, bloodCrimsonColor, dreadLevel * 0.65f);
+                ? bonePaperColor
+                : Color.Lerp(new Color32(0x0D, 0x09, 0x10, 0xFF), new Color32(0x1C, 0x06, 0x09, 0xFF), dreadLevel);
 
         if (monthHeaderText != null)
-            monthHeaderText.color = inImpactFlash ? bonePaperColor : new Color(bonePaperColor.r, bonePaperColor.g, bonePaperColor.b, 0.9f);
+            monthHeaderText.color = gridCol;
 
         Color subTextCol = inImpactFlash
             ? new Color(abyssInkColor.r, abyssInkColor.g, abyssInkColor.b, 0.6f)
@@ -842,13 +791,6 @@ public class TimeLoopResetTransition : MonoBehaviour
         img.fillMethod = Image.FillMethod.Radial360;
         img.fillOrigin = (int)Image.Origin360.Top;
         img.fillClockwise = false;
-    }
-
-    void PlaySfx(EventReference fmodEvent, AudioClip fallbackClip)
-    {
-        if (!fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(fmodEvent, sfxVolume))
-            return;
-        PlayClip(fallbackClip);
     }
 
     void PlayClip(AudioClip clip)

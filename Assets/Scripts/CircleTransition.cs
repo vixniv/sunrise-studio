@@ -1,5 +1,4 @@
 using System.Collections;
-using FMODUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -58,12 +57,10 @@ public class CircleTransition : MonoBehaviour
         }
     }
 
-    // Plays an FMOD event (if assigned), otherwise an FMOD cue/path, falling back to a legacy AudioClip.
+    // sound, when given, plays as the circle starts closing.
     public void LoadScene(
         string sceneName,
-        EventReference fmodEvent,
-        string fallbackCueOrPath = null,
-        AudioClip fallbackClip = null,
+        AudioClip sound = null,
         float volume = 1f,
         System.Action whileCovered = null)
     {
@@ -78,6 +75,7 @@ public class CircleTransition : MonoBehaviour
             return;
         }
 
+        // LoadSceneAsync returns null for these, which would leave the screen covered.
         if (!Application.CanStreamedLevelBeLoaded(sceneName))
         {
             Debug.LogError(
@@ -86,25 +84,10 @@ public class CircleTransition : MonoBehaviour
             return;
         }
 
-        bool played = false;
-        if (!fmodEvent.IsNull)
-            played = SunriseAudio.TryPlayFmodEvent(fmodEvent, volume);
-        if (!played && !string.IsNullOrWhiteSpace(fallbackCueOrPath))
-            played = SunriseAudio.TryPlay(fallbackCueOrPath, volume);
-        if (!played && fallbackClip != null && audioSource != null)
-            audioSource.PlayOneShot(fallbackClip, volume);
+        if (sound != null)
+            audioSource.PlayOneShot(sound, volume);
 
         StartCoroutine(TransitionRoutine(sceneName, whileCovered));
-    }
-
-    // sound, when given, plays as the circle starts closing.
-    public void LoadScene(
-        string sceneName,
-        AudioClip sound = null,
-        float volume = 1f,
-        System.Action whileCovered = null)
-    {
-        LoadScene(sceneName, default, null, sound, volume, whileCovered);
     }
 
     // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.

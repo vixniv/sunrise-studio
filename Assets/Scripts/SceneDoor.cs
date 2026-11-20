@@ -1,5 +1,4 @@
 using System;
-using FMODUnity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,9 +18,7 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [SerializeField] private string interactionLabel = "";
     [Tooltip("Scene to load when there is no story reason to stop. Must be in the Build Profile scene list.")]
     [SerializeField] private string destinationScene = "SchoolMap";
-    [Tooltip("Optional FMOD event played as the transition starts closing. Defaults to event:/SFX/Door/Open when empty.")]
-    [SerializeField] private EventReference enterEvent;
-    [Tooltip("Legacy fallback clip when FMOD banks are not loaded yet.")]
+    [Tooltip("Optional. Plays as the transition starts closing. Needs CircleTransition in the scene.")]
     [SerializeField] private AudioClip enterSound;
     [SerializeField, Range(0f, 1f)] private float enterVolume = 1f;
     [Tooltip("Play the interact sound (set on the Player's InteractionCue) when this door is tapped.")]
@@ -220,14 +217,16 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
         // Silent: the scene transition below already plays door_open.
         if (doorAnimation != null) doorAnimation.OpenSilently();
 
+        AudioClip transitionSound = SunriseAudio.GetClip("door_open");
+        if (transitionSound == null)
+            transitionSound = enterSound;
         SunriseAudio.QueueDoorClose(enterVolume);
 
         if (CircleTransition.Instance != null)
-            CircleTransition.Instance.LoadScene(destinationScene.Trim(), enterEvent, "door_open", enterSound, enterVolume);
+            CircleTransition.Instance.LoadScene(destinationScene.Trim(), transitionSound, enterVolume);
         else
         {
-            if (enterEvent.IsNull || !SunriseAudio.TryPlayFmodEvent(enterEvent, enterVolume))
-                SunriseAudio.TryPlay("door_open", enterVolume);
+            SunriseAudio.Play("door_open", enterVolume);
             SceneManager.LoadScene(destinationScene.Trim());
         }
     }

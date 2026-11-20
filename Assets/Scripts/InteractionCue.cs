@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Text;
-using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -73,9 +72,7 @@ public class InteractionCue : MonoBehaviour
     [SerializeField, Range(0.1f, 1f)] private float visualScale = 0.32f;
 
     [Header("Sound")]
-    [Tooltip("FMOD event played when the player taps an interactable. Defaults to event:/SFX/Interact when empty.")]
-    [SerializeField] private EventReference interactEvent;
-    [Tooltip("Legacy fallback clip when FMOD banks are not loaded yet.")]
+    [Tooltip("Plays when the player taps an interactable (ChoiceInteractable, SceneDoor). One clip for the whole game.")]
     [SerializeField] private AudioClip interactSound;
     [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
 
@@ -149,16 +146,10 @@ public class InteractionCue : MonoBehaviour
         return results.Count > 0;
     }
 
-    // Plays the shared interact sound via FMOD (with legacy AudioClip fallback).
+    // Plays the shared interact sound. Does nothing when the scene has no InteractionCue or no clip is assigned.
     public static void PlayInteractSound()
     {
-        if (instance == null) return;
-        if (!instance.interactEvent.IsNull &&
-            SunriseAudio.TryPlayFmodEvent(instance.interactEvent, instance.interactVolume))
-            return;
-        if (SunriseAudio.TryPlay("interact", instance.interactVolume))
-            return;
-        if (instance.interactSound == null || instance.audioSource == null) return;
+        if (instance == null || instance.interactSound == null) return;
         instance.audioSource.PlayOneShot(instance.interactSound, instance.interactVolume);
     }
 

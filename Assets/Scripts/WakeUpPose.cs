@@ -112,10 +112,10 @@ public class WakeUpPose : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(wakeSound))
         {
-            float duration = SunriseAudio.PlayAndGetDuration(wakeSound);
-            if (duration > 0f)
-                yield return new WaitForSecondsRealtime(duration);
-            else if (duration < 0f)
+            AudioClip clip = SunriseAudio.Play(wakeSound);
+            if (clip != null)
+                yield return new WaitForSecondsRealtime(clip.length);
+            else
                 Debug.LogWarning($"WakeUpPose on \"{name}\" could not play sound \"{wakeSound}\".", this);
         }
 

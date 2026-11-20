@@ -1,4 +1,3 @@
-using FMODUnity;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +6,6 @@ namespace SunriseStudio.UI
     [RequireComponent(typeof(Button))]
     public sealed class UIButtonSound : MonoBehaviour
     {
-        [Tooltip("Optional direct FMOD event override. When empty, plays the mapped FMOD event for Cue.")]
-        [SerializeField] EventReference fmodEvent;
         [SerializeField] string cue = "ui_click";
 
         Button button;
@@ -27,8 +24,6 @@ namespace SunriseStudio.UI
 
         void Play()
         {
-            if (!fmodEvent.IsNull && SunriseAudio.TryPlayFmodEvent(fmodEvent))
-                return;
             SunriseAudio.Play(cue);
         }
 

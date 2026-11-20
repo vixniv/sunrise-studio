@@ -169,7 +169,7 @@ namespace SunriseStudio.UI
         void RestoreRuntimeState()
         {
             Time.timeScale = 1f;
-            SunriseAudio.SetPaused(false);
+            AudioListener.pause = false;
             IsPaused = false;
 
             if (pauseRoot != null)

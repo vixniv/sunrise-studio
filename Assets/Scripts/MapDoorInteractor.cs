@@ -351,21 +351,21 @@ public class MapDoorInteractor : MonoBehaviour
     void LoadDestination(MapDoor door)
     {
         string targetScene = door.destinationScene.Trim();
+        AudioClip transitionSound = SunriseAudio.GetClip("door_open");
+        if (transitionSound == null)
+            transitionSound = door.enterSound;
         SunriseAudio.QueueDoorClose(door.enterVolume);
 
         if (CircleTransition.Instance != null)
         {
             CircleTransition.Instance.LoadScene(
                 targetScene,
-                door.enterEvent,
-                "door_open",
-                door.enterSound,
+                transitionSound,
                 door.enterVolume);
         }
         else
         {
-            if (door.enterEvent.IsNull || !SunriseAudio.TryPlayFmodEvent(door.enterEvent, door.enterVolume))
-                SunriseAudio.TryPlay("door_open", door.enterVolume);
+            SunriseAudio.Play("door_open", door.enterVolume);
             SceneManager.LoadScene(targetScene);
         }
     }

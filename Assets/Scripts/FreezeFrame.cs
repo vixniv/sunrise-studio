@@ -1,5 +1,4 @@
 using System.Collections;
-using FMODUnity;
 using UnityEngine;
 using UnityEngine.UI;
 using Yarn.Unity;
@@ -18,11 +17,9 @@ public class FreezeFrame : MonoBehaviour
     [SerializeField, Min(0f)] private float holdSeconds = 1f;
     [Tooltip("Stops the world after the flash. Off: only the flash plays.")]
     [SerializeField] private bool stopTime = true;
-    [Tooltip("Optional FMOD shutter event.")]
-    [SerializeField] private EventReference shutterEvent;
-    [Tooltip("Legacy fallback shutter sound when FMOD event is unassigned.")]
+    [Tooltip("Optional shutter sound.")]
     [SerializeField] private AudioClip shutterSound;
-    [Tooltip("Plays the legacy shutter sound. Leave empty to use an Audio Source on this object.")]
+    [Tooltip("Plays the shutter sound. Leave empty to use an Audio Source on this object.")]
     [SerializeField] private AudioSource audioSource;
 
     private bool frozen;
@@ -53,10 +50,7 @@ public class FreezeFrame : MonoBehaviour
     private IEnumerator PlayRoutine()
     {
         playing = true;
-        if (!(!shutterEvent.IsNull && SunriseAudio.TryPlayFmodEvent(shutterEvent)))
-        {
-            if (shutterSound != null && audioSource != null) audioSource.PlayOneShot(shutterSound);
-        }
+        if (shutterSound != null && audioSource != null) audioSource.PlayOneShot(shutterSound);
         if (stopTime)
         {
             frozen = true;
