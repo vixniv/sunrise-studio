@@ -72,6 +72,7 @@ public class YarnCommands : MonoBehaviour
     private bool pausedAudio;
     private YarnDialogPresenter presenter;
     private readonly HashSet<GameObject> movingActors = new HashSet<GameObject>();
+    private readonly HashSet<GameObject> interruptedMoves = new HashSet<GameObject>();
 
     private static readonly int IsWalkingParameter = Animator.StringToHash("IsWalking");
     private static readonly int IsRunningParameter = Animator.StringToHash("IsRunning");
@@ -137,6 +138,9 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
         runner.AddCommandHandler("delay", (Func<float, YarnTask>)Delay);
         runner.AddCommandHandler("fade", (Func<string, YarnTask>)FadeCommand);
+        runner.AddCommandHandler("fade_black_out", (Func<YarnTask>)(() => FadeBlack(true)));
+        runner.AddCommandHandler("fade_black_in", (Func<YarnTask>)(() => FadeBlack(false)));
+        runner.AddCommandHandler("set_time_of_day", (Action<string>)ApplyTimeOfDay);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
         runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
@@ -154,6 +158,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("move_character_to_actor", (Func<string, string, float, float, string, YarnTask>)MoveCharacterToActor);
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
         runner.AddCommandHandler("start_character_move_to_actor", (Action<string, string, float, float, string, float>)StartCharacterMoveToActor);
+        runner.AddCommandHandler("stop_character_move", (Func<string, YarnTask>)StopCharacterMove);
         runner.AddCommandHandler("wait_for_character_moves", (Func<YarnTask>)WaitForCharacterMoves);
         runner.AddCommandHandler("open_door", (Func<string, YarnTask>)(door => AnimateDoor(door, true)));
         runner.AddCommandHandler("close_door", (Func<string, YarnTask>)(door => AnimateDoor(door, false)));
@@ -513,6 +518,19 @@ public class YarnCommands : MonoBehaviour
         return YarnTask.CompletedTask;
     }
 
+    private YarnTask FadeBlack(bool toBlack)
+    {
+        HideDialogueLine();
+        CircleTransition transition = CircleTransition.Instance;
+        if (transition == null || !transition.FadeBlack(toBlack))
+        {
+            Debug.LogError($"<<fade_black_{(toBlack ? "out" : "in")}>> needs an idle CircleTransition with a Black Fade Group in this scene.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        return YarnTask.WaitUntil(() => transition == null || !transition.IsTransitioning);
+    }
+
     // <<fade_teleport_character "Anin" -8 "left">>: changes X and facing while the screen is covered.
     private YarnTask FadeTeleportCharacter(string actorName, float destinationX, string facing)
     {
@@ -736,6 +754,18 @@ public class YarnCommands : MonoBehaviour
         }
 
         StartCharacterMove(actorName, reference.transform.position.x + offsetX, speed, animation, delay);
+    }
+
+    // Stops an in-progress cutscene walk at its current X and waits for the
+    // animation and movement lock to be cleaned up before Yarn continues.
+    private YarnTask StopCharacterMove(string actorName)
+    {
+        GameObject target = FindActorTarget(actorName, "stop_character_move");
+        if (target == null || !movingActors.Contains(target))
+            return YarnTask.CompletedTask;
+
+        interruptedMoves.Add(target);
+        return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
     }
 
     // <<wait_for_character_moves>>: waits for all non-blocking character moves to finish.
@@ -986,7 +1016,7 @@ public class YarnCommands : MonoBehaviour
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
 
-            if (target == null)
+            if (target == null || interruptedMoves.Contains(target))
                 yield break;
 
             // A seated character gets up before walking off.
@@ -1030,7 +1060,7 @@ public class YarnCommands : MonoBehaviour
                 }
             }
 
-            while (target != null)
+            while (target != null && !interruptedMoves.Contains(target))
             {
                 Vector3 position = target.transform.position;
                 float nextX = Mathf.MoveTowards(position.x, destinationX, speed * Time.deltaTime);
@@ -1075,6 +1105,7 @@ public class YarnCommands : MonoBehaviour
                 }
             }
 
+            interruptedMoves.Remove(target);
             movingActors.Remove(target);
         }
     }

@@ -31,7 +31,7 @@ Kirana: Come on! Only three more days until graduation!
 <<cutscene_image "cutscene_prologue_3b">>
 // Muffle the crowd as Anin's attention turns inward.
 <<ambience_muffle 1.5>>
-Anin: Three days already...
+Anin: Only three days...
 
 <<cutscene_image "cutscene_prologue_3c">>
 Anin: Why does that feel so soon?

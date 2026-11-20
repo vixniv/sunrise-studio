@@ -1,9 +1,9 @@
-// DECEMBER 9 / DAY 1 — separate test version. Existing scene1.yarn is unchanged.
+// DECEMBER 9 / DAY 1. Existing scene1.yarn is unchanged.
 // The player controls Anin between the Dorm conversation and the Classroom,
 // between the friends and Fal, between Fal and the friends, and at bedtime.
 // The keepsake choice happens inside the friends' dialogue; it is not an object interaction.
-// VISUAL TODO: Add a memory-box prop and a photo-stack prop on the classroom table.
-// Neither sprite is in the project yet. The ticket and group photo need no visible sprites.
+// VISUAL TODO: Replace the temporary memory-box and photo-stack square sprites
+// with final art when it arrives. The ticket and group photo need no visible sprites.
 // Bind MemoryBox and PhotoStack in Classroom Dialogue > YarnCommands > Actors.
 // Bind the character names used by movement and visibility commands in each room's Actors list.
 // The Sleep choice stops at a December 10 placeholder until the next day's Yarn is ready.
@@ -21,10 +21,12 @@ tags: setup testing
 title: Dec9_Dorm_Morning
 tags: december9 day1 dorm testing
 ---
-// The existing Dorm Intro wake-up animation handles Anin waking.
+// The new Dorm morning YarnCutscene handles Anin waking.
 // Kirana should already be standing near the desk when the fade opens.
 <<set $story_exit to true>>
 <<set $dec9_dressed to false>>
+// CharacterOutfit already uses this variable to choose casual clothes in the Dorm.
+<<set $anin_dressed to false>>
 <<set $dec9_keepsake to "none">>
 <<set $dec9_classroom_phase to "intro">>
 <<set $dec9_day_finished to false>>
@@ -40,6 +42,8 @@ Kirana: Hey, you've been pretty quiet since yesterday. Everything okay?
     Anin: Just thinking too much. I'll be fine.
     Kirana: Alright. But you know you can talk to me, right?
 Kirana: Come on. Dira wants us to help clear up the festival leftovers.
+<<close_dialogue_bubble>>
+<<door_exit "Kirana" "Dorm">>
 <<quest_start "dec9" "Get ready and go to school">>
 // CONTROL ANIN. Desk: Dec9_Dorm_Desk. Door: Dec9_Dorm_Door.
 ===
@@ -48,8 +52,15 @@ title: Dec9_Dorm_Desk
 tags: december9 day1 dorm interactable testing
 ---
 <<if $dec9_dressed is false>>
-    <<set $dec9_dressed to true>>
-    <<fade_outfit "Anin" "uniform">>
+    Anin: I should hurry.
+    -> Get dressed
+        <<set $dec9_dressed to true>>
+        <<set $anin_dressed to true>>
+        <<fade_outfit "Anin" "uniform">>
+    -> Cancel
+        <<stop>>
+<<else>>
+    Anin: I'm already wearing my uniform.
 <<endif>>
 ===
 
@@ -71,11 +82,18 @@ tags: december9 day1 classroom testing
 ---
 <<set $story_exit to true>>
 <<set $dec9_classroom_phase to "intro">>
-// VISUAL TODO: These commands work once the two missing props are added and bound.
+// Show the temporary props until their final sprites arrive.
 <<show "MemoryBox">>
 <<show "PhotoStack">>
 <<quest_update "dec9" "Talk with your friends">>
 // CONTROL ANIN. The friends' interaction starts Dec9_Classroom_Friends.
+// The Classroom map door runs Dec9_Classroom_Door until the scripted walk home.
+===
+
+title: Dec9_Classroom_Door
+tags: december9 day1 classroom interactable testing
+---
+Anin: I should stay here for now.
 ===
 
 title: Dec9_Classroom_Friends
@@ -102,6 +120,9 @@ tags: december9 day1 classroom interactable testing
         Anin: You kept asking.
         Kirana: And now you're the one making sure we're all in it.
 
+    <<delay 0.5>>
+    <<hide "PhotoStack">>
+    <<delay 0.5>>
     Dira: That's everything. Hard to believe graduation's so close.
     Dira: At least my university applications are finally done.
     Lila: Of course yours are. I've got a media program interview next week. Apparently talking too much is a useful skill.
@@ -114,9 +135,9 @@ tags: december9 day1 classroom interactable testing
     Dira: I can help you compare some options.
     Kirana: Dira, she doesn't need to figure everything out today.
     Anin: …
-    // Fal starts outside the group, approaches, then becomes interactable.
-    <<show "Fal">>
-    <<move_character_to_actor "Fal" "Anin" 2.5 3 "walk">>
+    // Place Fal just off the camera's left edge in the Classroom scene.
+    <<show "FalSceneDec9">>
+    <<move_character_to_actor "FalSceneDec9" "Anin" -3.5 6 "walk">>
     Fal: Hi all, having fun?
     <<set $dec9_classroom_phase to "fal">>
     <<quest_update "dec9" "Talk to Fal">>
@@ -124,7 +145,6 @@ tags: december9 day1 classroom interactable testing
 <<elseif $dec9_classroom_phase == "myth">>
     // The group finishes sorting the keepsakes.
     Dira: That's everything. One less thing to worry about before graduation.
-    <<hide "PhotoStack">>
     Anin: I wish we could have another day like yesterday.
     Lila: You know, a senior once swore she repeated the same day.
     Kirana: What?
@@ -135,12 +155,19 @@ tags: december9 day1 classroom interactable testing
     Anin: ...Before midnight?
     Dira: Anin, it's just a rumor.
     <<delay 0.6>>
-    // Time changes, friends leave, and Anin moves near the left door while the screen is covered.
-    // Set the friends' ActiveDuringTime to follow time changes in the Inspector.
+    // Hold on black for the school bell. The room returns after school with
+    // Anin alone, already partway toward the classroom door.
+    <<close_dialogue_bubble>>
     <<set $dec9_classroom_phase to "day_end">>
-    <<advance_time_teleport_character "after_school" "Anin" -13 "right">>
+    <<fade_black_out>>
+    <<hide "KiranaSceneDec9">>
+    <<hide "DiraSceneDec9">>
+    <<hide "LilaSceneDec9">>
+    <<set_time_of_day "after_school">>
+    <<teleport_character "Anin" -18.3 "left">>
     <<sfx "day_transition">>
-    <<delay 2.5>>
+    <<delay 1>>
+    <<fade_black_in>>
     <<jump Dec9_Classroom_Day_End>>
 <<endif>>
 ===
@@ -163,8 +190,8 @@ tags: december9 day1 classroom interactable testing
     Fal: ...I'm glad you did.
     Fal: See you tomorrow, Anin.
     <<close_dialogue_bubble>>
-    <<move_character "Fal" 24 3 "walk">>
-    <<hide "Fal">>
+    <<move_character "FalSceneDec9" -17.22 6 "walk">>
+    <<hide "FalSceneDec9">>
     <<set $dec9_classroom_phase to "myth">>
     <<quest_update "dec9" "Go back to the group">>
     // CONTROL ANIN. Return to Dec9_Classroom_Friends.
@@ -174,18 +201,24 @@ tags: december9 day1 classroom interactable testing
 title: Dec9_Classroom_Day_End
 tags: december9 day1 classroom testing
 ---
-// Kirana waits to Anin's right, then comes over. Dira and Lila stay hidden.
-<<teleport_character "KiranaScene1" -5 "left">>
-<<show "KiranaScene1">>
-<<move_character_to_actor "KiranaScene1" "Anin" 2.5 3 "walk">>
+// Anin starts toward the left door as soon as the fade opens. Kirana's call
+// interrupts her halfway there, before Anin turns around.
+<<start_character_move "Anin" -23.5 2 "walk" 0>>
+<<delay 1.1>>
+<<stop_character_move "Anin">>
+<<teleport_character "KiranaSceneDec9" 8.6 "left">>
+<<show "KiranaSceneDec9">>
 Kirana: Anin, coming? We can walk back together.
+<<close_dialogue_bubble>>
+<<face_character "Anin" "right">>
+<<move_character_to_actor "KiranaSceneDec9" "Anin" 2.5 6 "walk">>
 Anin: Yeah. Just a second.
 // Anin's next line is an inner thought. Parentheses mark it until a thought style exists.
 Anin: (Tomorrow's our last day here…)
 Anin: Okay… let's go.
 <<close_dialogue_bubble>>
-<<start_character_move "Anin" -16 3 "walk" 0>>
-<<start_character_move "KiranaScene1" -16 3 "walk" 0.3>>
+<<start_character_move "Anin" -24 3 "walk" 0>>
+<<start_character_move "KiranaSceneDec9" -24 3 "walk" 0.3>>
 <<wait_for_character_moves>>
 // One transition covers the move to the Dorm and switches to the Night look.
 <<advance_time_to_scene_at_x_silent "night" "Dorm" 12.0625 "left">>
@@ -207,7 +240,7 @@ tags: december9 day1 dorm night testing
 <<show "Anin">>
 <<show "Kirana">>
 <<start_character_move "Anin" -3.4 3 "walk" 0>>
-<<start_character_move "Kirana" 6.3 3 "walk" 0.2>>
+<<start_character_move "Kirana" 6.3 3 "walk" 0.5>>
 <<wait_for_character_moves>>
 <<close_door "Dorm">>
 Kirana: Last school day tomorrow. I'll wake you early.

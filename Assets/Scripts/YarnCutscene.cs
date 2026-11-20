@@ -24,8 +24,13 @@ public class YarnCutscene : MonoBehaviour
     [Tooltip("Frozen from the moment the scene opens until the node ends; the ChoiceWheel shows above this player. " +
              "Leave empty to use the PlayerMove in the scene.")]
     [SerializeField] private PlayerMove player;
+    private enum InitialFacing { Keep, Left, Right }
+    [Tooltip("Direction the player faces when this cutscene begins. Applied before Wake Up captures the standing pose.")]
+    [SerializeField] private InitialFacing initialFacing;
     [Tooltip("Scene to load when the cutscene ends. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
     [SerializeField] private string nextScene = "Dorm";
+    [Tooltip("Use only when this scene is already black at the end. Fades the next scene in from black for this many seconds; 0 uses the usual circle transition.")]
+    [SerializeField, Min(0f)] private float nextSceneBlackFadeInSeconds;
     [Tooltip("Plays the node only the first time this scene opens, until <<hard_reset>> starts the day over.")]
     [SerializeField] private bool playOnce = true;
     [Tooltip("On: when this cutscene plays, the player stays where they are placed in the scene. " +
@@ -96,6 +101,8 @@ public class YarnCutscene : MonoBehaviour
         started = true;
         // Frozen during Start Delay too, so the player cannot walk before the first line shows.
         if (player != null) player.InteractionMenuOpen = true;
+        if (player != null && initialFacing != InitialFacing.Keep)
+            player.Face(initialFacing == InitialFacing.Right ? 1f : -1f);
         // Runs while the transition still covers the screen, so the scene fades in on Anin asleep in bed.
         if (wakeUp != null)
         {
@@ -123,7 +130,12 @@ public class YarnCutscene : MonoBehaviour
 
         leaving = true;
         if (CircleTransition.Instance != null)
-            CircleTransition.Instance.LoadScene(nextScene.Trim());
+        {
+            if (nextSceneBlackFadeInSeconds > 0f)
+                CircleTransition.Instance.LoadSceneFromBlack(nextScene.Trim(), nextSceneBlackFadeInSeconds);
+            else
+                CircleTransition.Instance.LoadScene(nextScene.Trim());
+        }
         else
             SceneManager.LoadScene(nextScene.Trim());
     }
