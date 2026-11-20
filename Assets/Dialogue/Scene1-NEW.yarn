@@ -11,6 +11,8 @@
 title: Dec8_Festival_Cutscene
 tags: cutscene festival december8 testing
 ---
+<<set $chapter_scene to 9>>
+<<set $anin_dressed to false>>
 <<ambience_start "festival_crowd">>
 <<cutscene_image "cutscene_prologue_1">>
 December 8. Our last school festival.

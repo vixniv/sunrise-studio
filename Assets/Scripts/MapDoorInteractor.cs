@@ -166,7 +166,7 @@ public class MapDoorInteractor : MonoBehaviour
 
         if (CircleTransition.Instance != null)
         {
-            CircleTransition.Instance.LoadScene(
+            CircleTransition.Instance.LoadSceneWithBlackFade(
                 door.destinationScene,
                 transitionSound,
                 door.enterVolume);

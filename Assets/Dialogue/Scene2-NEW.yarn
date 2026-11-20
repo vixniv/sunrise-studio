@@ -6,7 +6,7 @@
 // with final art when it arrives. The ticket and group photo need no visible sprites.
 // Bind MemoryBox and PhotoStack in Classroom Dialogue > YarnCommands > Actors.
 // Bind the character names used by movement and visibility commands in each room's Actors list.
-// The Sleep choice stops at a December 10 placeholder until the next day's Yarn is ready.
+// The Sleep choice starts December 10 in the Dorm.
 
 title: Dec9_Declarations
 tags: setup testing
@@ -271,7 +271,9 @@ tags: december9 day1 dorm night interactable testing
         Anin: Let's enjoy tomorrow to the fullest
         <<set $dec9_day_finished to true>>
         <<quest_clear>>
-        // PLACEHOLDER: Transition to December 10 morning when its new Yarn exists.
+        <<set $chapter_scene to 10>>
+        <<set $anin_dressed to false>>
+        <<advance_time_to_scene "morning" "Dorm">>
     -> Not now
         // Return control to Anin; the bed can be used again later.
 <<endif>>

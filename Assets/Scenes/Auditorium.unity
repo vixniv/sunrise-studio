@@ -420,6 +420,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -436,6 +439,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -595,7 +599,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 840653991}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -1711,6 +1717,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &364336048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 364336050}
+  - component: {fileID: 364336049}
+  m_Layer: 0
+  m_Name: Story_Dec10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &364336049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364336048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $chapter_scene
+  matchMode: 0
+  value: 10
+  targets: []
+  followChanges: 0
+--- !u!4 &364336050
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364336048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.77164, y: -5.36695, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 880819255}
+  - {fileID: 1942151455}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &409442818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1768,10 +1826,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.23134328
-    width: 0.6243326
-    height: 0.6254139
+    x: 0.21548437
+    y: 0
+    width: 0.4552646
+    height: 0.45605308
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1975,6 +2033,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -1991,6 +2052,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2116,7 +2178,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &465817825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2143,8 +2205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 465817824}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 17.48667, y: -1.31907, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2153,7 +2215,7 @@ Transform:
   - {fileID: 1204373345}
   - {fileID: 1116261122}
   - {fileID: 518764157}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 986199026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &499175430
 GameObject:
@@ -2207,6 +2269,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -2223,6 +2288,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2948,13 +3014,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 732680877}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 17.48667, y: -1.31907, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2029213725}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 986199026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &735187774
 GameObject:
@@ -3075,6 +3141,72 @@ MonoBehaviour:
   rimIntensityAtFullCoverage: 0.75
   coverageSamplesX: 8
   coverageSamplesY: 16
+--- !u!1001 &747033344
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1942151455}
+    m_Modifications:
+    - target: {fileID: 1395506584659977879, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -17.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8046009779440690047, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+      propertyPath: m_Name
+      value: Visual
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+--- !u!4 &747033345 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
+  m_PrefabInstance: {fileID: 747033344}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &799165872
 GameObject:
   m_ObjectHideFlags: 0
@@ -3388,12 +3520,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2564647810717430902, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
   m_PrefabInstance: {fileID: 840653989}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 840653992}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05006a984cf7d4e0c8592952039a256d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
+--- !u!1 &840653992 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 840653989}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &851998795
 GameObject:
   m_ObjectHideFlags: 0
@@ -3535,6 +3672,84 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a8a05de0ac134f4f9d01bef6b9da077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachinePixelPerfect
+--- !u!1 &880819254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 880819255}
+  - component: {fileID: 880819257}
+  - component: {fileID: 880819256}
+  m_Layer: 0
+  m_Name: Intro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &880819255
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880819254}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.51558, y: 5.20828, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 364336050}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &880819256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880819254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 127c0fc5de8f0485eb0bfc67b7981ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
+  times:
+  - morning
+  targets: []
+  followTimeChanges: 0
+--- !u!114 &880819257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880819254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9bebd7a6e317444d89efcad1547dea2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
+  yarnDialog: {fileID: 1908947818}
+  startNode: Dec10_Auditorium_Arrival
+  narrator: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  startDelay: 0
+  player: {fileID: 840653991}
+  initialFacing: 0
+  nextScene: 
+  nextSceneBlackFadeInSeconds: 0
+  playOnce: 0
+  keepPlayerPosition: 0
+  wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -3613,6 +3828,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &986199025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 986199026}
+  m_Layer: 0
+  m_Name: OLD_Story
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &986199026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986199025}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.48667, y: 1.31907, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 732680879}
+  - {fileID: 1984970636}
+  - {fileID: 465817826}
+  - {fileID: 992315417}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &992315415
 GameObject:
   m_ObjectHideFlags: 0
@@ -3629,7 +3879,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &992315416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3656,14 +3906,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992315415}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 17.48667, y: -1.31907, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2062862690}
   - {fileID: 1983836184}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 986199026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1012961347
 GameObject:
@@ -3717,6 +3967,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -3733,6 +3986,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4074,6 +4328,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -4090,6 +4347,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4359,6 +4617,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -4375,6 +4636,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4536,6 +4798,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -4552,6 +4817,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -5746,7 +6012,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 840653991}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -6139,6 +6407,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -6155,6 +6426,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -7496,16 +7768,24 @@ PrefabInstance:
       objectReference: {fileID: 1326022622}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
-      value: Night Anin
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].name
+      value: DiraSceneDec10
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].target
       value: 
-      objectReference: {fileID: 821064789}
+      objectReference: {fileID: 840653992}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].target
+      value: 
+      objectReference: {fileID: 1942151454}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: m_Name
       value: Dialogue
@@ -7708,6 +7988,125 @@ RectTransform:
   m_AnchoredPosition: {x: -8.25, y: 1.0625}
   m_SizeDelta: {x: 17.5, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!1 &1942151454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1942151455}
+  - component: {fileID: 1942151458}
+  - component: {fileID: 1942151457}
+  - component: {fileID: 1942151456}
+  m_Layer: 0
+  m_Name: Dira
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1942151455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942151454}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -27.98, y: 0.49195004, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 747033345}
+  m_Father: {fileID: 364336050}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1942151456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942151454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ce8304b35954056ab1482564498656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WindowBacklightReceiver2D
+  windowLightZoneLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  characters: []
+  characterCollider: {fileID: 1942151458}
+  spriteRenderers: []
+  backlightStrengthAtNoCoverage: 1
+  rimIntensityAtNoCoverage: 0
+  backlightStrengthAtFullCoverage: 1.8
+  rimIntensityAtFullCoverage: 0.75
+  coverageSamplesX: 8
+  coverageSamplesY: 16
+--- !u!114 &1942151457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942151454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd62b2e29470342228b43f290faa577b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
+  characterName: Dira
+  dialogOffset: {x: 0, y: 0.25}
+--- !u!61 &1942151458
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942151454}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 2.90625}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.5, y: 5.8125}
+  m_EdgeRadius: 0
 --- !u!1 &1955772575
 GameObject:
   m_ObjectHideFlags: 0
@@ -7758,7 +8157,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 840653991}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -7835,7 +8236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1984970635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7862,8 +8263,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1984970634}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 17.48667, y: -1.31907, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7872,7 +8273,7 @@ Transform:
   - {fileID: 499175431}
   - {fileID: 1780162209}
   - {fileID: 1830672143}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 986199026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1992132768
 GameObject:
@@ -8632,7 +9033,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 840653991}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -8852,44 +9255,28 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -8961,6 +9348,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 1908947818}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -8977,6 +9367,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -9007,6 +9398,9 @@ MonoBehaviour:
   storyNodeUntilCutsceneStarts: {fileID: 1640803321}
   storyNodeQuestId: 
   storyNodeQuestObjective: 
+  questStoryNodes:
+  - questId: dec10
+    node: Dec10_Memory_RoomExit
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   tapMaxTravel: 0.02
@@ -9030,9 +9424,7 @@ SceneRoots:
   - {fileID: 799165874}
   - {fileID: 345082558}
   - {fileID: 1175142180}
-  - {fileID: 732680879}
-  - {fileID: 1984970636}
-  - {fileID: 465817826}
-  - {fileID: 992315417}
   - {fileID: 1065525050}
   - {fileID: 1361346472}
+  - {fileID: 986199026}
+  - {fileID: 364336050}

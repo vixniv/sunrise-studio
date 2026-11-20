@@ -511,6 +511,18 @@ PrefabInstance:
       propertyPath: destinationScene
       value: SchoolMap
       objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.data[0].node
+      value: Dec10_Memory_RoomExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.data[0].questId
+      value: dec10
+      objectReference: {fileID: 0}
     - target: {fileID: 7333009451300224665, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: m_LocalScale.x
       value: 6.1071544
@@ -949,6 +961,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Talk
@@ -965,6 +980,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1207,6 +1223,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Talk
@@ -1223,6 +1242,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -1437,10 +1457,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.23134328
-    width: 0.6243326
-    height: 0.6254139
+    x: 0.21548437
+    y: 0
+    width: 0.4552646
+    height: 0.45605308
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1470,7 +1490,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.251125, y: 2.4369802, z: -10}
+  m_LocalPosition: {x: -18.252228, y: 2.43647, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2463,6 +2483,58 @@ MonoBehaviour:
   rimIntensityAtFullCoverage: 0.75
   coverageSamplesX: 8
   coverageSamplesY: 16
+--- !u!1 &681530484
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 681530485}
+  - component: {fileID: 681530486}
+  m_Layer: 0
+  m_Name: Story_Dec10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &681530485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681530484}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.77164, y: -5.36695, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 908261455}
+  - {fileID: 1486909301}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &681530486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681530484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $chapter_scene
+  matchMode: 0
+  value: 10
+  targets: []
+  followChanges: 0
 --- !u!1 &718640086
 GameObject:
   m_ObjectHideFlags: 0
@@ -2907,7 +2979,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &799537670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2934,8 +3006,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799537669}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.77164, y: -5.36695, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2943,7 +3015,7 @@ Transform:
   - {fileID: 677713830}
   - {fileID: 825516236}
   - {fileID: 823554262}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2019603429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &823554261
 GameObject:
@@ -3046,6 +3118,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 1168120479}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -3106,6 +3181,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -3481,7 +3557,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &901531373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3508,17 +3584,94 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901531372}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.77164, y: -5.36695, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1156643448}
-  - {fileID: 1486909301}
   - {fileID: 321672665}
   - {fileID: 404649049}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2019603429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &908261454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 908261455}
+  - component: {fileID: 908261457}
+  - component: {fileID: 908261456}
+  m_Layer: 0
+  m_Name: Intro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &908261455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908261454}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.51558, y: 5.20828, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 681530485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &908261456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908261454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 127c0fc5de8f0485eb0bfc67b7981ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
+  times:
+  - morning
+  targets: []
+  followTimeChanges: 0
+--- !u!114 &908261457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908261454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9bebd7a6e317444d89efcad1547dea2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
+  yarnDialog: {fileID: 1168120479}
+  startNode: Dec10_Cafetaria_Arrival
+  narrator: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  startDelay: 0
+  player: {fileID: 1616248450}
+  initialFacing: 0
+  nextScene: 
+  nextSceneBlackFadeInSeconds: 0
+  playOnce: 0
+  keepPlayerPosition: 0
+  wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &933310290
 GameObject:
   m_ObjectHideFlags: 0
@@ -3823,6 +3976,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 0}
   yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Talk
@@ -3839,6 +3995,7 @@ MonoBehaviour:
   approachBeforeTalking: 1
   approachDistance: 4.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -4084,7 +4241,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 1616248450}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -4151,7 +4310,7 @@ PrefabInstance:
       objectReference: {fileID: 1326022622}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
@@ -4159,7 +4318,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[1].name
-      value: Fal
+      value: KiranaSceneDec10
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[2].name
@@ -4192,7 +4351,7 @@ PrefabInstance:
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[1].target
       value: 
-      objectReference: {fileID: 883469723}
+      objectReference: {fileID: 1486909300}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[2].target
       value: 
@@ -5098,7 +5257,6 @@ GameObject:
   - component: {fileID: 1486909301}
   - component: {fileID: 1486909304}
   - component: {fileID: 1486909303}
-  - component: {fileID: 1486909302}
   - component: {fileID: 1486909305}
   m_Layer: 0
   m_Name: Kirana
@@ -5115,51 +5273,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486909300}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1875, y: -4.875, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -8.267, y: -0.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1719842851}
-  m_Father: {fileID: 901531374}
+  m_Father: {fileID: 681530485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1486909302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1486909300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
-  cue: {fileID: 0}
-  interactionLabel: 
-  wheel: {fileID: 0}
-  actionCarousel: {fileID: 0}
-  dialog: {fileID: 0}
-  yarnDialog: {fileID: 0}
-  dialogOffset: {x: 0, y: 0.25}
-  choices:
-  - label: Talk
-    icon: {fileID: 0}
-    description: 
-    timeCostMinutes: 0
-    locked: 0
-    lockedReason: 
-    yarnNode: Day4_Talk_Kirana
-    dialogLines: []
-    onChoose:
-      m_PersistentCalls:
-        m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
-  approachSide: 0
-  playInteractSound: 1
-  tapMaxTravel: 0.02
-  tapMaxSeconds: 0.35
 --- !u!61 &1486909303
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6095,6 +6216,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1486909301}
     m_Modifications:
+    - target: {fileID: 1103957328339039329, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 7903016075579963352, guid: 9ce6f0fa5f31d49a1b0c7510a0170fff, type: 3}
     - target: {fileID: 3859405708248132063, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7612,6 +7737,39 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2019603428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019603429}
+  m_Layer: 0
+  m_Name: OLD_Story
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2019603429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019603428}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.77164, y: 5.36695, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 799537671}
+  - {fileID: 901531374}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2071071709 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5475098831631229392, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
@@ -8034,44 +8192,28 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -8101,8 +8243,8 @@ SceneRoots:
   - {fileID: 2139328371}
   - {fileID: 574021409}
   - {fileID: 883469726}
-  - {fileID: 799537671}
-  - {fileID: 901531374}
+  - {fileID: 681530485}
   - {fileID: 108655053}
   - {fileID: 729413181}
   - {fileID: 253376293}
+  - {fileID: 2019603429}

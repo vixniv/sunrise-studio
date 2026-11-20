@@ -122,6 +122,32 @@ public class CircleTransition : MonoBehaviour
         StartCoroutine(BlackFadeSceneRoutine(sceneName, Mathf.Max(0.05f, fadeInDuration), whileCovered));
     }
 
+    // Used when entering a room from SchoolMap: fade fully to black, load the room,
+    // then fade back in. Other scene transitions can continue using the circle.
+    public void LoadSceneWithBlackFade(string sceneName, AudioClip sound = null, float volume = 1f)
+    {
+        if (transitioning)
+            return;
+
+        if (blackFadeGroup == null)
+        {
+            Debug.LogError("CircleTransition needs a Black Fade Group for map entry. Using its circle transition instead.", this);
+            LoadScene(sceneName, sound, volume);
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"CircleTransition: scene \"{sceneName}\" is not in the Build Profile scene list, or the name is misspelled.", this);
+            return;
+        }
+
+        if (sound != null)
+            audioSource.PlayOneShot(sound, volume);
+
+        StartCoroutine(BlackFadeEntryRoutine(sceneName));
+    }
+
     // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
     // Returns false when a transition is already running or there is no circle.
     public bool Cover(System.Action whileCovered, float holdSeconds)
@@ -262,6 +288,42 @@ public class CircleTransition : MonoBehaviour
             yield return null;
         }
 
+        blackFadeGroup.alpha = 0f;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+        transitioning = false;
+    }
+
+    IEnumerator BlackFadeEntryRoutine(string sceneName)
+    {
+        transitioning = true;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        if (circle != null)
+            circle.localScale = Vector3.zero;
+        float startAlpha = blackFadeGroup.alpha;
+        float elapsed = 0f;
+        while (elapsed < closeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = Mathf.Lerp(startAlpha, 1f, Mathf.Clamp01(elapsed / closeDuration));
+            yield return null;
+        }
+        blackFadeGroup.alpha = 1f;
+
+        AsyncOperation loading = SceneManager.LoadSceneAsync(sceneName);
+        while (!loading.isDone)
+            yield return null;
+        yield return null;
+
+        elapsed = 0f;
+        while (elapsed < openDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = 1f - Mathf.Clamp01(elapsed / openDuration);
+            yield return null;
+        }
         blackFadeGroup.alpha = 0f;
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;

@@ -146,6 +146,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
         runner.AddCommandHandler("fade_outfit", (Func<string, string, YarnTask>)((actor, outfit) => Fade(() => SetOutfit(actor, outfit))));
         runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
+        runner.AddCommandHandler("face_character_to_actor", (Action<string, string>)FaceCharacterToActor);
         runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
         runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
@@ -612,6 +613,18 @@ public class YarnCommands : MonoBehaviour
         }
 
         FaceActor(target, facingKey == "right" ? 1f : -1f);
+    }
+
+    private void FaceCharacterToActor(string actorName, string referenceActorName)
+    {
+        GameObject actor = FindActorTarget(actorName, "face_character_to_actor");
+        GameObject reference = FindActorTarget(referenceActorName, "face_character_to_actor");
+        if (actor == null || reference == null)
+            return;
+
+        float difference = reference.transform.position.x - actor.transform.position.x;
+        if (Mathf.Abs(difference) > 0.001f)
+            FaceActor(actor, difference);
     }
 
     // <<sit "Dira">> / <<stand "Dira">>: plays or stops the SitPose on the character's Visual child.

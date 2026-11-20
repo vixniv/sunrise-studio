@@ -753,6 +753,10 @@ MonoBehaviour:
     dressedVariable: $d3_dressed
   - chapterScene: 7
     dressedVariable: $d4_dressed
+  - chapterScene: 9
+    dressedVariable: $anin_dressed
+  - chapterScene: 10
+    dressedVariable: $anin_dressed
   dialogueRunner: {fileID: 0}
 --- !u!1001 &6697390529076107895
 PrefabInstance:

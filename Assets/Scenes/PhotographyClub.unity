@@ -698,10 +698,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.23134328
-    width: 0.6243326
-    height: 0.6254139
+    x: 0.21548437
+    y: 0
+    width: 0.4552646
+    height: 0.45605308
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -731,7 +731,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.566233, y: 2.4362297, z: -10}
+  m_LocalPosition: {x: 7.9403887, y: 2.43617, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -864,6 +864,18 @@ PrefabInstance:
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: destinationScene
       value: SchoolMap
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.data[0].node
+      value: Dec10_Memory_RoomExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: questStoryNodes.Array.data[0].questId
+      value: dec10
       objectReference: {fileID: 0}
     - target: {fileID: 7333009451300224665, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: m_LocalScale.x
@@ -1554,7 +1566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &773595799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1624,12 +1636,12 @@ Transform:
   m_GameObject: {fileID: 773595798}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.5, y: -4.875, z: 0}
+  m_LocalPosition: {x: -4.79, y: -2.90625, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2125855997}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 904614573}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &773595803
 MonoBehaviour:
@@ -1755,6 +1767,9 @@ MonoBehaviour:
   actionCarousel: {fileID: 0}
   dialog: {fileID: 1326022622}
   yarnDialog: {fileID: 1863427837}
+  availableWhenYarnVariable: 
+  availableWhenValues: []
+  availabilityRunner: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   choices:
   - label: Examine
@@ -1817,6 +1832,7 @@ MonoBehaviour:
   approachBeforeTalking: 0
   approachDistance: 1.5
   approachSide: 0
+  approachAnchor: {fileID: 0}
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
@@ -2055,6 +2071,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a8a05de0ac134f4f9d01bef6b9da077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachinePixelPerfect
+--- !u!1 &904614571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 904614573}
+  - component: {fileID: 904614572}
+  m_Layer: 0
+  m_Name: Story_Dec10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &904614572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904614571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $chapter_scene
+  matchMode: 0
+  value: 10
+  targets: []
+  followChanges: 0
+--- !u!4 &904614573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904614571}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.96875, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1696002896}
+  - {fileID: 773595802}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &945857406
 GameObject:
   m_ObjectHideFlags: 0
@@ -2581,6 +2649,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
   m_PrefabInstance: {fileID: 1336086768}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1336086770 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2564647810717430902, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 1336086768}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2012960145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05006a984cf7d4e0c8592952039a256d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
 --- !u!1 &1384466821
 GameObject:
   m_ObjectHideFlags: 0
@@ -3293,6 +3372,84 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogSpeaker
   characterName: Narrator
   dialogOffset: {x: 0, y: 0.25}
+--- !u!1 &1696002895
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1696002896}
+  - component: {fileID: 1696002898}
+  - component: {fileID: 1696002897}
+  m_Layer: 0
+  m_Name: Intro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1696002896
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696002895}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.51558, y: 5.20828, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 904614573}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1696002897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696002895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 127c0fc5de8f0485eb0bfc67b7981ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
+  times:
+  - morning
+  targets: []
+  followTimeChanges: 0
+--- !u!114 &1696002898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696002895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9bebd7a6e317444d89efcad1547dea2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
+  yarnDialog: {fileID: 1863427837}
+  startNode: Dec10_Photography_Arrival
+  narrator: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  startDelay: 0
+  player: {fileID: 1336086770}
+  initialFacing: 0
+  nextScene: 
+  nextSceneBlackFadeInSeconds: 0
+  playOnce: 0
+  keepPlayerPosition: 0
+  wakeUp: {fileID: 0}
+  wakeUpAsleepSeconds: 2
+  wakeUpSound: alarm_clock
+  awakeOnArrival: {fileID: 0}
+  proximityTarget: {fileID: 0}
+  proximityDistance: 3
 --- !u!1 &1696304925
 GameObject:
   m_ObjectHideFlags: 0
@@ -4554,6 +4711,26 @@ PrefabInstance:
       propertyPath: freezeFrame
       value: 
       objectReference: {fileID: 2032489817}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[0].name
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].name
+      value: LilaSceneDec10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[0].target
+      value: 
+      objectReference: {fileID: 2012960145}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[1].target
+      value: 
+      objectReference: {fileID: 773595798}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: m_Name
       value: Dialogue
@@ -4884,7 +5061,9 @@ MonoBehaviour:
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 0}
+  initialFacing: 0
   nextScene: 
+  nextSceneBlackFadeInSeconds: 0
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}
@@ -5205,6 +5384,11 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2012960145 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 1336086768}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2032489815
 GameObject:
   m_ObjectHideFlags: 0
@@ -5916,44 +6100,28 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874363782047064136, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6826859337323854153, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8315579324230237297, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5973,7 +6141,6 @@ SceneRoots:
   - {fileID: 448491669}
   - {fileID: 823554262}
   - {fileID: 2109752819}
-  - {fileID: 773595802}
   - {fileID: 1581785298}
   - {fileID: 18589154}
   - {fileID: 1326022623}
@@ -5986,5 +6153,6 @@ SceneRoots:
   - {fileID: 1948901372}
   - {fileID: 1859040592}
   - {fileID: 724974069}
+  - {fileID: 904614573}
   - {fileID: 1255555872}
   - {fileID: 823952958}
