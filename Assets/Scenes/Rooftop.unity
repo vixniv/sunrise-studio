@@ -1426,10 +1426,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.5812604
-    width: 0.27116707
-    height: 0.27163672
+    x: 0.2372235
+    y: 0
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -5964,6 +5964,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2104156613}
+  - component: {fileID: 2104156614}
   m_Layer: 0
   m_Name: Story_Dec10
   m_TagString: Untagged
@@ -5988,6 +5989,24 @@ Transform:
   - {fileID: 1737937368}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2104156614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104156612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $chapter_scene
+  matchMode: 0
+  value: 10
+  targets: []
+  followChanges: 0
 --- !u!1 &2138848582
 GameObject:
   m_ObjectHideFlags: 0

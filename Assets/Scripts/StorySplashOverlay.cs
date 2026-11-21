@@ -24,6 +24,9 @@ public sealed class StorySplashOverlay : MonoBehaviour
     [SerializeField] private Sprite calendarNormal;
     [SerializeField] private Sprite calendarCircled;
 
+    [Header("School art (optional)")]
+    [SerializeField] private Sprite rooftopSign;
+
     [SerializeField, Min(0f)] private float fadeSeconds = 0.3f;
     private Coroutine fadeRoutine;
 
@@ -103,6 +106,7 @@ public sealed class StorySplashOverlay : MonoBehaviour
             case "fal": return fal != null ? fal : characterPlaceholder;
             case "calendar_normal": return calendarNormal;
             case "calendar_circled": return calendarCircled;
+            case "rooftop_sign": return rooftopSign;
             default:
                 Debug.LogError($"Unknown story splash id '{id}'.", this);
                 return null;

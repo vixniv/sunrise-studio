@@ -6,13 +6,13 @@
 // Time advances when leaving after the 2nd, 4th, and 6th completed memories.
 // The sixth exit sends Anin directly to the Locker Room at Night.
 // Anin's time-change thoughts play at the room exit, before the transition.
-// VISUAL TODO: Rooftop entrance/door, rooftop sign splash art, rooftop notice,
-// missing-key-hook Locker Room background, Rooftop scene/background, and
-// Anin/Fal railing poses are unfinished.
+// The rooftop sign, separate Locker Room key sprite, Rooftop Entrance, and
+// Rooftop room art are imported. Their scene references must be assigned in Unity.
+// VISUAL TODO: Anin/Fal railing poses are unfinished.
 // CAMERA TODO: Pan from rooftop sign to Key Hook, then Janitor's Locker.
 // AUDIO TODO: No dedicated closing-bell cue was found. The day_transition cue
 // supplies the time-change bell and the late bell placeholder.
-// The Rooftop encounter plays in the Rooftop scene, using placeholder room art for now.
+// The Rooftop encounter plays in the Rooftop scene after its entrance notice.
 
 title: Dec10_Declarations
 tags: setup testing
@@ -164,7 +164,7 @@ tags: december10 lockers interactable testing
     // The janitor's locker key is still hanging here.
     Anin: (I think that is the key to the Janitor's Locker.)
 <<else>>
-    // VISUAL TODO: Swap to lockerroom-keyhook-missing when that background exists.
+    // The separate key sprite hides when $dec10_missing_key_started becomes true.
     Anin: (The janitor's locker key is missing.)
 <<endif>>
 ===
@@ -373,7 +373,7 @@ tags: december10 lockers night cutscene testing
 ---
 <<set $dec10_missing_key_started to true>>
 // The incoming time transition fades to black and rings the school bell once.
-// VISUAL TODO: Change Locker Room to the missing-key-hook background during that fade.
+// The separate key sprite hides here when the variable changes.
 // Anin stands alone near the Key Hook.
 Anin: (I think that's everywhere...)
 Anin: But it's weird though, i didn't see Fal anywhere today
@@ -388,9 +388,11 @@ tags: december10 lockers rooftop interactable testing
 ---
 <<if $dec10_rooftop_checked is false>>
     Anin: Ah. The door is locked
-    // VISUAL TODO: Show the rooftop-sign splash art here.
+    <<story_splash "rooftop_sign">>
     Anin: (Aw, I wanted to see the view one last time.)
+    <<story_splash_end>>
     // CAMERA TODO: Pan to the Key Hook, then the Janitor's Locker.
+    <<face_character "Anin" "right">>
     Anin: (I think that is the key to the Janitor's Locker.)
     Anin: (The rooftop key's probably in there.)
     Anin: (...Yeah, I'm not touching that.)
@@ -399,9 +401,7 @@ tags: december10 lockers rooftop interactable testing
     <<quest_update "dec10" "Explore the school">>
 <<elseif $dec10_janitor_examined is false>>
     Anin: Ah. The door is locked
-<<elseif $dec10_stairway_seen is false>>
-    <<jump Dec10_Stairway>>
-<<elseif $dec10_rooftop_entered is false>>
+<<else>>
     <<jump Dec10_Rooftop_Enter>>
 <<endif>>
 ===
@@ -409,13 +409,14 @@ tags: december10 lockers rooftop interactable testing
 title: Dec10_Stairway
 tags: december10 stairway cutscene testing
 ---
-// Anin climbs the now-accessible stairway and sees the notice beside the roof door.
-// STAIRWAY SCENE TODO: Replace this same-room staging when the stairway exists.
-<<detour Dec10_Rooftop_Notice>>
-// The rooftop door has been left unlocked.
-<<set $dec10_stairway_seen to true>>
-<<quest_update "dec10" "Enter the rooftop">>
-// CONTROL ANIN. Interact with the rooftop entrance again to enter.
+// Start this node on first arrival in the Rooftop Entrance scene.
+<<if $dec10_janitor_examined is true and $dec10_stairway_seen is false>>
+    // Anin sees the notice beside the unlocked rooftop door.
+    <<detour Dec10_Rooftop_Notice>>
+    <<set $dec10_stairway_seen to true>>
+    <<quest_update "dec10" "Enter the rooftop">>
+<<endif>>
+// CONTROL ANIN. Use this room's door to enter the Rooftop scene.
 ===
 
 title: Dec10_Rooftop_Notice
@@ -427,9 +428,8 @@ NO ENTRY AFTER 6 PM.
 title: Dec10_Rooftop_Enter
 tags: december10 rooftop door interactable testing
 ---
-<<if $dec10_janitor_examined is true and $dec10_rooftop_entered is false>>
-    <<set $dec10_rooftop_entered to true>>
-    // Enter the stairway room before continuing to the rooftop exterior.
+<<if $dec10_janitor_examined is true>>
+    // Enter the stairway room. Its arrival node shows the rooftop notice.
     <<scene_transition "Rooftop Entrance" "door">>
 <<endif>>
 ===
@@ -438,7 +438,8 @@ title: Dec10_Rooftop_Encounter
 tags: december10 rooftop cutscene testing
 ---
 // Anin unexpectedly finds Fal by the railing, looking out over the school.
-// VISUAL TODO: Rooftop background and Anin/Fal leaning on the railing.
+// VISUAL TODO: Add Anin/Fal leaning poses when their art is ready.
+<<set $dec10_rooftop_entered to true>>
 Anin: Fal? Didn't expect to see you here.
 Fal: Just needed somewhere quiet.
 <<jump Dec10_Rooftop_Conversation>>
@@ -478,7 +479,7 @@ tags: december10 rooftop exit testing
     <<stop>>
 <<endif>>
 // Anin and Fal return downstairs together and part ways.
-// ROOFTOP EXIT TODO: Animate their descent when the rooftop scene exists.
+// ROOFTOP EXIT TODO: Animate their descent when the character poses are ready.
 Fal: I'll see you tomorrow, Anin.
 Anin: Yeah. See you tomorrow.
 // HIDDEN CONTEXT: Fal is already experiencing a serious mental health crisis.
