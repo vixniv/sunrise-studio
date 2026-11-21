@@ -2032,10 +2032,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.21548437
-    y: 0
-    width: 0.4552646
-    height: 0.45605308
+    x: 0
+    y: 0.05804312
+    width: 0.6651411
+    height: 0.66629314
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -11880,6 +11880,10 @@ PrefabInstance:
     - target: {fileID: 2306019414515160900, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 2706367768900612532, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
+      propertyPath: barHeight
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 2928711039150371146, guid: a4b954249b55f4eb3a886275d0c08451, type: 3}
       propertyPath: m_AnchorMax.y

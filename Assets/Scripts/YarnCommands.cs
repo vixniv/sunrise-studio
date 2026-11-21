@@ -174,6 +174,10 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("story_splash", (Action<string>)ShowStorySplash);
         runner.AddCommandHandler("story_splash_end", (Action)HideStorySplash);
         runner.AddCommandHandler("dialogue_speed", (Action<float>)SetDialogueSpeed);
+        runner.AddCommandHandler("cinematic_start", (Func<YarnTask>)(() => SetCinematicBars(true)));
+        runner.AddCommandHandler("cinematic_end", (Func<YarnTask>)(() => SetCinematicBars(false)));
+        // A node that forgets <<cinematic_end>> would leave the HUD hidden, so the bars go when the dialogue ends.
+        runner.onDialogueComplete?.AddListener(EndCinematicBarsAfterDialogue);
         runner.AddCommandHandler("hard_reset", (Func<YarnTask>)HardReset);
         runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
@@ -1245,6 +1249,7 @@ public class YarnCommands : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (runner != null) runner.onDialogueComplete?.RemoveListener(EndCinematicBarsAfterDialogue);
         SunriseAudio.StopLoop();
         if (pausedAudio) AudioListener.pause = false;
     }
@@ -1333,6 +1338,28 @@ public class YarnCommands : MonoBehaviour
             return;
         }
         hud.SetTextSpeed(charactersPerSecond);
+    }
+
+    // <<cinematic_start>>: black bars slide in at the top and bottom and the gameplay HUD fades out.
+    // <<cinematic_end>>: the bars slide out and the HUD fades back in. Both wait for the animation.
+    private YarnTask SetCinematicBars(bool show)
+    {
+        SunriseStudio.UI.CinematicBarsView bars = SunriseStudio.UI.CinematicBarsView.Active;
+        if (bars == null)
+        {
+            Debug.LogWarning($"<<cinematic_{(show ? "start" : "end")}>>: this scene has no CinematicBarsView, so the bars are skipped.", this);
+            return YarnTask.CompletedTask;
+        }
+        if (show) bars.Show();
+        else bars.Hide();
+        return YarnTask.WaitUntil(() => bars == null || !bars.IsAnimating);
+    }
+
+    private void EndCinematicBarsAfterDialogue()
+    {
+        SunriseStudio.UI.CinematicBarsView bars = SunriseStudio.UI.CinematicBarsView.Active;
+        if (bars != null && bars.IsShown)
+            bars.Hide();
     }
 
     private YarnTask PlayFreezeFrame()

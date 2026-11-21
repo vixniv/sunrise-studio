@@ -4,6 +4,10 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MapPlayerMove : MonoBehaviour
 {
+    [Header("Control")]
+    [Tooltip("When off, the map player stays at the current room marker and does not move by swiping or keyboard.")]
+    public bool allowSwipeMovement = false;
+
     [Header("Movement")]
     [Min(0f)] public float walkSpeed = 3f;
     [Min(0f)] public float runSpeed = 7f;
@@ -16,16 +20,21 @@ public class MapPlayerMove : MonoBehaviour
     public bool restrictToHallways = true;
     public LayerMask walkableLayer;
 
-    [Header("Walking Bob and Tilt")]
+    [Header("Walking Tilt")]
     [Tooltip("Assign a child object containing only the player's SpriteRenderer.")]
     public Transform visual;
-    [Min(1f)] public float pixelsPerUnit = 16f;
-    [Min(0f)] public float bobHeightPixels = 1f;
-    [Min(0f)] public float bobCyclesPerSecond = 4f;
     [Tooltip("Maximum left/right rotation applied while walking.")]
     [Range(0f, 15f)] public float tiltAngleDegrees = 3f;
     [Tooltip("How many complete left/right sway cycles happen each second.")]
     [Min(0f)] public float tiltCyclesPerSecond = 2f;
+
+    [Header("Idle Tilt")]
+    [Tooltip("Snappily tilt left, hold, then right, hold while idle on the map.")]
+    public bool tiltWhileIdle = true;
+    [Tooltip("Rotation angle applied left and right while idle.")]
+    [Range(0f, 25f)] public float idleTiltAngleDegrees = 8f;
+    [Tooltip("How many seconds to hold each side before snapping to the other side.")]
+    [Min(0.05f)] public float idleTiltHoldSeconds = 1f;
 
     Rigidbody2D rb;
     Vector2 moveDirection;
@@ -35,7 +44,7 @@ public class MapPlayerMove : MonoBehaviour
     bool running;
     bool moving;
     Vector2 dragStart;
-    float bobTime;
+    float tiltTime;
 
     public Vector2 MoveDirection => moveDirection;
     public bool IsRunning => running;
@@ -55,9 +64,15 @@ public class MapPlayerMove : MonoBehaviour
         }
         else
             Debug.LogWarning(
-                "MapPlayerMove needs a child named Visual for walking bob. " +
+                "MapPlayerMove needs a child named Visual for walking tilt. " +
                 "Movement still works without it.",
                 this);
+
+        if (!allowSwipeMovement && rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+        }
 
         if (restrictToHallways && walkableLayer.value == 0)
             Debug.LogWarning(
@@ -70,6 +85,12 @@ public class MapPlayerMove : MonoBehaviour
         moveDirection = Vector2.zero;
         running = false;
 
+        if (!allowSwipeMovement)
+        {
+            dragging = false;
+            return;
+        }
+
         ReadPointer();
 
         if (!dragging)
@@ -78,6 +99,12 @@ public class MapPlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!allowSwipeMovement)
+        {
+            moving = false;
+            return;
+        }
+
         float speed = running ? runSpeed : walkSpeed;
         Vector2 start = rb.position;
         Vector2 target = start + moveDirection * speed * Time.fixedDeltaTime;
@@ -94,40 +121,33 @@ public class MapPlayerMove : MonoBehaviour
         if (visual == null)
             return;
 
-        if (!moving)
+        if (!moving && !tiltWhileIdle)
         {
-            bobTime = 0f;
+            tiltTime = 0f;
             visual.localPosition = visualRestPosition;
             visual.localRotation = visualRestRotation;
             return;
         }
 
-        bobTime += Time.deltaTime;
-
-        if (bobHeightPixels > 0f && bobCyclesPerSecond > 0f)
-        {
-            float heightInUnits = bobHeightPixels / pixelsPerUnit;
-            float rawOffset = Mathf.Sin(
-                bobTime * bobCyclesPerSecond * Mathf.PI * 2f) * heightInUnits;
-
-            float pixelSnappedOffset =
-                Mathf.Round(rawOffset * pixelsPerUnit) / pixelsPerUnit;
-
-            visual.localPosition =
-                visualRestPosition + Vector3.up * pixelSnappedOffset;
-        }
-        else
-        {
-            visual.localPosition = visualRestPosition;
-        }
+        tiltTime += Time.deltaTime;
+        visual.localPosition = visualRestPosition;
 
         float tilt = 0f;
 
-        if (tiltAngleDegrees > 0f && tiltCyclesPerSecond > 0f)
+        if (moving)
         {
-            tilt = Mathf.Sin(
-                bobTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
-                tiltAngleDegrees;
+            if (tiltAngleDegrees > 0f && tiltCyclesPerSecond > 0f)
+            {
+                tilt = Mathf.Sin(
+                    tiltTime * tiltCyclesPerSecond * Mathf.PI * 2f) *
+                    tiltAngleDegrees;
+            }
+        }
+        else if (idleTiltAngleDegrees > 0f)
+        {
+            float hold = Mathf.Max(0.05f, idleTiltHoldSeconds);
+            int step = Mathf.FloorToInt(tiltTime / hold);
+            tilt = (step % 2 == 0) ? idleTiltAngleDegrees : -idleTiltAngleDegrees;
         }
 
         visual.localRotation =
@@ -241,8 +261,9 @@ public class MapPlayerMove : MonoBehaviour
     void OnValidate()
     {
         runThreshold = Mathf.Max(runThreshold, deadZone);
-        pixelsPerUnit = Mathf.Max(1f, pixelsPerUnit);
         tiltAngleDegrees = Mathf.Max(0f, tiltAngleDegrees);
         tiltCyclesPerSecond = Mathf.Max(0f, tiltCyclesPerSecond);
+        idleTiltAngleDegrees = Mathf.Max(0f, idleTiltAngleDegrees);
+        idleTiltHoldSeconds = Mathf.Max(0.05f, idleTiltHoldSeconds);
     }
 }
