@@ -20,32 +20,26 @@ MonoBehaviour:
     - {fileID: 8300000, guid: b979d2a29c50f4fb38fa002176bd1126, type: 3}
     volume: 0.55
   - key: dialogue_advance
-    clips:
-    - {fileID: 8300000, guid: c564f8489601e4251ba7314b7512631e, type: 3}
+    clips: []
     volume: 0.8
   - key: dialogue_choice
-    clips:
-    - {fileID: 8300000, guid: 60adc974859c549608d54bbc31934126, type: 3}
+    clips: []
     volume: 0.9
   - key: ui_click
-    clips:
-    - {fileID: 8300000, guid: 651f3f45377c74809a94aca725622ced, type: 3}
+    clips: []
     volume: 0.8
   - key: ui_click_short
-    clips:
-    - {fileID: 8300000, guid: e67898f98ef9c40afb6688623e877dac, type: 3}
+    clips: []
     volume: 0.8
   - key: ui_confirm
-    clips:
-    - {fileID: 8300000, guid: 7a5b37d2af52248b9be90f44f6a2bd9c, type: 3}
+    clips: []
     volume: 0.9
   - key: ui_error
     clips:
     - {fileID: 8300000, guid: a9e61be40b6d74e308770d8e788d19e4, type: 3}
     volume: 0.9
   - key: ui_interact
-    clips:
-    - {fileID: 8300000, guid: 9aa18ce39b3bb4fd0947a71fff06a13d, type: 3}
+    clips: []
     volume: 0.85
   - key: ui_item_pickup
     clips:
@@ -301,16 +295,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 80235d7b60207417f8b41d699ce02f1e, type: 3}
     volume: 1
   - key: music_main_menu
-    clips:
-    - {fileID: 8300000, guid: 02fa2df3f4fe845d9b1c94a980627a95, type: 3}
+    clips: []
     volume: 1
   - key: music_daylight
-    clips:
-    - {fileID: 8300000, guid: 8b177f652ed7b41a59da371287a991bb, type: 3}
+    clips: []
     volume: 1
   - key: music_midnight
-    clips:
-    - {fileID: 8300000, guid: 218eb78c11cdb490a81be2b488246e5d, type: 3}
+    clips: []
     volume: 1
   sceneSurfaces:
   - sceneName: Library

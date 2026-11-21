@@ -1644,6 +1644,7 @@ GameObject:
   - component: {fileID: 3878580980914968672}
   - component: {fileID: 8377866942565620176}
   - component: {fileID: 4418728797223704788}
+  - component: {fileID: 1346864836443364229}
   m_Layer: 5
   m_Name: BTN_Close
   m_TagString: Untagged
@@ -1752,7 +1753,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8285570256469045861}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1346864836443364229}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8377866942565620176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1784,6 +1797,37 @@ MonoBehaviour:
   label: {fileID: 1697090137813649495}
   pressedOffset: {x: 1, y: -1}
   pressedColor: {r: 0.9019608, g: 0.95686275, b: 1, a: 1}
+--- !u!114 &1346864836443364229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7263967084898676359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1405237645
+      Data2: 1313151974
+      Data3: -943890301
+      Data4: -1310804549
+    Path: event:/UI/Click_Short
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1
 --- !u!1 &7523877455873286636
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7359475706931256332}
   - component: {fileID: 678228592980204237}
   - component: {fileID: 3399257380818112006}
+  - component: {fileID: 3168425488794453320}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -153,11 +154,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneDoor
   cue: {fileID: 0}
+  interactionLabel: 
   destinationScene: 
   enterSound: {fileID: 8300000, guid: 5c506b02534b24b2ebf53a92ce2faa99, type: 3}
   enterVolume: 1
+  playInteractSound: 1
+  spawnPoint: {fileID: 0}
+  defaultEntrance: 0
+  spawnFacing: 0
+  doorAnimation: {fileID: 0}
   storyNode: 
+  storyNodeChapterScene: 0
+  storyNodeUntilCutsceneStarts: {fileID: 0}
+  storyNodeQuestId: 
+  storyNodeQuestObjective: 
   yarnDialog: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
+--- !u!114 &3168425488794453320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9078556808458564916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1381259185
+      Data2: 1256926796
+      Data3: -1278371422
+      Data4: 1251488310
+    Path: event:/SFX/Door/Open
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1

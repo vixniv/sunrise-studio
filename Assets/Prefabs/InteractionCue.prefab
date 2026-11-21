@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5475098831631229392}
   - component: {fileID: 168716947436891891}
+  - component: {fileID: 3242217863777555404}
   m_Layer: 0
   m_Name: InteractionCue
   m_TagString: Untagged
@@ -93,6 +94,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &3242217863777555404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568328922728227769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1211611328
+      Data2: 1286841820
+      Data3: -1546112848
+      Data4: 612324843
+    Path: event:/SFX/Interact
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1
 --- !u!1 &5411922171965967617
 GameObject:
   m_ObjectHideFlags: 0

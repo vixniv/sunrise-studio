@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5432263177751620548}
   - component: {fileID: 9077094125130241078}
   - component: {fileID: 7410614188264671123}
+  - component: {fileID: 8691010881182307546}
   m_Layer: 5
   m_Name: CARD_ActionItem
   m_TagString: Untagged
@@ -114,7 +115,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2683514510910614601}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8691010881182307546}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!225 &5432263177751620548
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -167,6 +180,37 @@ MonoBehaviour:
   selectedTilt: 0
   leftTilt: 0
   rightTilt: 0
+--- !u!114 &8691010881182307546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121528202669111581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -511785590
+      Data2: 1205347590
+      Data3: -1360334177
+      Data4: 1254278226
+    Path: event:/UI/Click
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1
 --- !u!1 &3149894642497290048
 GameObject:
   m_ObjectHideFlags: 0

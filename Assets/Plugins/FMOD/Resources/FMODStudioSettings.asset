@@ -170,7 +170,7 @@ MonoBehaviour:
       HasValue: 1
     Overlay:
       Value: 0
-      HasValue: 0
+      HasValue: 1
     OverlayPosition:
       Value: 0
       HasValue: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
       HasValue: 0
     Logging:
       Value: 0
-      HasValue: 0
+      HasValue: 1
     SampleRate:
       Value: 0
       HasValue: 0
@@ -550,7 +550,7 @@ MonoBehaviour:
   TargetBankFolder: 
   EventLinkage: 0
   SerializeGUIDsOnly: 0
-  LoggingLevel: 2
+  LoggingLevel: 0
   SpeakerModeSettings: []
   SampleRateSettings: []
   LiveUpdateSettings: []
@@ -559,8 +559,12 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Master
+  Banks:
+  - Music
+  - SFX
+  - UI
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
@@ -831,7 +835,7 @@ MonoBehaviour:
       Value: 0
       HasValue: 0
     Overlay:
-      Value: 1
+      Value: 0
       HasValue: 1
     OverlayPosition:
       Value: 0
@@ -841,7 +845,7 @@ MonoBehaviour:
       HasValue: 0
     Logging:
       Value: 0
-      HasValue: 0
+      HasValue: 1
     SampleRate:
       Value: 48000
       HasValue: 1

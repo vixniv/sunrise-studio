@@ -159,6 +159,7 @@ GameObject:
   - component: {fileID: 7253258128577262085}
   - component: {fileID: 3389131182923258579}
   - component: {fileID: 6374298573216635909}
+  - component: {fileID: 7710656313039397208}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -438,6 +439,37 @@ MonoBehaviour:
   rimIntensityAtFullCoverage: 0.75
   coverageSamplesX: 8
   coverageSamplesY: 16
+--- !u!114 &7710656313039397208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128274413978399931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 876785130
+      Data2: 1175820127
+      Data3: -1908969826
+      Data4: 728718901
+    Path: event:/SFX/Footsteps/Concrete
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1
 --- !u!1 &7358358093368023489
 GameObject:
   m_ObjectHideFlags: 0
