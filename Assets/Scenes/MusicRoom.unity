@@ -927,10 +927,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.2372235
     y: 0
-    width: 1
-    height: 1
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -960,7 +960,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.9403887, y: 2.43617, z: -10}
+  m_LocalPosition: {x: -7.940366, y: 2.43618, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2522,12 +2522,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2564647810717430902, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
   m_PrefabInstance: {fileID: 1343263512}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1343263515}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05006a984cf7d4e0c8592952039a256d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
+--- !u!1 &1343263515 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+  m_PrefabInstance: {fileID: 1343263512}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1382950252
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2716,6 +2721,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - lunch
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &1489034864
@@ -2735,6 +2742,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0
+  firstVisitBlackFadeInSeconds: 2
   player: {fileID: 1343263514}
   initialFacing: 0
   nextScene: 
@@ -4533,6 +4541,18 @@ PrefabInstance:
       propertyPath: bubble
       value: 
       objectReference: {fileID: 1326022622}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[0].name
+      value: Anin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[0].target
+      value: 
+      objectReference: {fileID: 1343263515}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: m_Name
       value: Dialogue

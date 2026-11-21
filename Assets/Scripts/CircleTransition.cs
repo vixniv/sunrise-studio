@@ -25,9 +25,23 @@ public class CircleTransition : MonoBehaviour
     public AudioSource audioSource;
 
     bool transitioning;
+    string blackEntryScene;
+    float blackEntryOpenDuration;
 
     public bool IsTransitioning => transitioning;
     public bool IsBlack => blackFadeGroup != null && blackFadeGroup.alpha >= 0.999f;
+
+    // A cutscene in the newly loaded room may lengthen this one map-entry reveal.
+    // The usual openDuration stays unchanged for later visits and other transitions.
+    public bool SetCurrentBlackEntryOpenDuration(string sceneName, float seconds)
+    {
+        if (blackEntryScene == null || !string.Equals(blackEntryScene, sceneName, System.StringComparison.Ordinal) ||
+            float.IsNaN(seconds) || float.IsInfinity(seconds) || seconds <= 0f)
+            return false;
+
+        blackEntryOpenDuration = seconds;
+        return true;
+    }
 
     void Awake()
     {
@@ -312,16 +326,20 @@ public class CircleTransition : MonoBehaviour
         }
         blackFadeGroup.alpha = 1f;
 
+        blackEntryScene = sceneName;
+        blackEntryOpenDuration = openDuration;
         AsyncOperation loading = SceneManager.LoadSceneAsync(sceneName);
         while (!loading.isDone)
             yield return null;
         yield return null;
 
+        float revealDuration = blackEntryOpenDuration;
+        blackEntryScene = null;
         elapsed = 0f;
-        while (elapsed < openDuration)
+        while (elapsed < revealDuration)
         {
             elapsed += Time.unscaledDeltaTime;
-            blackFadeGroup.alpha = 1f - Mathf.Clamp01(elapsed / openDuration);
+            blackFadeGroup.alpha = 1f - Mathf.Clamp01(elapsed / revealDuration);
             yield return null;
         }
         blackFadeGroup.alpha = 0f;

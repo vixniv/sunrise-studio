@@ -12,6 +12,7 @@ public class YarnCutscene : MonoBehaviour
 {
     // Start nodes already played this loop. <<hard_reset>> clears it.
     private static readonly HashSet<string> played = new HashSet<string>();
+    private static readonly HashSet<string> firstVisitFadesPlayed = new HashSet<string>();
 
     [SerializeField] private YarnDialogPresenter yarnDialog;
     [SerializeField] private string startNode = "Ch01_Prologue";
@@ -21,6 +22,8 @@ public class YarnCutscene : MonoBehaviour
     [SerializeField] private Vector2 dialogOffset = new Vector2(0f, 0.25f);
     [Tooltip("Seconds before the first line, so the scene can fade in first.")]
     [SerializeField, Min(0f)] private float startDelay = 0.5f;
+    [Tooltip("Optional black fade-in length for this node's first SchoolMap entry each loop. 0 uses TransitionCanvas's usual Open Duration. Only affects the current room entry.")]
+    [SerializeField, Min(0f)] private float firstVisitBlackFadeInSeconds;
     [Tooltip("Frozen from the moment the scene opens until the node ends; the ChoiceWheel shows above this player. " +
              "Leave empty to use the PlayerMove in the scene.")]
     [SerializeField] private PlayerMove player;
@@ -66,9 +69,26 @@ public class YarnCutscene : MonoBehaviour
 
     // Clears the played nodes when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetOnPlay() => played.Clear();
+    private static void ResetOnPlay()
+    {
+        played.Clear();
+        firstVisitFadesPlayed.Clear();
+    }
 
-    public static void ForgetPlayed() => played.Clear();
+    public static void ForgetPlayed()
+    {
+        played.Clear();
+        firstVisitFadesPlayed.Clear();
+    }
+
+    // Lets a story flashback replay one existing scene intro without resetting every cutscene.
+    public static void ForgetPlayedNode(string node)
+    {
+        if (string.IsNullOrWhiteSpace(node)) return;
+        string key = node.Trim();
+        played.Remove(key);
+        firstVisitFadesPlayed.Remove(key);
+    }
 
     private IEnumerator Start()
     {
@@ -99,6 +119,10 @@ public class YarnCutscene : MonoBehaviour
 
         if (playOnce && !played.Add(node)) yield break;
         started = true;
+        if (firstVisitBlackFadeInSeconds > 0f && !firstVisitFadesPlayed.Contains(node) &&
+            CircleTransition.Instance != null &&
+            CircleTransition.Instance.SetCurrentBlackEntryOpenDuration(gameObject.scene.name, firstVisitBlackFadeInSeconds))
+            firstVisitFadesPlayed.Add(node);
         // Frozen during Start Delay too, so the player cannot walk before the first line shows.
         if (player != null) player.InteractionMenuOpen = true;
         if (player != null && initialFacing != InitialFacing.Keep)

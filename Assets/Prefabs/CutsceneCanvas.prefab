@@ -224,6 +224,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ca04740e45c224f70b8cd333248352c0, type: 3}
   - {fileID: 21300000, guid: 07ee578b6c9aa4c6eb09a468ac2faf57, type: 3}
   - {fileID: 21300000, guid: 1129c5263159d4bafba03cf9bcd80194, type: 3}
+  - {fileID: 21300000, guid: 6a29cff5191684473b0306a0e0c86e12, type: 3}
+  - {fileID: 21300000, guid: 904a2dfba58a3497aadabe547dd62054, type: 3}
+  - {fileID: 21300000, guid: 242fec1733a4c4ee3b45e71a5b23441a, type: 3}
+  - {fileID: 21300000, guid: bc72338fd50ec4d4ca9b9bc83f317555, type: 3}
   charactersPerSecond: 30
   fadeSeconds: 0.4
   pictureChangeSeconds: 0.3

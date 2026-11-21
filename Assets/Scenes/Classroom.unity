@@ -1760,6 +1760,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 556314118}
   initialFacing: 0
   nextScene: 
@@ -1880,166 +1881,6 @@ MonoBehaviour:
   targetCamera: {fileID: 409442820}
   strength: 0.15
   pixelsPerUnit: 16
---- !u!1001 &253943388
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4186522725043985381, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
-      propertyPath: m_Name
-      value: TimeLoopResetCanvas
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
---- !u!1 &277137494
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 277137496}
-  - component: {fileID: 277137495}
-  m_Layer: 0
-  m_Name: FMOD_BGM
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &277137495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 277137494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 946774566
-      Data2: 1152213631
-      Data3: -249637989
-      Data4: 966134027
-    Path: event:/Music/Daylight
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 2
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: -1
-  OverrideMaxDistance: -1
---- !u!4 &277137496
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 277137494}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &242387353
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,6 +2061,166 @@ MonoBehaviour:
   playInteractSound: 1
   tapMaxTravel: 0.02
   tapMaxSeconds: 0.35
+--- !u!1001 &253943388
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352369486020805136, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4186522725043985381, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+      propertyPath: m_Name
+      value: TimeLoopResetCanvas
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 22d2a7929e63244d4ba406f7697a7135, type: 3}
+--- !u!1 &277137494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 277137496}
+  - component: {fileID: 277137495}
+  m_Layer: 0
+  m_Name: FMOD_BGM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &277137495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277137494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioEventEmitter
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 946774566
+      Data2: 1152213631
+      Data3: -249637989
+      Data4: 966134027
+    Path: event:/Music/Daylight
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: -1
+  OverrideMaxDistance: -1
+--- !u!4 &277137496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277137494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &291719678
 GameObject:
   m_ObjectHideFlags: 0
@@ -2811,10 +2812,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.2372235
     y: 0
-    width: 1
-    height: 1
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -4836,6 +4837,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 556314118}
   initialFacing: 0
   nextScene: 
@@ -5106,6 +5108,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 556314118}
   initialFacing: 0
   nextScene: 
@@ -6354,6 +6357,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 556314118}
   initialFacing: 0
   nextScene: 
@@ -8002,6 +8006,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - lunch
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &1560535586
@@ -8021,6 +8027,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0
+  firstVisitBlackFadeInSeconds: 2
   player: {fileID: 556314118}
   initialFacing: 0
   nextScene: 

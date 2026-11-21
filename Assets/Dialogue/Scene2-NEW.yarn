@@ -80,6 +80,9 @@ tags: december9 day1 dorm interactable testing
 title: Dec9_Classroom_Arrival
 tags: december9 day1 classroom testing
 ---
+<<if $dec10_wish_flashback is true>>
+    <<jump Dec9_Classroom_WishFlashback>>
+<<endif>>
 <<set $story_exit to true>>
 <<set $dec9_classroom_phase to "intro">>
 // Show the temporary props until their final sprites arrive.
@@ -88,6 +91,24 @@ tags: december9 day1 classroom testing
 <<quest_update "dec9" "Talk with your friends">>
 // CONTROL ANIN. The friends' interaction starts Dec9_Classroom_Friends.
 // The Classroom map door runs Dec9_Classroom_Door until the scripted walk home.
+===
+
+title: Dec9_Classroom_WishFlashback
+tags: december9 classroom wish flashback
+---
+// Revisit the real December 9 Classroom and its Lila for the two original lines.
+Lila: You know, a senior once swore she repeated the same day.
+<<fade_black_out>>
+<<fade_black_in>>
+Lila: It's an old school myth. Circle today's date on a calendar, make a wish before midnight, and you'll wake up to the same day again.
+<<fade_black_out>>
+<<memory_montage false>>
+<<set $dec10_wish_flashback to false>>
+<<set $dec10_wish_resume to true>>
+<<set $chapter_scene to 10>>
+<<set_time_of_day "night">>
+<<replay_cutscene "Dec10_Dorm_Return">>
+<<scene_transition_at_x "Dorm" -9 "right">>
 ===
 
 title: Dec9_Classroom_Door

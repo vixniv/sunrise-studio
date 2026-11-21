@@ -162,12 +162,13 @@ public class TimeLoopResetTransition : MonoBehaviour
         string dayLabel = "10",
         Action whileCovered = null,
         Action onRewindStart = null,
-        string sceneToLoad = null)
+        string sceneToLoad = null,
+        bool holdBlackAtEnd = false)
     {
         if (transitioning || !HasRequiredReferences())
             return false;
 
-        StartCoroutine(LoopResetRoutine(dayLabel, whileCovered, onRewindStart, sceneToLoad));
+        StartCoroutine(LoopResetRoutine(dayLabel, whileCovered, onRewindStart, sceneToLoad, holdBlackAtEnd));
         return true;
     }
 
@@ -175,7 +176,8 @@ public class TimeLoopResetTransition : MonoBehaviour
         string dayLabel,
         Action whileCovered,
         Action onRewindStart,
-        string sceneToLoad)
+        string sceneToLoad,
+        bool holdBlackAtEnd)
     {
         EnsureProceduralTextures();
         EnsureBlurVolume();
@@ -317,6 +319,15 @@ public class TimeLoopResetTransition : MonoBehaviour
 
         if (blackoutSilenceDuration > 0f)
             yield return new WaitForSecondsRealtime(blackoutSilenceDuration);
+
+        if (holdBlackAtEnd)
+        {
+            SetSceneBlur(0f);
+            SetImageAlpha(fullBackdropImage, 1f);
+            SetEyelidHeight(0f);
+            transitioning = false;
+            yield break;
+        }
 
         // 6. GROGGY WAKE-UP EYELID OPEN (halfway -> blink down -> full open) as scene blur clears
         PlayClip(wakeUpSfx);

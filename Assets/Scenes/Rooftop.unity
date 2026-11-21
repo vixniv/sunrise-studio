@@ -1366,7 +1366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundCycleSwitcher2D
   backgroundRenderer: {fileID: 345082557}
   dayBackground: {fileID: -828277839, guid: 1a8930575fd7e4d77a31c4d2375029ab, type: 3}
-  nightBackground: {fileID: 2136261411, guid: 679c131e32f6c4ce68a32906bf3032b0, type: 3}
+  nightBackground: {fileID: -828277839, guid: 1a8930575fd7e4d77a31c4d2375029ab, type: 3}
   dayOnlyObjects: []
 --- !u!1 &409442818
 GameObject:
@@ -1426,10 +1426,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.2372235
-    y: 0
-    width: 0.4080826
-    height: 0.4087894
+    x: 0
+    y: 0.13515754
+    width: 0.24485126
+    height: 0.24527535
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1459,7 +1459,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -36.502243, y: 2.436469, z: -10}
+  m_LocalPosition: {x: -36.50224, y: 2.436469, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2229,15 +2229,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -6056,6 +6056,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 840653991}
   initialFacing: 2
   nextScene: 
@@ -6157,8 +6158,8 @@ Transform:
   m_GameObject: {fileID: 244974681915686901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -55.1, y: -0.875, z: 0}
-  m_LocalScale: {x: 2, y: 8, z: 1}
+  m_LocalPosition: {x: -52.23, y: -0.875, z: 0}
+  m_LocalScale: {x: 5, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 622465636}

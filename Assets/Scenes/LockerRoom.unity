@@ -2209,10 +2209,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.2372235
-    y: 0
-    width: 0.4080826
-    height: 0.4087894
+    x: 0
+    y: 0.13515754
+    width: 0.24485126
+    height: 0.24527535
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -3708,6 +3708,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -4313,12 +4314,13 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
-  initialFacing: 2
+  initialFacing: 0
   nextScene: 
   nextSceneBlackFadeInSeconds: 0
   playOnce: 0
-  keepPlayerPosition: 1
+  keepPlayerPosition: 0
   wakeUp: {fileID: 0}
   wakeUpAsleepSeconds: 2
   wakeUpSound: alarm_clock
@@ -5216,6 +5218,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -6491,6 +6494,7 @@ GameObject:
   - component: {fileID: 1379795507}
   - component: {fileID: 1379795506}
   - component: {fileID: 1379795508}
+  - component: {fileID: 1379795509}
   m_Layer: 0
   m_Name: Story_Dec10
   m_TagString: Untagged
@@ -6555,6 +6559,26 @@ MonoBehaviour:
   value: false
   targets:
   - {fileID: 462552887}
+  followChanges: 1
+--- !u!114 &1379795509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379795505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
+  runner: {fileID: 0}
+  variable: $dec10_locker_intro_done
+  matchMode: 0
+  value: false
+  targets:
+  - {fileID: 2134216838}
+  - {fileID: 227218830}
   followChanges: 1
 --- !u!1 &1406243741
 GameObject:
@@ -7731,6 +7755,14 @@ PrefabInstance:
     - target: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710656313039397208, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: OverrideMaxDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710656313039397208, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: OverrideMinDistance
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8708204972718609183, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -8947,6 +8979,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -11791,6 +11824,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 

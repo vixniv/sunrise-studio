@@ -134,6 +134,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("advance_time_silent", (Func<string, YarnTask>)AdvanceTimeSilent);
         runner.AddCommandHandler("advance_time_to_scene", (Func<string, string, YarnTask>)AdvanceTimeToScene);
         runner.AddCommandHandler("advance_time_to_scene_at_x", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtX);
+        runner.AddCommandHandler("advance_time_to_scene_at_door", (Func<string, string, string, YarnTask>)AdvanceTimeToSceneAtDoor);
         runner.AddCommandHandler("advance_time_to_scene_at_x_silent", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtXSilent);
         runner.AddCommandHandler("advance_time_teleport_character", (Func<string, string, float, string, YarnTask>)AdvanceTimeTeleportCharacter);
         runner.AddCommandHandler("delay", (Func<float, YarnTask>)Delay);
@@ -142,6 +143,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("fade_black_in", (Func<YarnTask>)(() => FadeBlack(false)));
         runner.AddCommandHandler("set_time_of_day", (Action<string>)ApplyTimeOfDay);
         runner.AddCommandHandler("teleport_character", (Action<string, float, string>)TeleportCharacter);
+        runner.AddCommandHandler("place_character_near_x", (Action<string, float, float>)PlaceCharacterNearX);
+        runner.AddCommandHandler("place_character_near_actor", (Action<string, string, float, float>)PlaceCharacterNearActor);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
         runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
         runner.AddCommandHandler("fade_outfit", (Func<string, string, YarnTask>)((actor, outfit) => Fade(() => SetOutfit(actor, outfit))));
@@ -149,6 +152,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("face_character_to_actor", (Action<string, string>)FaceCharacterToActor);
         runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
         runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
+        runner.AddCommandHandler("lie_down", (Action<string>)LieDown);
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
         runner.AddCommandHandler("close_dialogue_bubble", (Action)CloseDialogueBubble);
@@ -173,6 +177,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("cutscene_black", (Func<YarnTask>)ShowBlackNarration);
         runner.AddCommandHandler("story_splash", (Action<string>)ShowStorySplash);
         runner.AddCommandHandler("story_splash_end", (Action)HideStorySplash);
+        runner.AddCommandHandler("wait_for_time_transition", (Func<YarnTask>)WaitForTimeTransition);
+        runner.AddCommandHandler("dialogue_bottom_left", (Action<bool>)SetDialogueBottomLeft);
         runner.AddCommandHandler("dialogue_speed", (Action<float>)SetDialogueSpeed);
         runner.AddCommandHandler("cinematic_start", (Func<YarnTask>)(() => SetCinematicBars(true)));
         runner.AddCommandHandler("cinematic_end", (Func<YarnTask>)(() => SetCinematicBars(false)));
@@ -182,6 +188,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("time_loop_reset", (Func<YarnTask>)SoftReset);
+        runner.AddCommandHandler("replay_cutscene", (Action<string>)YarnCutscene.ForgetPlayedNode);
+        runner.AddCommandHandler("time_loop_hold", (Func<YarnTask>)TimeLoopHold);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
         runner.AddCommandHandler("sfx", (Action<string>)PlaySound);
         runner.AddCommandHandler("ambience_start", (Action<string>)StartAmbience);
@@ -471,6 +479,23 @@ public class YarnCommands : MonoBehaviour
         return AdvanceTimeToSceneAtXInternal(slot, location, destinationX, facing, true);
     }
 
+    // Uses the destination room's authored door Spawn Point and Spawn Facing.
+    private YarnTask AdvanceTimeToSceneAtDoor(string slot, string location, string doorDestination)
+    {
+        if (leaving)
+            return YarnTask.CompletedTask;
+
+        string scene = FindBuildScene(Key(location));
+        if (scene == null || string.IsNullOrWhiteSpace(doorDestination))
+        {
+            Debug.LogError("<<advance_time_to_scene_at_door>>: provide a Build Profile scene and a door destination.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        DoorSpawn.SetNextSpawnAtDoor(scene, doorDestination.Trim());
+        return AdvanceTimeToScene(slot, scene);
+    }
+
     // Places Anin and changes time during one room transition, without playing a time-change sound.
     private YarnTask AdvanceTimeToSceneAtXSilent(string slot, string location, float destinationX, string facing)
     {
@@ -656,6 +681,40 @@ public class YarnCommands : MonoBehaviour
             FaceActor(target, facingKey == "right" ? 1f : -1f);
     }
 
+    // Place an actor close enough for a short approach, keeping the side they entered from.
+    // Run this only while the room-entry fade still covers the screen.
+    private void PlaceCharacterNearX(string actorName, float destinationX, float maxDistance)
+    {
+        GameObject actor = FindActorTarget(actorName, "place_character_near_x");
+        if (actor == null)
+            return;
+
+        if (float.IsNaN(destinationX) || float.IsInfinity(destinationX) ||
+            float.IsNaN(maxDistance) || float.IsInfinity(maxDistance) || maxDistance <= 0f)
+        {
+            Debug.LogError("<<place_character_near_x>>: destination X must be finite and max distance must be greater than zero.", this);
+            return;
+        }
+
+        float arrivalX = Mathf.Clamp(actor.transform.position.x, destinationX - maxDistance, destinationX + maxDistance);
+        TeleportCharacter(actorName, arrivalX, "keep");
+    }
+
+    private void PlaceCharacterNearActor(string actorName, string referenceActorName, float offsetX, float maxDistance)
+    {
+        GameObject reference = FindActorTarget(referenceActorName, "place_character_near_actor");
+        if (reference == null)
+            return;
+
+        if (float.IsNaN(offsetX) || float.IsInfinity(offsetX))
+        {
+            Debug.LogError("<<place_character_near_actor>>: X offset must be finite.", this);
+            return;
+        }
+
+        PlaceCharacterNearX(actorName, reference.transform.position.x + offsetX, maxDistance);
+    }
+
     // <<face_character "Anin" "left">>: changes only the actor's sprite facing.
     private void FaceCharacter(string actorName, string facing)
     {
@@ -719,6 +778,22 @@ public class YarnCommands : MonoBehaviour
             if (sit) pose.Sit();
             else pose.Stand();
         }
+    }
+
+    // Uses the Dorm's existing bed pose while the wish cutscene is in progress.
+    private void LieDown(string actorName)
+    {
+        GameObject target = FindActorTarget(actorName, "lie_down");
+        if (target == null) return;
+
+        WakeUpPose pose = target.GetComponentInChildren<WakeUpPose>(true);
+        if (pose == null)
+        {
+            Debug.LogError($"<<lie_down>>: \"{target.name}\" has no WakeUpPose on its Visual child.", this);
+            return;
+        }
+
+        pose.LieDown();
     }
 
     private static void StandUp(GameObject target)
@@ -1383,6 +1458,22 @@ public class YarnCommands : MonoBehaviour
         if (overlay != null) overlay.Hide();
     }
 
+    private void SetDialogueBottomLeft(bool enabled)
+    {
+        SunriseStudio.UI.DialogueHudView hud = FindAnyObjectByType<SunriseStudio.UI.DialogueHudView>();
+        if (hud == null)
+        {
+            Debug.LogWarning("<<dialogue_bottom_left>>: no DialogueHudView is active in this scene.", this);
+            return;
+        }
+        hud.SetSplashPresentation(enabled);
+    }
+
+    private YarnTask WaitForTimeTransition()
+    {
+        return YarnTask.WaitUntil(() => TimeTransition.Instance == null || !TimeTransition.Instance.IsTransitioning);
+    }
+
     private void SetDialogueSpeed(float charactersPerSecond)
     {
         SunriseStudio.UI.DialogueHudView hud = FindAnyObjectByType<SunriseStudio.UI.DialogueHudView>();
@@ -1476,6 +1567,27 @@ public class YarnCommands : MonoBehaviour
 
         StartOver(GapTimeOfDay, true);
         return LoadLocation(dormScene, "");
+    }
+
+    // Plays the calendar reset for the new story preview without loading the old loop.
+    private YarnTask TimeLoopHold()
+    {
+        TimeLoopResetTransition loopTransition = TimeLoopResetTransition.Instance;
+        if (loopTransition == null)
+        {
+            Debug.LogError("<<time_loop_hold>>: no TimeLoopResetTransition is active.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        HideDialogueLine();
+        HideStorySplash();
+        if (!loopTransition.PlayLoopReset("10", holdBlackAtEnd: true))
+        {
+            Debug.LogError("<<time_loop_hold>>: the transition is busy or missing UI references.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        return YarnTask.WaitUntil(() => loopTransition == null || !loopTransition.IsTransitioning);
     }
 
     // <<end_gap>>: the gap is over and Dec 10 starts again in the Dorm, in the morning.

@@ -12,7 +12,7 @@ public class PlaytestStartWindow : EditorWindow
     private const string NoChange = "(no change)";
     private static readonly List<string> Times = new List<string>
     {
-        NoChange, YarnCommands.DefaultTimeOfDay, "lunch", "after_school", YarnCommands.GapTimeOfDay
+        NoChange, YarnCommands.DefaultTimeOfDay, "lunch", "after_school", "night", YarnCommands.GapTimeOfDay
     };
 
     [MenuItem("Tools/Playtest Start")]
@@ -36,6 +36,7 @@ public class PlaytestStartWindow : EditorWindow
 
         var help = new HelpBox(
             "One variable per line, such as:\n$chapter_scene = 1\n$anin_dressed = true\n" +
+            "Use night for Dec10; midnight is the dream/gap slot.\n" +
             "Open the scene to test and press Play. Turn the toggle off for normal play.",
             HelpBoxMessageType.Info);
 

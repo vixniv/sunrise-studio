@@ -598,6 +598,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 840653991}
   initialFacing: 0
   nextScene: 
@@ -1827,10 +1828,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.2372235
     y: 0
-    width: 1
-    height: 1
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2551,7 +2552,7 @@ Transform:
   m_GameObject: {fileID: 536746195}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.79232, y: -4.57, z: 0}
+  m_LocalPosition: {x: -0.79232, y: -4.35654, z: 0}
   m_LocalScale: {x: 114, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3170,7 +3171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.28
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4729128949383697161, guid: 929b8f5b95b704e3c8e686e08a115c54, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3503,15 +3504,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5546698152702113541, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -3734,6 +3735,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - lunch
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &880819257
@@ -3753,6 +3756,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0
+  firstVisitBlackFadeInSeconds: 2
   player: {fileID: 840653991}
   initialFacing: 0
   nextScene: 
@@ -6089,6 +6093,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 840653991}
   initialFacing: 0
   nextScene: 
@@ -8094,7 +8099,7 @@ Transform:
   m_GameObject: {fileID: 1942151454}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -27.98, y: 0.49195004, z: 0}
+  m_LocalPosition: {x: -44.98, y: 0.49195004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8234,6 +8239,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 840653991}
   initialFacing: 0
   nextScene: 
@@ -9110,6 +9116,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 840653991}
   initialFacing: 0
   nextScene: 

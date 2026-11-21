@@ -912,6 +912,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - lunch
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &161188430
@@ -931,6 +933,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0
+  firstVisitBlackFadeInSeconds: 2
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -1337,10 +1340,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.2372235
     y: 0
-    width: 1
-    height: 1
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1666,6 +1669,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -4238,6 +4242,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 

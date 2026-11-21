@@ -507,6 +507,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3168425488794453320, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: OverrideMaxDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3168425488794453320, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
+      propertyPath: OverrideMinDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3399257380818112006, guid: ad1840d3c6afc4d429b37c98a2d20413, type: 3}
       propertyPath: destinationScene
       value: SchoolMap
@@ -681,7 +689,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253376293}
-  - component: {fileID: 253376294}
   m_Layer: 0
   m_Name: CounterStaff
   m_TagString: Untagged
@@ -708,24 +715,6 @@ Transform:
   - {fileID: 1705050942}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &253376294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 253376292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 010329af60caf437798af12b6968e1ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActiveIfYarnVariable
-  runner: {fileID: 0}
-  variable: $chapter_scene
-  matchMode: 1
-  value: cafeteria
-  targets: []
-  followChanges: 0
 --- !u!1 &291719678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1458,10 +1447,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.2372235
     y: 0
-    width: 1
-    height: 1
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1924,7 +1913,7 @@ Transform:
   m_GameObject: {fileID: 536746195}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.79232, y: -5, z: 0}
+  m_LocalPosition: {x: -0.79232, y: -4.98, z: 0}
   m_LocalScale: {x: 76, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3471,7 +3460,7 @@ Transform:
   m_GameObject: {fileID: 851998795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -31.37, y: -4.875, z: -10}
+  m_LocalPosition: {x: -31.37, y: -5.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3656,6 +3645,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveDuringTime
   times:
   - morning
+  - lunch
+  - after_school
   targets: []
   followTimeChanges: 0
 --- !u!114 &908261457
@@ -3675,6 +3666,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0
+  firstVisitBlackFadeInSeconds: 2
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -4255,6 +4247,7 @@ MonoBehaviour:
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
+  firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
   nextScene: 
@@ -4931,7 +4924,7 @@ GameObject:
   - component: {fileID: 1329049137}
   - component: {fileID: 1329049136}
   m_Layer: 0
-  m_Name: BackTablesw
+  m_Name: BackTables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5585,7 +5578,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.875
+      value: -5.5
       objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5626,6 +5619,14 @@ PrefabInstance:
     - target: {fileID: 5128274413978399931, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710656313039397208, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: OverrideMaxDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710656313039397208, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: OverrideMinDistance
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6298,6 +6299,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 7903016075579963352, guid: 9ce6f0fa5f31d49a1b0c7510a0170fff, type: 3}
+    - target: {fileID: 1103957328339039329, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1103957328339039329, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: m_SortingOrder
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1103957328339039329, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 721941457
+      objectReference: {fileID: 0}
     - target: {fileID: 3859405708248132063, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6343,8 +6356,24 @@ PrefabInstance:
       value: Visual
       objectReference: {fileID: 0}
     - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: sitOffset.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
       propertyPath: startSitting
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: overrideSorting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: sitSortingLayer
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8765720951215239086, guid: 707a6437e68f8496dbdac8877b0e20d9, type: 3}
+      propertyPath: sitSortingOrder
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
