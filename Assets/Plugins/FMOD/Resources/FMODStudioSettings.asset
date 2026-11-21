@@ -536,8 +536,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Again_v1.fspro
-  sourceBankPath: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build
+  sourceProjectPath: ../../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Again_v1.fspro
+  sourceBankPath: ../../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1

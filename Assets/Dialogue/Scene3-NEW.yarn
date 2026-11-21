@@ -429,8 +429,8 @@ tags: december10 rooftop door interactable testing
 ---
 <<if $dec10_janitor_examined is true and $dec10_rooftop_entered is false>>
     <<set $dec10_rooftop_entered to true>>
-    // The Rooftop scene uses a temporary background until its final art is imported.
-    <<scene_transition "Rooftop" "door">>
+    // Enter the stairway room before continuing to the rooftop exterior.
+    <<scene_transition "Rooftop Entrance" "door">>
 <<endif>>
 ===
 

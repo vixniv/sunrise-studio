@@ -41,5 +41,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Prologue.unity
     guid: 6e6166fba6b144275addc9a1a1f8aaa5
+  - enabled: 1
+    path: Assets/Scenes/Rooftop Entrance.unity
+    guid: 22df4299282484f9bbb81ecc7f66cbf1
+  - enabled: 1
+    path: Assets/Scenes/Rooftop.unity
+    guid: 8f71e26e4f24a43b397f401d66074e15
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
