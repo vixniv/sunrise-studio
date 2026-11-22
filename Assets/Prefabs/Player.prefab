@@ -468,8 +468,8 @@ MonoBehaviour:
   NonRigidbodyVelocity: 0
   Params: []
   OverrideAttenuation: 0
-  OverrideMinDistance: -1
-  OverrideMaxDistance: -1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &7358358093368023489
 GameObject:
   m_ObjectHideFlags: 0
@@ -788,6 +788,8 @@ MonoBehaviour:
   - chapterScene: 9
     dressedVariable: $anin_dressed
   - chapterScene: 10
+    dressedVariable: $anin_dressed
+  - chapterScene: 11
     dressedVariable: $anin_dressed
   dialogueRunner: {fileID: 0}
 --- !u!1001 &6697390529076107895

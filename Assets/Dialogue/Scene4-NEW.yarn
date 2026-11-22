@@ -5,7 +5,7 @@
 // Assign calendar-1 and calendar-2 to that overlay.
 // ANIMATION TODO: A dedicated flinch, climb into bed, and eyes-open/close sleep art.
 // CAMERA TODO: Close in on the circled calendar after Anin shuts her eyes.
-// STORY TODO: Connect the next morning after Scene 5 NEW is implemented.
+// The calendar reset now opens on the first playable repeat of December 10.
 
 title: Dec10_Wish_FlashbackState
 tags: setup testing
@@ -129,6 +129,5 @@ Anin: And goodbye, everyone...
 <<dialogue_speed 0>>
 // Camera close-up remains a centered calendar still until the camera shot is made.
 <<story_splash "calendar_circled">>
-<<time_loop_hold>>
-// The transition remains black. Scene 5 NEW is not connected yet.
+<<begin_loop_one>>
 ===

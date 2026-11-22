@@ -224,6 +224,9 @@ public class MapDoorInteractor : MonoBehaviour
             return;
         }
 
+        if (MapRoomAccessRules.TryShowBlockedLine(door.destinationScene, transform))
+            return;
+
         entering = true;
         ShowPrompt(false);
 
@@ -274,6 +277,9 @@ public class MapDoorInteractor : MonoBehaviour
 
     IEnumerator EnterDoor(MapDoor door)
     {
+        if (MapRoomAccessRules.TryShowBlockedLine(door.destinationScene, transform))
+            yield break;
+
         if (door.entryPoint == null)
         {
             Debug.LogError(
@@ -351,6 +357,9 @@ public class MapDoorInteractor : MonoBehaviour
     void LoadDestination(MapDoor door)
     {
         string targetScene = door.destinationScene.Trim();
+        if (MapRoomAccessRules.TryStartLunchEntry(targetScene))
+            return;
+
         AudioClip transitionSound = SunriseAudio.GetClip("door_open");
         if (transitionSound == null)
             transitionSound = door.enterSound;

@@ -184,6 +184,9 @@ public class MapRoomTap : MonoBehaviour
             return;
         }
 
+        if (MapRoomAccessRules.TryShowBlockedLine(targetScene, ResolveMapPlayer()))
+            return;
+
         if (!Application.CanStreamedLevelBeLoaded(targetScene))
         {
             Debug.LogWarning(
@@ -226,6 +229,9 @@ public class MapRoomTap : MonoBehaviour
 
             player.position = endPos;
         }
+
+        if (MapRoomAccessRules.TryStartLunchEntry(targetScene))
+            yield break;
 
         if (CircleTransition.Instance != null)
             CircleTransition.Instance.LoadSceneWithBlackFade(targetScene);

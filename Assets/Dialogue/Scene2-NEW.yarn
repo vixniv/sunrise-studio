@@ -80,6 +80,9 @@ tags: december9 day1 dorm interactable testing
 title: Dec9_Classroom_Arrival
 tags: december9 day1 classroom testing
 ---
+<<if $loop1_myth_flashback is true>>
+    <<jump Loop1_Classroom_MythFlashback>>
+<<endif>>
 <<if $dec10_wish_flashback is true>>
     <<jump Dec9_Classroom_WishFlashback>>
 <<endif>>
@@ -91,6 +94,22 @@ tags: december9 day1 classroom testing
 <<quest_update "dec9" "Talk with your friends">>
 // CONTROL ANIN. The friends' interaction starts Dec9_Classroom_Friends.
 // The Classroom map door runs Dec9_Classroom_Door until the scripted walk home.
+===
+
+title: Loop1_Classroom_MythFlashback
+tags: december9 classroom loop1 flashback testing
+---
+// Lila repeats her actual December 9 line; Anin remembers it from the same spot.
+Lila: You know, a senior once swore she repeated the same day.
+Lila: It's an old school myth. Circle today's date on a calendar, make a wish before midnight, and you'll wake up to the same day again.
+<<fade_black_out>>
+<<memory_montage false>>
+<<set $loop1_myth_flashback to false>>
+<<set $loop1_stage to "lockers_after_myth">>
+<<set $chapter_scene to 11>>
+<<set_time_of_day "morning">>
+<<replay_cutscene "Loop1_Lockers_Entry">>
+<<scene_transition_at_x "LockerRoom" -27.4375 "right">>
 ===
 
 title: Dec9_Classroom_WishFlashback

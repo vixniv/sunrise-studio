@@ -106,7 +106,10 @@ public class YarnCommands : MonoBehaviour
     public static bool IsTimeOfDay(string slot) => Key(slot) == Key(TimeOfDay);
 
     // Playtesting only (Tools > Playtest Start): jumps to a time slot without <<advance_time>> or its fade.
-    public static void SetTimeOfDayForTesting(string slot)
+    public static void SetTimeOfDayForTesting(string slot) => SetTimeOfDayWithoutFade(slot);
+
+    // Called by a transition that already owns the screen, such as the map's Loop 1 Lunch entry.
+    public static void SetTimeOfDayWithoutFade(string slot)
     {
         TimeOfDay = slot.Trim();
         TimeOfDayChanged?.Invoke();
@@ -188,6 +191,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("hard_reset_from_cutscene", (Func<YarnTask>)HardResetFromCutscene);
         runner.AddCommandHandler("soft_reset", (Func<YarnTask>)SoftReset);
         runner.AddCommandHandler("time_loop_reset", (Func<YarnTask>)SoftReset);
+        runner.AddCommandHandler("begin_loop_one", (Func<YarnTask>)BeginLoopOne);
         runner.AddCommandHandler("replay_cutscene", (Action<string>)YarnCutscene.ForgetPlayedNode);
         runner.AddCommandHandler("time_loop_hold", (Func<YarnTask>)TimeLoopHold);
         runner.AddCommandHandler("end_gap", (Func<YarnTask>)EndGap);
@@ -218,6 +222,9 @@ public class YarnCommands : MonoBehaviour
             Debug.Log($"Quest completed: {id}", this);
         }));
         runner.AddCommandHandler("quest_clear", (Action)(() => SunriseStudio.UI.QuestTracker.ClearQuest()));
+        // Keep the quest ID for scene-door routing while hiding its objective from the HUD.
+        runner.AddCommandHandler("quest_hide_objective", (Action<string>)(id =>
+            SunriseStudio.UI.QuestTracker.UpdateQuest(id, string.Empty)));
         runner.AddCommandHandler("event_marker", (Action<string, bool>)((id, visible) =>
         {
             if (visible) SunriseAudio.Play("ui_achievement");
@@ -548,9 +555,8 @@ public class YarnCommands : MonoBehaviour
 
     private void ApplyTimeOfDay(string slot)
     {
-        TimeOfDay = slot.Trim();
+        SetTimeOfDayWithoutFade(slot);
         Debug.Log($"<<advance_time>>: it is now {TimeOfDay}.", this);
-        TimeOfDayChanged?.Invoke();
     }
 
     // <<delay 1.5>>: pauses this Yarn node for 1.5 real seconds, even when the world is frozen.
@@ -1588,6 +1594,43 @@ public class YarnCommands : MonoBehaviour
         }
 
         return YarnTask.WaitUntil(() => loopTransition == null || !loopTransition.IsTransitioning);
+    }
+
+    // Start the first playable repeat of December 10 during the calendar reset.
+    private YarnTask BeginLoopOne()
+    {
+        void PrepareLoop()
+        {
+            runner.VariableStorage.SetValue("$chapter_scene", 11f);
+            runner.VariableStorage.SetValue("$anin_dressed", false);
+            runner.VariableStorage.SetValue("$loop1_calendar_checked", false);
+            runner.VariableStorage.SetValue("$loop1_dressed", false);
+            runner.VariableStorage.SetValue("$loop1_stage", "dorm");
+            StartOver(DefaultTimeOfDay, true);
+        }
+
+        string targetScene = FindBuildScene(Key(dormScene));
+        if (targetScene == null)
+        {
+            Debug.LogError("<<begin_loop_one>>: Dorm is missing from the Build Profile scene list.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        HideDialogueLine();
+        HideStorySplash();
+        TimeLoopResetTransition loopTransition = TimeLoopResetTransition.Instance;
+        if (loopTransition != null)
+        {
+            leaving = true;
+            if (loopTransition.PlayLoopReset("10", PrepareLoop, null, targetScene))
+                return YarnTask.WaitUntil(() => this == null || loopTransition == null || !loopTransition.IsTransitioning);
+            leaving = false;
+            Debug.LogError("<<begin_loop_one>>: the calendar transition is busy or missing UI references.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        PrepareLoop();
+        return LoadLocation(targetScene, "");
     }
 
     // <<end_gap>>: the gap is over and Dec 10 starts again in the Dorm, in the morning.

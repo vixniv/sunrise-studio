@@ -310,6 +310,11 @@ public class TimeLoopResetTransition : MonoBehaviour
         if (vignetteGrainImage != null) SetImageAlpha(vignetteGrainImage, 0f);
         fullBackdropImage.color = abyssInkColor;
 
+        // The reset can replace the room while the full-screen backdrop hides it.
+        // This was previously passed by callers but never used.
+        if (!string.IsNullOrWhiteSpace(sceneToLoad))
+            SceneManager.LoadScene(sceneToLoad);
+
         if (flashOverlayImage != null)
         {
             flashOverlayImage.color = new Color(bonePaperColor.r, bonePaperColor.g, bonePaperColor.b, 0.65f);
