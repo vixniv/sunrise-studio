@@ -357,9 +357,6 @@ public class MapDoorInteractor : MonoBehaviour
     void LoadDestination(MapDoor door)
     {
         string targetScene = door.destinationScene.Trim();
-        if (MapRoomAccessRules.TryStartLunchEntry(targetScene))
-            return;
-
         AudioClip transitionSound = SunriseAudio.GetClip("door_open");
         if (transitionSound == null)
             transitionSound = door.enterSound;

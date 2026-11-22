@@ -2981,6 +2981,7 @@ GameObject:
   - component: {fileID: 1581785296}
   - component: {fileID: 1581785295}
   - component: {fileID: 1581785299}
+  - component: {fileID: 1581785300}
   m_Layer: 0
   m_Name: Dira
   m_TagString: Untagged
@@ -3088,6 +3089,50 @@ MonoBehaviour:
   rimIntensityAtFullCoverage: 0.75
   coverageSamplesX: 8
   coverageSamplesY: 16
+--- !u!114 &1581785300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581785294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
+  cue: {fileID: 0}
+  interactionLabel: Talk
+  wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
+  dialog: {fileID: 0}
+  yarnDialog: {fileID: 0}
+  availableWhenYarnVariable: $loop1_stage
+  availableWhenValues:
+  - find_lila
+  availabilityRunner: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  choices:
+  - label: Talk
+    icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
+    yarnNode: Loop1_Photography_Dira
+    dialogLines:
+    - Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    onChoose:
+      m_PersistentCalls:
+        m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
+  approachAnchor: {fileID: 0}
+  playInteractSound: 1
+  tapMaxTravel: 0.02
+  tapMaxSeconds: 0.35
 --- !u!1 &1621232699
 GameObject:
   m_ObjectHideFlags: 0
@@ -4803,7 +4848,7 @@ PrefabInstance:
       objectReference: {fileID: 2032489817}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].name
@@ -4818,6 +4863,10 @@ PrefabInstance:
       value: Kirana
       objectReference: {fileID: 0}
     - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[3].name
+      value: Dira
+      objectReference: {fileID: 0}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: actors.Array.data[0].target
       value: 
       objectReference: {fileID: 2012960145}
@@ -4829,6 +4878,10 @@ PrefabInstance:
       propertyPath: actors.Array.data[2].target
       value: 
       objectReference: {fileID: 823554261}
+    - target: {fileID: 6328864532096563477, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
+      propertyPath: actors.Array.data[3].target
+      value: 
+      objectReference: {fileID: 1581785294}
     - target: {fileID: 8395286795773695412, guid: fcb42201b5a1d417f9eb8b442e203f5c, type: 3}
       propertyPath: m_Name
       value: Dialogue
@@ -6417,7 +6470,6 @@ SceneRoots:
   - {fileID: 1336086768}
   - {fileID: 448491669}
   - {fileID: 2109752819}
-  - {fileID: 1581785298}
   - {fileID: 18589154}
   - {fileID: 1326022623}
   - {fileID: 1863427836}
@@ -6432,6 +6484,7 @@ SceneRoots:
   - {fileID: 904614573}
   - {fileID: 846545564}
   - {fileID: 823554262}
+  - {fileID: 1581785298}
   - {fileID: 1255555872}
   - {fileID: 823952958}
   - {fileID: 1269322117}

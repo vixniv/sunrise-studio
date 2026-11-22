@@ -2291,10 +2291,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.32395834
+    x: 0.2372235
     y: 0
-    width: 0.5572878
-    height: 0.4564815
+    width: 0.4080826
+    height: 0.4087894
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2324,7 +2324,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.0639305, y: 2.43684, z: -10}
+  m_LocalPosition: {x: -11.063932, y: 2.43684, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7938,7 +7938,7 @@ MonoBehaviour:
   startNode: Loop1_Lockers_Entry
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
-  startDelay: 0.5
+  startDelay: 0
   firstVisitBlackFadeInSeconds: 0
   player: {fileID: 1616248450}
   initialFacing: 0
@@ -12623,7 +12623,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2556371763675637220, guid: 3d8bc421b00a940afb348e8a770b3b9f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

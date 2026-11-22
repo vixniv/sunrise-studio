@@ -19,7 +19,6 @@ tags: setup testing
 <<declare $loop1_stage = "dorm">>
 <<declare $loop1_myth_flashback = false>>
 <<declare $loop1_students_left = false>>
-<<declare $loop1_asked_lila_about_dira = false>>
 ===
 
 // ---------------------------------------------------------------------
@@ -134,6 +133,8 @@ tags: december10 loop1 lockers entry testing
 <<elseif $loop1_stage == "lockers_after_myth">>
     <<jump Loop1_Lockers_AfterMyth>>
 <<elseif $loop1_stage == "fresh_air">>
+    <<hide "StudentALoop1">>
+    <<hide "StudentBLoop1">>
     <<jump Loop1_Lockers_Night>>
 <<endif>>
 ===
@@ -175,8 +176,7 @@ title: Loop1_Cafeteria_Entry
 tags: december10 loop1 cafeteria entry testing
 ---
 <<if $loop1_stage == "find_kirana">>
-    // SchoolMap plays the Morning-to-Lunch clock transition instead of its black room fade.
-    // Keep direct Playtest Start entries in sync when they bypass SchoolMap.
+    // SchoolMap uses its normal black room-entry fade. Set Lunch while it opens.
     <<set_time_of_day "lunch">>
     Anin: Okay. If I sit at our usual table, Kirana will come over, just like yesterday.
     <<quest_update "loop1" "Sit at the usual table">>
@@ -231,11 +231,11 @@ title: Loop1_Auditorium_Entry
 tags: december10 loop1 auditorium entry testing
 ---
 <<if $loop1_stage == "find_dira">>
-    // Dira's previous spot was X -44.98. Anin walks to its +2.5 offset,
-    // beginning while the room's black entry fade is still opening.
-    <<place_character_near_x "Anin" -42.48 8>>
-    <<delay 0.75>>
-    <<move_character "Anin" -42.48 4 "walk">>
+    // Start a short approach under the entry fade, as in the Classroom day-end scene.
+    // A fixed start X ensures this plays even if the door spawn is already near the target.
+    <<teleport_character "Anin" -26 "left">>
+    // The first-visit reveal lasts two seconds, so this approach continues after it opens.
+    <<move_character "Anin" -36.93303 6 "walk">>
     Anin: Diraa! Let's go take a photo togeth...
     Anin: Wait...
     Anin: Why isn't she here?
@@ -261,12 +261,13 @@ tags: december10 loop1 library interactable testing
     Dira: Or else?
     Anin: No free lunch for you.
     Dira: Wait, what happened? Why are you suddenly so generous?
-    Anin: You wound me. I can be nice once in a while, you know.
+    Anin: What?? I can be nice once in a while, you know.
     Dira: Hehe, of course you can. Where should we take it?
     Anin: Photography Club. Kirana's already waiting. I'm gonna grab Lila real quick.
     Dira: Okay. Anything for a free lunch.
     <<close_dialogue_bubble>>
-    <<door_exit "DiraSceneLoop1" "Library">>
+    <<move_character "DiraSceneLoop1" -10.16 6 "walk">>
+    <<hide "DiraSceneLoop1">>
     Anin: One more to go. Dira wasn't where she was yesterday, so Lila might not be at Photography Club either.
     <<set $loop1_stage to "find_lila">>
     <<quest_update "loop1" "Find Lila">>
@@ -281,16 +282,24 @@ tags: december10 loop1 library interactable testing
 title: Loop1_Music_Entry
 tags: december10 loop1 musicroom entry testing
 ---
-<<if $loop1_stage == "search_dira" and $loop1_asked_lila_about_dira is false>>
+// Both search conversations begin when Anin talks to Lila, not on room entry.
+<<stop>>
+===
+
+title: Loop1_Music_Lila_Search
+tags: december10 loop1 musicroom interactable testing
+---
+<<if $loop1_stage == "search_dira">>
     Anin: Lila, have you seen Dira?
-    Lila: Not since this morning. I was about to head back to the Dorm.
-    Anin: Wait. I still want a photo with everyone. Don't go home yet.
-    Lila: Okay, okay. I'll stay until we get that photo.
-    <<set $loop1_asked_lila_about_dira to true>>
+    Lila: No, I don't. What you guys up to?
+    Anin: Wait here, I'll explain later.
 <<elseif $loop1_stage == "find_lila">>
     Anin: Morning, dummy.
+    <<face_character "LilaSceneLoop1" "left">>
     Lila: What? Who said tha...
     Lila: Oh, it's just Anin. What's up?
+    <<close_dialogue_bubble>>
+    <<move_character_to_actor "Anin" "LilaSceneLoop1" 2.5 4 "walk">>
     Anin: Nothing. Just felt like playing some guitar today.
     Lila: Wait, we've known each other for three years and you're only now telling me you play guitar?
     Anin: Nope. Who said I could play?
@@ -304,7 +313,7 @@ tags: december10 loop1 musicroom entry testing
     Anin: Yup. Your skill at making every photo blurry or cutting someone's head off.
     Lila: HEY! STOP REMEMBERING THAT!
     <<set $loop1_stage to "photo_montage">>
-    <<scene_transition "PhotographyClub">>
+    <<advance_time_to_scene "after_school" "PhotographyClub">>
 <<endif>>
 ===
 
@@ -316,6 +325,7 @@ tags: december10 loop1 photographyclub entry testing
     // Kirana waits here while Anin searches for Dira.
 <<elseif $loop1_stage == "find_lila">>
     <<show "Kirana">>
+    <<show "Dira">>
     // Kirana remains here while Anin searches for Lila.
 <<elseif $loop1_stage == "photo_montage">>
     // The room opens directly onto a black screen with text centered in it.
@@ -326,7 +336,8 @@ tags: december10 loop1 photographyclub entry testing
     The others were, to put it mildly, very happy about it.
     <<set $loop1_stage to "after_school">>
     // Keep the black panel up until the room changes, avoiding a flash of the room.
-    <<advance_time_to_scene "after_school" "Cafeteria">>
+    <<fade_black_out>>
+    <<scene_transition_from_black "Cafeteria" 2>>
 <<endif>>
 ===
 
@@ -334,19 +345,35 @@ title: Loop1_Photography_Kirana
 tags: december10 loop1 photographyclub interactable testing
 ---
 <<if $loop1_stage == "search_dira">>
-    Anin: Kirana, have you seen Dira?
-    Kirana: Not yet. I'll wait here while you look for her.
+    Kirana: Hurry up Anin, I'm hungry.
 <<elseif $loop1_stage == "find_lila">>
     Kirana: Any sign of Lila? I'll stay here for the photo.
+<<endif>>
+===
+
+title: Loop1_Photography_Dira
+tags: december10 loop1 photographyclub interactable testing
+---
+<<if $loop1_stage == "find_lila">>
+    Dira: You'd better not be joking about that free lunch, Anin.
 <<endif>>
 ===
 
 title: Loop1_Cafeteria_AfterSchool
 tags: december10 loop1 cafeteria afterschool testing
 ---
-// The friends stand near the door, ready to leave.
+// Place Anin alone on the left, facing Kirana, Dira, and Lila on the right.
+<<teleport_character "Anin" -31.25 "right">>
+<<teleport_character "KiranaSceneLoop1" -28.5 "left">>
+<<teleport_character "DiraSceneLoop1" -26.75 "left">>
+<<teleport_character "LilaSceneLoop1" -25 "left">>
 <<show "KiranaSceneLoop1">>
+<<show "DiraSceneLoop1">>
+<<show "LilaSceneLoop1">>
+<<stand "Anin">>
+<<stand "DiraSceneLoop1">>
 <<stand "KiranaSceneLoop1">>
+<<stand "LilaSceneLoop1">>
 Dira: Hey, Anin. You seem happier today.
 Anin: Hmm, do I?
 Lila: Now that you mention it, she does seem pretty chipper.
@@ -364,7 +391,12 @@ Kirana: ...
 Kirana: Okay. Take care, Anin.
 Dira: R-right. Don't stay too late, okay?
 Lila: See you tomorrow, Anin!
-// The friends leave Anin alone by the door.
+// Let the friends walk completely off the left edge before hiding them.
+<<close_dialogue_bubble>>
+<<start_character_move "KiranaSceneLoop1" -40.5 6 "walk" 0>>
+<<start_character_move "DiraSceneLoop1" -40.5 6 "walk" 0.15>>
+<<start_character_move "LilaSceneLoop1" -40.5 6 "walk" 0.3>>
+<<wait_for_character_moves>>
 <<hide "KiranaSceneLoop1">>
 <<hide "DiraSceneLoop1">>
 <<hide "LilaSceneLoop1">>
@@ -380,7 +412,7 @@ title: Loop1_Cafeteria_Exit
 tags: december10 loop1 cafeteria exit testing
 ---
 <<if $loop1_stage == "fresh_air">>
-    <<advance_time_to_scene "night" "LockerRoom">>
+    <<advance_time_to_scene_at_door "night" "LockerRoom" "SchoolMap">>
 <<elseif $loop1_stage == "find_kirana">>
     Anin: I should sit at our table first.
 <<else>>
@@ -395,6 +427,9 @@ tags: december10 loop1 cafeteria exit testing
 title: Loop1_Lockers_Night
 tags: december10 loop1 lockers night ending testing
 ---
+// The Cafeteria transition places Anin at the right SchoolMap-door spawn.
+// Walk toward the left Dorm-door spawn while each line remains tap-to-advance.
+<<start_character_move "Anin" -17.87 3 "walk" 0>>
 Anin: ...
 Anin: Why did they have to bring up the future? Now my whole mood's ruined.
 Anin: It's like nobody here understands me. What's so bad about living in the moment?
@@ -402,7 +437,9 @@ Anin: Nobody?
 Anin: Is it really nobody?
 Anin: Wait...
 Anin: Why do I feel like I'm forgetting something important?
-// Existing Fal death cutscene is a temporary reuse. Its text and frames will be revised.
+<<close_dialogue_bubble>>
+<<wait_for_character_moves>>
+// The Fal fall pictures begin only after Anin reaches the left side.
 <<detour Cutscene_FalFall>>
 // Cut directly from its final image to a black thank-you card.
 <<cutscene_black>>

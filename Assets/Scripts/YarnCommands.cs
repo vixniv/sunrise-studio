@@ -132,6 +132,7 @@ public class YarnCommands : MonoBehaviour
         // The player gets control back when the node ends, so there is nothing to do here.
         runner.AddCommandHandler("enable_control", (Action)(() => { }));
         runner.AddCommandHandler("scene_transition", (Func<string, string, YarnTask>)SceneTransition);
+        runner.AddCommandHandler("scene_transition_from_black", (Func<string, float, YarnTask>)SceneTransitionFromBlack);
         runner.AddCommandHandler("scene_transition_at_x", (Func<string, float, string, YarnTask>)SceneTransitionAtX);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
         runner.AddCommandHandler("advance_time_silent", (Func<string, YarnTask>)AdvanceTimeSilent);
@@ -309,6 +310,23 @@ public class YarnCommands : MonoBehaviour
         return LoadLocation(location, sound);
     }
 
+    // <<scene_transition_from_black "Cafeteria" 2>>: loads a room from an already-black screen,
+    // then takes the specified number of seconds to reveal it.
+    private YarnTask SceneTransitionFromBlack(string location, float fadeInSeconds)
+    {
+        if (float.IsNaN(fadeInSeconds) || float.IsInfinity(fadeInSeconds) || fadeInSeconds <= 0f)
+        {
+            Debug.LogError("<<scene_transition_from_black>>: fade-in seconds must be greater than zero.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        string key = Key(location);
+        if (key == Key(SceneManager.GetActiveScene().name) || locationsInThisScene.Exists(l => Key(l) == key))
+            return YarnTask.CompletedTask;
+
+        return LoadLocation(location, "", null, fadeInSeconds);
+    }
+
     // <<scene_transition_at_x "Library" -8 "right">>: loads a room with the player at X before its first frame.
     // Use "sit" to seat the player at that X before the transition opens.
     private YarnTask SceneTransitionAtX(string location, float destinationX, string facing)
@@ -347,7 +365,7 @@ public class YarnCommands : MonoBehaviour
     }
 
     // Loads location even when it is this scene, so a reset reloads the room with the objects of the new $chapter_scene.
-    private YarnTask LoadLocation(string location, string sound, Action whileCovered = null)
+    private YarnTask LoadLocation(string location, string sound, Action whileCovered = null, float blackFadeInSeconds = 0f)
     {
         string scene = FindBuildScene(Key(location));
         if (scene == null)
@@ -372,7 +390,9 @@ public class YarnCommands : MonoBehaviour
             {
                 CircleTransition transition = CircleTransition.Instance;
                 if (transition.IsBlack)
-                    transition.LoadSceneFromBlack(scene, transition.openDuration, whileCovered);
+                    transition.LoadSceneFromBlack(scene,
+                        blackFadeInSeconds > 0f ? blackFadeInSeconds : transition.openDuration,
+                        whileCovered);
                 else
                     transition.LoadScene(scene, clip, 1f, whileCovered);
             }

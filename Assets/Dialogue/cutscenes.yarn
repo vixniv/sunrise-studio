@@ -57,24 +57,9 @@ I wish I could stay in high school forever.
 title: Cutscene_FalFall
 tags: cutscene
 ---
-<<cutscene_image "cutscene_fals_death_1a">>
-It was peaceful evening, everyone's here and Fal will come soon.
-Until...
-
-<<cutscene_image "cutscene_fals_death_1b">>
-<<sfx "fall_impact">>
-Empty
-
-<<cutscene_image_keep_text "cutscene_fals_death_2">>
-<<sfx "distant_scream">>
-
-<<cutscene_image "cutscene_fals_death_3a">>
-There's crowd at school park. It was too packed you can't see what's happening there.
-
-<<cutscene_image_keep_text "cutscene_fals_death_3b">>
-
-<<cutscene_image_keep_text "cutscene_fals_death_3c">>
-
+<<cutscene_image "cutscene_fals_death_3c">>
+This wasn't the day Anin had imagined, much less the one she'd wished for.
 <<cutscene_image "cutscene_fals_death_3d">>
-...Again
+<<sfx "fall_impact">>
+The day ended—and Fal's life with it.
 ===

@@ -230,9 +230,6 @@ public class MapRoomTap : MonoBehaviour
             player.position = endPos;
         }
 
-        if (MapRoomAccessRules.TryStartLunchEntry(targetScene))
-            yield break;
-
         if (CircleTransition.Instance != null)
             CircleTransition.Instance.LoadSceneWithBlackFade(targetScene);
         else

@@ -28,27 +28,15 @@ public static class MapRoomAccessRules
 
         YarnDialogPresenter dialogue = UnityEngine.Object.FindAnyObjectByType<YarnDialogPresenter>();
         if (dialogue != null && !dialogue.IsPlaying)
-            dialogue.PlayLines(new[] { line }, mapPlayer, new Vector2(0f, 0.25f), null, null);
+        {
+            DialogueHudView hud = UnityEngine.Object.FindAnyObjectByType<DialogueHudView>();
+            if (hud != null) hud.SetSplashPresentation(true);
+            dialogue.PlayLines(new[] { line }, mapPlayer, new Vector2(0f, 0.25f), null,
+                () => { if (hud != null) hud.SetSplashPresentation(false); });
+        }
         else
             SunriseAudio.Play("ui_error");
 
-        return true;
-    }
-
-    public static bool TryStartLunchEntry(string destinationScene)
-    {
-        if (!IsObjective("Find Kirana at the cafeteria") ||
-            !string.Equals(destinationScene?.Trim(), "Cafeteria", StringComparison.OrdinalIgnoreCase) ||
-            YarnCommands.IsTimeOfDay("lunch"))
-            return false;
-
-        TimeTransition transition = TimeTransition.Instance;
-        if (transition == null || !transition.PlayCycleTransition(
-                StoryTimeSlot.Morning, StoryTimeSlot.Lunch,
-                () => YarnCommands.SetTimeOfDayWithoutFade("lunch"), destinationScene))
-            return false;
-
-        SunriseAudio.Play("day_transition");
         return true;
     }
 }

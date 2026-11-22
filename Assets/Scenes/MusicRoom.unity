@@ -1326,7 +1326,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6279886795483939002, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.18
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6279886795483939002, guid: d8ce1d65acafe4cafb45ae8d6091dc26, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5785,6 +5785,7 @@ GameObject:
   - component: {fileID: 2063496359}
   - component: {fileID: 2063496358}
   - component: {fileID: 2063496357}
+  - component: {fileID: 2063496360}
   m_Layer: 0
   m_Name: Lila
   m_TagString: Untagged
@@ -5801,7 +5802,7 @@ Transform:
   m_GameObject: {fileID: 2063496355}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.79, y: -2.90625, z: 0}
+  m_LocalPosition: {x: 2.21, y: -2.90625, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5892,6 +5893,49 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.5625, y: 5.8125}
   m_EdgeRadius: 0
+--- !u!114 &2063496360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063496355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15c3e2c6d1da441e850e65a5638d81e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChoiceInteractable
+  cue: {fileID: 0}
+  interactionLabel: Talk
+  wheel: {fileID: 0}
+  actionCarousel: {fileID: 0}
+  dialog: {fileID: 0}
+  yarnDialog: {fileID: 1876352129}
+  availableWhenYarnVariable: $loop1_stage
+  availableWhenValues:
+  - search_dira
+  - find_lila
+  availabilityRunner: {fileID: 0}
+  dialogOffset: {x: 0, y: 0.25}
+  choices:
+  - label: Talk
+    icon: {fileID: 0}
+    description: 
+    timeCostMinutes: 0
+    locked: 0
+    lockedReason: 
+    yarnNode: Loop1_Music_Lila_Search
+    dialogLines: []
+    onChoose:
+      m_PersistentCalls:
+        m_Calls: []
+  approachBeforeTalking: 0
+  approachDistance: 1.5
+  approachSide: 0
+  approachAnchor: {fileID: 0}
+  playInteractSound: 1
+  tapMaxTravel: 0.02
+  tapMaxSeconds: 0.35
 --- !u!1 &2100638635
 GameObject:
   m_ObjectHideFlags: 0
