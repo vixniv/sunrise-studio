@@ -963,6 +963,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 1
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 2
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -1465,6 +1466,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -2055,6 +2057,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 1
+  keepSpeakerFacingOnApproach: 1
   approachDistance: 1.8
   approachSide: 1
   approachAnchor: {fileID: 0}
@@ -3767,6 +3770,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4110,6 +4114,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4583,6 +4588,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4919,6 +4925,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -5775,6 +5782,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 1
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 3.9
   approachSide: 1
   approachAnchor: {fileID: 0}
@@ -6846,6 +6854,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}

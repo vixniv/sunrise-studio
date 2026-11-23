@@ -109,6 +109,7 @@ tags: december10 loop1 dorm exit testing
 title: Loop1_Lockers_Entry
 tags: december10 loop1 lockers entry testing
 ---
+<<quest_hide_objective "loop1">>
 <<if $loop1_stage == "lockers">>
     // Student A and Student B are clearing their lockers. They exit right.
     Student A: You're still not done clearing your locker?
@@ -198,7 +199,7 @@ tags: december10 loop1 cafeteria interactable testing
     // Kirana approaches after Anin sits. Tune the offset with the table layout.
     <<show "KiranaSceneLoop1">>
     <<stand "KiranaSceneLoop1">>
-    <<move_character_to_actor "KiranaSceneLoop1" "Anin" -2.5 6 "walk">>
+    <<move_character_to_actor "KiranaSceneLoop1" "Anin" -2 6 "walk">>
     Kirana: Hey! Same table?
     <<face_character "Anin" "left">>
     Anin: (Wow. It really happened.) As always.
@@ -252,6 +253,7 @@ tags: december10 loop1 library interactable testing
 ---
 <<if $loop1_stage == "search_dira">>
     Anin: Here you are...
+    <<face_character "DiraSceneLoop1" "left">>
     Dira: Hey, Anin. It's rare to see you here. Need something?
     Anin: Yup. As a matter of fact, I do.
     Anin: Let's take a group photo. All of us.
@@ -282,8 +284,9 @@ tags: december10 loop1 library interactable testing
 title: Loop1_Music_Entry
 tags: december10 loop1 musicroom entry testing
 ---
-// Both search conversations begin when Anin talks to Lila, not on room entry.
-<<stop>>
+<<if $loop1_stage == "find_lila">>
+    <<jump Loop1_Music_Lila_Search>>
+<<endif>>
 ===
 
 title: Loop1_Music_Lila_Search
@@ -299,7 +302,7 @@ tags: december10 loop1 musicroom interactable testing
     Lila: What? Who said tha...
     Lila: Oh, it's just Anin. What's up?
     <<close_dialogue_bubble>>
-    <<move_character_to_actor "Anin" "LilaSceneLoop1" 2.5 4 "walk">>
+    <<move_character_to_actor "Anin" "LilaSceneLoop1" -2.5 4 "walk">>
     Anin: Nothing. Just felt like playing some guitar today.
     Lila: Wait, we've known each other for three years and you're only now telling me you play guitar?
     Anin: Nope. Who said I could play?
@@ -400,6 +403,7 @@ Lila: See you tomorrow, Anin!
 <<hide "KiranaSceneLoop1">>
 <<hide "DiraSceneLoop1">>
 <<hide "LilaSceneLoop1">>
+<<face_character "Anin" "left">>
 Anin: ...
 <<delay 2>>
 Anin: I need some fresh air...
@@ -437,7 +441,7 @@ Anin: Nobody?
 Anin: Is it really nobody?
 Anin: Wait...
 Anin: Why do I feel like I'm forgetting something important?
-<<close_dialogue_bubble>>
+// <<close_dialogue_bubble>>
 <<wait_for_character_moves>>
 // The Fal fall pictures begin only after Anin reaches the left side.
 <<detour Cutscene_FalFall>>

@@ -129,6 +129,7 @@ namespace SunriseStudio.UI
         {
             current.sfxVolume = Mathf.Clamp01(value);
             Save();
+            SunriseAudio.SetSfxVolume(current.sfxVolume);
             onSfxVolumeChanged.Invoke(current.sfxVolume);
         }
 
@@ -151,6 +152,7 @@ namespace SunriseStudio.UI
         void BroadcastCurrentValues()
         {
             SunriseAudio.SetMusicVolume(current.musicVolume);
+            SunriseAudio.SetSfxVolume(current.sfxVolume);
             onMusicVolumeChanged.Invoke(current.musicVolume);
             onSfxVolumeChanged.Invoke(current.sfxVolume);
             onHapticsChanged.Invoke(current.hapticsEnabled);

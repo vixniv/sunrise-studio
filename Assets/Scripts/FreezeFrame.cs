@@ -50,7 +50,7 @@ public class FreezeFrame : MonoBehaviour
     private IEnumerator PlayRoutine()
     {
         playing = true;
-        if (shutterSound != null && audioSource != null) audioSource.PlayOneShot(shutterSound);
+        if (shutterSound != null && audioSource != null) audioSource.PlayOneShot(shutterSound, SunriseAudio.SfxVolume);
         if (stopTime)
         {
             frozen = true;

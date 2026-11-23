@@ -112,6 +112,7 @@ public static class DoorSpawn
                     body.linearVelocity = Vector2.zero;
                 }
                 FacePlayer(scene, player, candidate, doorPosition.x);
+                ResetCameraForArrival(scene);
                 Debug.Log($"DoorSpawn: story transition placed the player at {candidate.name}'s Spawn Point in {scene.name}.", candidate);
                 return;
             }
@@ -138,6 +139,7 @@ public static class DoorSpawn
                 foreach (SitPose pose in poses)
                     pose.Sit();
             }
+            ResetCameraForArrival(scene);
             Debug.Log($"DoorSpawn: story transition placed the player at X {pendingX} in {scene.name}, facing {(pendingFaceRight ? "Right" : "Left")}.", player);
             return;
         }
@@ -146,6 +148,7 @@ public static class DoorSpawn
         {
             if (cutscene.KeepsPlayerInPlace)
             {
+                ResetCameraForArrival(scene);
                 Debug.Log($"DoorSpawn: {cutscene.name} plays with Keep Player Position, so the player stays where the scene places them.", cutscene);
                 return;
             }
@@ -154,6 +157,7 @@ public static class DoorSpawn
         SceneDoor[] doors = InScene<SceneDoor>(scene);
         if (doors.Length == 0)
         {
+            ResetCameraForArrival(scene);
             Debug.Log($"DoorSpawn: {scene.name} has no active SceneDoor, so the player stays where the scene places them.");
             return;
         }
@@ -207,6 +211,7 @@ public static class DoorSpawn
         }
 
         FacePlayer(scene, player, door, position.x);
+        ResetCameraForArrival(scene);
         // Only when the player really walked in through this door, not when it is just the default entrance.
         if (door.LeadsTo(previousScene))
             door.PlayArrival();
@@ -276,6 +281,15 @@ public static class DoorSpawn
 
         Debug.Log($"DoorSpawn: map player starts at {targetMarker.name} in {scene.name} " +
                   $"because they came from {previousScene}.", targetMarker);
+    }
+
+    private static void ResetCameraForArrival(Scene scene)
+    {
+        CircleTransition transition = CircleTransition.Instance;
+        if (transition != null)
+            transition.PrimeCameraForScene(scene);
+        else
+            CinemachineCore.ResetCameraState();
     }
 
     // Active components of type T in scene only, unlike FindObjectsByType, which also returns the old scene's.

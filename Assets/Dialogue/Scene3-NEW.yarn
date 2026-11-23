@@ -109,6 +109,7 @@ tags: december10 dorm interactable testing
 title: Dec10_Lockers_Arrival
 tags: december10 lockers testing
 ---
+<<quest_hide_objective "dec10">>
 <<if $dec10_room_count >= 6>>
     <<hide "StudentA">>
     <<hide "StudentB">>
@@ -170,6 +171,7 @@ tags: december10 lockers interactable testing
 ---
 <<if $dec10_missing_key_started is false>>
     // The janitor's locker key is still hanging here.
+    <<face_character "Anin" "left">>
     Anin: (I think that is the key to the Janitor's Locker.)
 <<else>>
     // The separate key sprite hides when $dec10_missing_key_started becomes true.
@@ -379,7 +381,7 @@ tags: december10 schoolmap testing
 <<if $dec10_pending_map_thought == "lunch">>
     <<set $dec10_pending_map_thought to "">>
     <<dialogue_bottom_left true>>
-    Anin: (Already lunchtime? Guess the Cafetaria will be packed right around now.)
+    Anin: (Already lunchtime? Guess the cafeteria will be packed right around now.)
     <<close_dialogue_bubble>>
     <<dialogue_bottom_left false>>
 <<elseif $dec10_pending_map_thought == "after_school">>
@@ -421,7 +423,7 @@ tags: december10 lockers rooftop interactable testing
     Anin: (Aw, I wanted to see the view one last time.)
     <<story_splash_end>>
     // CAMERA TODO: Pan to the Key Hook, then the Janitor's Locker.
-    <<face_character "Anin" "right">>
+    <<face_character "Anin" "left">>
     Anin: (I think that is the key to the Janitor's Locker.)
     Anin: (The rooftop key's probably in there.)
     Anin: (...Yeah, I'm not touching that.)
@@ -485,6 +487,7 @@ Anin: Want me to change the subject?
 Fal: Nah. It's nice talking to someone who listens.
 Anin: ...I can do that.
 Fal: I know. That's why I like talking to you.
+<<close_dialogue_bubble>>
 // A brief, comfortable silence.
 <<delay 0.7>>
 // Early night: the school is nearing closing time.

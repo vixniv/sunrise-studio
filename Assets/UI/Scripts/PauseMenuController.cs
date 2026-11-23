@@ -162,6 +162,12 @@ namespace SunriseStudio.UI
         {
             onQuitRequested.Invoke();
             RestoreRuntimeState();
+            if (CircleTransition.Instance != null)
+                CircleTransition.Instance.ResetForTitleScreen();
+            if (TimeTransition.Instance != null)
+                TimeTransition.Instance.ResetForTitleScreen();
+            if (TimeLoopResetTransition.Instance != null)
+                TimeLoopResetTransition.Instance.ResetForTitleScreen();
             if (!string.IsNullOrWhiteSpace(mainMenuScene))
                 SceneManager.LoadScene(mainMenuScene.Trim());
         }

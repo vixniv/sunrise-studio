@@ -149,6 +149,13 @@ public class TimeTransition : MonoBehaviour
 
     public bool IsTransitioning => transitioning;
 
+    public void ResetForTitleScreen()
+    {
+        StopAllCoroutines();
+        transitioning = false;
+        ResetIdleState();
+    }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -333,7 +340,10 @@ public class TimeTransition : MonoBehaviour
             AsyncOperation loading = SceneManager.LoadSceneAsync(sceneToLoad);
             while (loading != null && !loading.isDone)
                 yield return null;
-            yield return null;
+            if (CircleTransition.Instance != null)
+                yield return CircleTransition.Instance.SettleCameraBeforeReveal(sceneToLoad);
+            else
+                yield return null;
         }
 
         if (postTickHold > 0f)
@@ -704,7 +714,7 @@ public class TimeTransition : MonoBehaviour
             }
         }
 
-        audioSource.PlayOneShot(clip, sfxVolume);
+        audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
     }
 
     Color GetSlotAccentColor(StoryTimeSlot slot)
