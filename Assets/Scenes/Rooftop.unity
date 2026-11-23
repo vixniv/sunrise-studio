@@ -1427,9 +1427,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.13515754
-    width: 0.24485126
-    height: 0.24527535
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1459,7 +1459,7 @@ Transform:
   m_GameObject: {fileID: 409442818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -36.50224, y: 2.436469, z: -10}
+  m_LocalPosition: {x: -36.470455, y: 2.4365091, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2511,6 +2511,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LightingRig
       objectReference: {fileID: 0}
+    - target: {fileID: 2968868521319789629, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: nightIntensity
+      value: 0.45
+      objectReference: {fileID: 0}
     - target: {fileID: 3444334783152024996, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.3841
@@ -2551,6 +2555,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4954844735585777664, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
+      propertyPath: sharedProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: bb814bdc343a141ee82fcb844d8a96fb, type: 2}
     - target: {fileID: 6218955904402205923, guid: 5542a516bc81648eead4808fdffcf393, type: 3}
       propertyPath: m_Intensity
       value: 1
@@ -2897,6 +2905,8 @@ MonoBehaviour:
   - light: {fileID: 1846092172}
   - light: {fileID: 1842134861}
   - light: {fileID: 1653525800}
+  useWindowLightsAtNight: 0
+  useCustomNightLights: 0
 --- !u!4 &1361346472
 Transform:
   m_ObjectHideFlags: 0

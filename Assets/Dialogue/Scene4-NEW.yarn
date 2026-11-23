@@ -81,11 +81,12 @@ Anin: How do they all know what they want to do after school?
 Anin: All I wanted was to keep enjoying high school forever.
 Anin: And look where that got me. I still have no clue what I want to be. Graduation's tomorrow. Shoot, I'm too late.
 Anin: I'm... scared.
-// Anin takes one backward step while still facing the window, then flinches.
+// Anin takes one backward step, pauses, then shudders as the next line appears.
 <<close_dialogue_bubble>>
 <<move_character_keep_facing "Anin" -8.3 2 "walk">>
-// <<flinch_character "Anin">>
-Anin: *flinches
+<<delay 0.5>>
+<<start_flinch_character "Anin">>
+// Anin: *flinches
 Anin: I'm... scared to move on with my life.
 Anin: I want to go back...
 Anin: Go back and rewind the time I have with my friends.
