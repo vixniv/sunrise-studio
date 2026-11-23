@@ -1716,10 +1716,10 @@ MonoBehaviour:
   Path: ../../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 639308148590000000
+  lastModified: 639310764220000000
   FileSizes:
   - Name: Desktop
-    Value: 1943616
+    Value: 1955456
   Exists: 1
 --- !u!114 &-3357127579568912814
 MonoBehaviour:
@@ -2719,7 +2719,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: -6349216494524935377}
   cacheVersion: 131861
-  cacheTime: 639308148590000000
+  cacheTime: 639310764220000000
   SerializableEventsDict:
   - key: event:/UI/Button_Click
     index: 0
@@ -4487,10 +4487,10 @@ MonoBehaviour:
   Path: ../../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/UI.bank
   Name: UI
   StudioPath: bank:/UI
-  lastModified: 639308148580000000
+  lastModified: 639310764220000000
   FileSizes:
   - Name: Desktop
-    Value: 73888
+    Value: 74720
   Exists: 1
 --- !u!114 &7443180149871169898
 MonoBehaviour:
@@ -4507,10 +4507,10 @@ MonoBehaviour:
   Path: ../../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/Music.bank
   Name: Music
   StudioPath: bank:/Music
-  lastModified: 639308148580000000
+  lastModified: 639310764210000000
   FileSizes:
   - Name: Desktop
-    Value: 2897664
+    Value: 2898368
   Exists: 1
 --- !u!114 &7587140474491237401
 MonoBehaviour:

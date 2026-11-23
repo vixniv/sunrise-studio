@@ -804,6 +804,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cue
       objectReference: {fileID: 0}
+    - target: {fileID: 3242217863777555404, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
+      propertyPath: OverrideMaxDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3242217863777555404, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
+      propertyPath: OverrideMinDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5475098831631229392, guid: 6c075c94ef5f24546bad2cc28a952874, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
