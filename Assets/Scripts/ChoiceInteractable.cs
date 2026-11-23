@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Yarn.Unity;
 using SunriseStudio.UI;
 
 // Shows the cue while the player is inside this object's trigger. A tap anywhere replaces the cue with the ChoiceWheel.
@@ -19,6 +20,11 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     [SerializeField] private DialogBubble dialog;
     [Tooltip("Only needed for choices with a Yarn Node.")]
     [SerializeField] private YarnDialogPresenter yarnDialog;
+    [Header("Availability (optional)")]
+    [Tooltip("When set, this interaction is available only while the Yarn variable matches one of these values. The character stays visible.")]
+    [SerializeField] private string availableWhenYarnVariable;
+    [SerializeField] private List<string> availableWhenValues = new List<string>();
+    [SerializeField] private DialogueRunner availabilityRunner;
     [Tooltip("World offset from the top of this object's sprite to the bottom of the dialog box.")]
     [SerializeField] private Vector2 dialogOffset = new Vector2(0f, 0.25f);
     [Tooltip("This object's actions. The first one starts in the center of the wheel. A single action skips the wheel.")]
@@ -45,6 +51,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     [SerializeField, Min(0f)] private float approachDistance = 1.5f;
     [Tooltip("Side of this object the player stands on. Nearest keeps the player on the side they came from.")]
     [SerializeField] private ApproachSide approachSide = ApproachSide.Nearest;
+    [Tooltip("Optional character whose position is used for the approach. Use the same anchor on several friends to make Anin stop at one shared spot.")]
+    [SerializeField] private Transform approachAnchor;
 
     public enum ApproachSide { Nearest, Left, Right }
 
@@ -102,6 +110,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         if (actionCarousel == null) actionCarousel = FindAnyObjectByType<ActionInventoryCarouselPresenter>(FindObjectsInactive.Include);
         if (dialog == null) dialog = FindAnyObjectByType<DialogBubble>();
         if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
+        if (availabilityRunner == null && !string.IsNullOrWhiteSpace(availableWhenYarnVariable))
+            availabilityRunner = FindAnyObjectByType<DialogueRunner>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -125,7 +135,7 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         bool busy = (wheel != null && wheel.IsOpen) || (actionCarousel != null && actionCarousel.IsOpen) ||
                     (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying) ||
                     approaching;
-        bool want = nearbyPlayer != null && !busy;
+        bool want = nearbyPlayer != null && !busy && IsAvailable();
         InteractionCue.Request(this, want, ownCue != null);
         bool isTarget = InteractionCue.IsTarget(this);
         SharedCue.Set(ownCue, ref cueShown, want && isTarget);
@@ -160,7 +170,7 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         bool busy = (wheel != null && wheel.IsOpen) || (actionCarousel != null && actionCarousel.IsOpen) ||
                     (dialog != null && dialog.IsOpen) || (yarnDialog != null && yarnDialog.IsPlaying) ||
                     approaching;
-        if (nearbyPlayer == null || busy || !InteractionCue.IsTarget(this))
+        if (nearbyPlayer == null || busy || !IsAvailable() || !InteractionCue.IsTarget(this))
             return false;
 
         BuildVisibleChoices();
@@ -213,6 +223,21 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         }
     }
 
+    private bool IsAvailable()
+    {
+        if (string.IsNullOrWhiteSpace(availableWhenYarnVariable)) return true;
+        if (availabilityRunner == null || availabilityRunner.VariableStorage == null) return false;
+
+        string variable = availableWhenYarnVariable.Trim();
+        if (!variable.StartsWith("$")) variable = "$" + variable;
+        if (!availabilityRunner.VariableStorage.TryGetValue(variable, out string current)) return false;
+
+        foreach (string allowed in availableWhenValues)
+            if (string.Equals(current, allowed?.Trim(), System.StringComparison.OrdinalIgnoreCase))
+                return true;
+        return false;
+    }
+
     private void OnChosen(int index)
     {
         ChoiceWheel.Choice choice = choices[index];
@@ -249,7 +274,7 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     // The player stays locked (InteractionMenuOpen) for the walk, so no other interaction takes a tap meanwhile.
     private void Approach(PlayerMove player, System.Action arrived)
     {
-        float npcX = transform.position.x;
+        float npcX = approachAnchor != null ? approachAnchor.position.x : transform.position.x;
         float playerX = player.transform.position.x;
         float side = approachSide == ApproachSide.Left ? -1f
                    : approachSide == ApproachSide.Right ? 1f

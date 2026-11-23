@@ -10,7 +10,7 @@ namespace SunriseStudio.UI
     {
         const string MusicVolumeKey = "Sunrise.Settings.MusicVolume";
         const string SfxVolumeKey = "Sunrise.Settings.SfxVolume";
-        const string HapticsKey = "Sunrise.Settings.Haptics";
+        const string HapticsKey = Haptics.PrefsKey;
 
         [Header("Controls")]
         [SerializeField] Slider musicSlider;
@@ -46,6 +46,7 @@ namespace SunriseStudio.UI
             current.sfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, 1f);
             current.hapticsEnabled = PlayerPrefs.GetInt(HapticsKey, 1) != 0;
             current.Sanitize();
+            Haptics.Enabled = current.hapticsEnabled;
 
             if (musicSlider != null)
                 musicSlider.SetValueWithoutNotify(current.musicVolume);
@@ -73,6 +74,7 @@ namespace SunriseStudio.UI
 
             current = settings.Clone();
             current.Sanitize();
+            Haptics.Enabled = current.hapticsEnabled;
 
             if (musicSlider != null)
                 musicSlider.SetValueWithoutNotify(current.musicVolume);
@@ -133,12 +135,14 @@ namespace SunriseStudio.UI
         void HandleHapticsChanged(bool enabled)
         {
             current.hapticsEnabled = enabled;
+            Haptics.Enabled = enabled;
             Save();
             onHapticsChanged.Invoke(enabled);
         }
 
         void HandleCloseClicked()
         {
+            Haptics.ButtonTap();
             Save();
             onCloseRequested.Invoke();
             CloseRequested?.Invoke();

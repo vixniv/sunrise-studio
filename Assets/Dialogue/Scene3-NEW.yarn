@@ -1,0 +1,532 @@
+// DECEMBER 10 — ONE LAST WALK
+// December 10 story. Existing scene3.yarn remains available for older playtests.
+// The six rooms may be visited in any order. Each memory starts from its named interaction,
+// and each memory counts once. An arrival node makes the map exit run Dec10_Memory_RoomExit.
+// Room arrival nodes are optional; the six room exits use a quest-specific door node.
+// Time advances when leaving after the 2nd, 4th, and 6th completed memories.
+// The sixth exit sends Anin directly to the Locker Room at Night.
+// Anin's time-change thoughts play on SchoolMap after the transition.
+// The rooftop sign, separate Locker Room key sprite, Rooftop Entrance, and
+// Rooftop room art are imported. Their scene references must be assigned in Unity.
+// VISUAL TODO: Anin/Fal railing poses are unfinished.
+// CAMERA TODO: Pan from rooftop sign to Key Hook, then Janitor's Locker.
+// AUDIO TODO: No dedicated closing-bell cue was found. The day_transition cue
+// supplies the time-change bell and the late bell placeholder.
+// The Rooftop encounter plays in the Rooftop scene after its entrance notice.
+
+title: Dec10_Declarations
+tags: setup testing
+---
+// Never start this node. These declarations hold progress across room loads.
+<<declare $dec10_dressed = false>>
+<<declare $dec10_locker_intro_done = false>>
+<<declare $dec10_rooftop_checked = false>>
+<<declare $dec10_stairway_seen = false>>
+<<declare $dec10_missing_key_started = false>>
+<<declare $dec10_rooftop_entered = false>>
+<<declare $dec10_rooftop_conversation_done = false>>
+<<declare $dec10_room_count = 0>>
+<<declare $dec10_time_phase = "morning">>
+<<declare $dec10_pending_map_thought = "">>
+<<declare $dec10_seen_classroom = false>>
+<<declare $dec10_seen_photography = false>>
+<<declare $dec10_seen_music = false>>
+<<declare $dec10_seen_library = false>>
+<<declare $dec10_seen_cafetaria = false>>
+<<declare $dec10_seen_auditorium = false>>
+===
+
+// ---------------------------------------------------------------------
+// MORNING — GIRLS' DORM
+// ---------------------------------------------------------------------
+
+title: Dec10_Dorm_Morning
+tags: december10 dorm morning testing
+---
+// Anin wakes with the existing wake-up animation; Kirana stands by the desk.
+// Keep Kirana's opening lines identical when Loop 1 repeats this day.
+<<set $dec10_dressed to false>>
+<<set $dec10_locker_intro_done to false>>
+<<set $dec10_rooftop_checked to false>>
+<<set $dec10_stairway_seen to false>>
+<<set $dec10_missing_key_started to false>>
+<<set $dec10_rooftop_entered to false>>
+<<set $dec10_rooftop_conversation_done to false>>
+<<set $dec10_room_count to 0>>
+<<set $dec10_time_phase to "morning">>
+<<set $dec10_pending_map_thought to "">>
+<<set $dec10_seen_classroom to false>>
+<<set $dec10_seen_photography to false>>
+<<set $dec10_seen_music to false>>
+<<set $dec10_seen_library to false>>
+<<set $dec10_seen_cafetaria to false>>
+<<set $dec10_seen_auditorium to false>>
+<<set $story_exit to true>>
+<<set $anin_dressed to false>>
+Kirana: Morning! You ready for our last day?
+Anin: Don't remind me.
+Kirana: Hey, at least we still have today.
+Anin: ...Yeah. We do.
+Kirana: I'm heading out. See you at school!
+<<close_dialogue_bubble>>
+<<door_exit "Kirana" "Dorm">>
+// Inner thought. Parentheses distinguish it until a thought presentation exists.
+Anin: (Maybe I should take one last walk around school. Before everything changes.)
+<<quest_start "dec10" "Get ready and go to school">>
+// CONTROL ANIN. Desk: Dec10_Dorm_Desk. Door: Dec10_Dorm_Door.
+===
+
+title: Dec10_Dorm_Desk
+tags: december10 dorm interactable testing
+---
+<<if $dec10_dressed is false>>
+    Anin: I should get dressed.
+    -> Get dressed
+        <<set $dec10_dressed to true>>
+        <<set $anin_dressed to true>>
+        <<fade_outfit "Anin" "uniform">>
+    -> Cancel
+        <<stop>>
+<<else>>
+    Anin: I'm already wearing my uniform.
+<<endif>>
+===
+
+title: Dec10_Dorm_Door
+tags: december10 dorm interactable testing
+---
+<<if $dec10_dressed is false>>
+    Anin: I can't go out like this.
+<<else>>
+    <<scene_transition "LockerRoom" "door">>
+<<endif>>
+===
+
+// ---------------------------------------------------------------------
+// LOCKER ROOM — MANDATORY FIRST VISIT
+// ---------------------------------------------------------------------
+
+title: Dec10_Lockers_Arrival
+tags: december10 lockers testing
+---
+<<if $dec10_room_count >= 6>>
+    <<hide "StudentA">>
+    <<hide "StudentB">>
+<<endif>>
+<<if $dec10_room_count >= 6 and $dec10_missing_key_started is false>>
+    <<jump Dec10_Lockers_MissingKey>>
+<<elseif $dec10_locker_intro_done is false>>
+    <<jump Dec10_Lockers_Intro>>
+<<endif>>
+===
+
+title: Dec10_Lockers_Intro
+tags: december10 lockers cutscene testing
+---
+// Two students are already chatting near the lockers.
+Student A: You're still not done clearing your locker?
+Student B: I just found my first-year ID photo!
+Student A: Oh, that haircut...
+Student B: Don't. I've suffered enough.
+<<close_dialogue_bubble>>
+// The screen goes black as the students leave; they are gone when it opens.
+<<fade_black_out>>
+<<hide "StudentA">>
+<<hide "StudentB">>
+<<fade_black_in>>
+Anin: School. Lively as ever
+Anin: Okay. Let's start by getting some fresh air on the rooftop.
+<<set $dec10_locker_intro_done to true>>
+<<quest_update "dec10" "Check the rooftop door">>
+// CONTROL ANIN. Both exits refuse to leave until the rooftop door is checked.
+===
+
+title: Dec10_Lockers_MapExit
+tags: december10 lockers interactable testing
+---
+<<if $dec10_time_phase == "night" and $dec10_room_count >= 6>>
+    Anin: I want to check the rooftop first.
+<<elseif $dec10_rooftop_checked is false>>
+    Anin: I want to check the rooftop first.
+<<else>>
+    <<scene_transition "SchoolMap" "door">>
+<<endif>>
+===
+
+title: Dec10_Lockers_DormExit
+tags: december10 lockers interactable testing
+---
+<<if $dec10_time_phase == "night" and $dec10_room_count >= 6>>
+    Anin: I want to check the rooftop first.
+<<elseif $dec10_rooftop_checked is false>>
+    Anin: I want to check the rooftop first.
+<<else>>
+    Anin: It's our last day at school. I'm not spending it in the dorm.
+<<endif>>
+===
+
+title: Dec10_KeyHook
+tags: december10 lockers interactable testing
+---
+<<if $dec10_missing_key_started is false>>
+    // The janitor's locker key is still hanging here.
+    Anin: (I think that is the key to the Janitor's Locker.)
+<<else>>
+    // The separate key sprite hides when $dec10_missing_key_started becomes true.
+    Anin: (The janitor's locker key is missing.)
+<<endif>>
+===
+
+title: Dec10_JanitorLocker
+tags: december10 lockers interactable testing
+---
+// The locker is still locked in the morning. Fal takes the key before Anin returns at night.
+Anin: (It's locked. I'm not touching that.)
+===
+
+// ---------------------------------------------------------------------
+// SIX ROOM MEMORIES — START ON FIRST ROOM ENTRY, IN ANY ORDER
+// ---------------------------------------------------------------------
+
+// Configure one YarnCutscene per room to start its Dec10_*_Arrival node.
+// The arrival node runs on every entry; the memory and walk run only once.
+title: Dec10_Classroom_Arrival
+tags: december10 classroom testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Classroom>>
+===
+
+title: Dec10_Photography_Arrival
+tags: december10 photographyclub testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Photography>>
+===
+
+title: Dec10_Music_Arrival
+tags: december10 musicroom testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Music>>
+===
+
+title: Dec10_Library_Arrival
+tags: december10 library testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Library>>
+===
+
+title: Dec10_Cafetaria_Arrival
+tags: december10 cafetaria testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Cafetaria>>
+===
+
+title: Dec10_Auditorium_Arrival
+tags: december10 auditorium testing
+---
+<<set $story_exit to true>>
+<<jump Dec10_Memory_Auditorium>>
+===
+
+title: Dec10_Memory_Classroom
+tags: december10 classroom memory interactable testing
+---
+// First entry: Anin walks to her old desk before remembering it.
+<<if $dec10_locker_intro_done is true and $dec10_seen_classroom is false>>
+    <<place_character_near_x "Anin" 5.84 8>>
+    <<move_character "Anin" 5.84 4 "walk">>
+    <<face_character "Anin" "right">>
+    Anin: (I used to sit here so nobody would notice me leaving.)
+    Anin: (Now there's always someone waiting for me.)
+    <<set $dec10_seen_classroom to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+title: Dec10_Classroom_AninDesk
+tags: scene10 classroom interactable
+---
+Anin: Good old desk. I'll miss you after graduation... or not.
+===
+
+title: Dec10_Memory_Photography
+tags: december10 photographyclub memory interactable testing
+---
+// First entry: Anin approaches Lila, who turns to face her.
+<<if $dec10_locker_intro_done is true and $dec10_seen_photography is false>>
+    <<place_character_near_actor "Anin" "LilaSceneDec10" 2.5 8>>
+    <<move_character_to_actor "Anin" "LilaSceneDec10" 2.5 4 "walk">>
+    <<face_character_to_actor "LilaSceneDec10" "Anin">>
+    Lila: Anin! Look what I found while sorting photos for my interview!
+    Anin: Please tell me I don't look awkward.
+    Lila: Worse. You're actually smiling!
+    Anin: ...Really?
+    Lila: You were laughing so hard you forgot to hide from my camera.
+    Anin: You kept that?
+    Lila: Obviously. Don't make it weird.
+    <<set $dec10_seen_photography to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+title: Dec10_Memory_Music
+tags: december10 musicroom memory interactable testing
+---
+// First entry: Anin walks toward the microphone or music stand.
+<<if $dec10_locker_intro_done is true and $dec10_seen_music is false>>
+    <<place_character_near_x "Anin" 11.6 8>>
+    <<move_character "Anin" 11.6 4 "walk">>
+    Anin: (Lila made me sing here once. I was terrified.)
+    Anin: (Then everyone joined in. Somehow, they were even worse.)
+    <<set $dec10_seen_music to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+title: Dec10_Music_Instrument
+tags: scene10 classroom interactable
+---
+Anin: I would love to someday be able to play one of this things
+===
+
+title: Dec10_Memory_Library
+tags: december10 library memory interactable testing
+---
+// First entry: Anin approaches her old reading spot.
+<<if $dec10_locker_intro_done is true and $dec10_seen_library is false>>
+    <<place_character_near_x "Anin" -1.26 8>>
+    <<move_character "Anin" -1.26 4 "walk">>
+    Anin: (Dira found me hiding here during lunch.)
+    Anin: (She didn't ask me to talk. She just stayed.)
+    <<set $dec10_seen_library to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+title: Dec10_Memory_Cafetaria
+tags: december10 cafetaria memory interactable testing
+---
+// First entry: Anin approaches Kirana at their usual table. She is seated and has already ordered.
+<<if $dec10_locker_intro_done is true and $dec10_seen_cafetaria is false>>
+    <<place_character_near_actor "Anin" "KiranaSceneDec10" -2.5 8>>
+    <<move_character_to_actor "Anin" "KiranaSceneDec10" -2.5 4 "walk">>
+    Kirana: Hey! Same table! I already ordered for us.
+    Anin: One last lunch here, huh?
+    Kirana: When I move, I'll find us a table just like this.
+    Anin: But we won't get to eat together every day.
+    Kirana: No. But I'll save you a seat whenever you visit.
+    Anin: ...Promise?
+    Kirana: Obviously!
+    <<set $dec10_seen_cafetaria to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+title: Dec10_Memory_Auditorium
+tags: december10 auditorium memory interactable testing
+---
+// First entry: Anin approaches Dira, who turns right to face her.
+<<if $dec10_locker_intro_done is true and $dec10_seen_auditorium is false>>
+    <<place_character_near_actor "Anin" "DiraSceneDec10" 2.5 8>>
+    <<move_character_to_actor "Anin" "DiraSceneDec10" 2.5 4 "walk">>
+    <<face_character "DiraSceneDec10" "right">>
+    Anin: Still checking everything?
+    Dira: Two names were missing from the seating chart. Fixed it.
+    Anin: You really have everything figured out. Even university.
+    Dira: I've submitted my applications. That's the easy part.
+    Anin: There's a hard part?
+    Dira: Not knowing what it'll actually be like.
+    Anin: ...You're worried too?
+    Dira: A little. I can make plans, Anin. I can't predict everything.
+    <<set $dec10_seen_auditorium to true>>
+    <<set $dec10_room_count to $dec10_room_count + 1>>
+<<endif>>
+===
+
+// Each memory room's map exit runs this node. Entering alone does not increase the count;
+// only completing a memory interaction does. The time transition runs here,
+// then Dec10_Map_Arrival speaks after the SchoolMap opens.
+title: Dec10_Memory_RoomExit
+tags: december10 memory exit testing
+---
+<<if $dec10_room_count == 2 and $dec10_time_phase == "morning">>
+    <<set $dec10_time_phase to "lunch">>
+    <<set $dec10_pending_map_thought to "lunch">>
+    <<advance_time_to_scene "lunch" "SchoolMap">>
+<<elseif $dec10_room_count == 4 and $dec10_time_phase == "lunch">>
+    <<set $dec10_time_phase to "after_school">>
+    <<set $dec10_pending_map_thought to "after_school">>
+    <<advance_time_to_scene "after_school" "SchoolMap">>
+<<elseif $dec10_room_count == 6 and $dec10_time_phase == "after_school">>
+    <<set $dec10_time_phase to "night">>
+    // The time transition supplies the bell; the Locker Room's SchoolMap door supplies the spawn and facing.
+    <<advance_time_to_scene_at_door "night" "LockerRoom" "SchoolMap">>
+<<else>>
+    <<scene_transition "SchoolMap">>
+<<endif>>
+===
+
+// Run on every SchoolMap arrival during December 10. A pending thought exists
+// only after the second or fourth memory room's time transition.
+title: Dec10_Map_Arrival
+tags: december10 schoolmap testing
+---
+<<wait_for_time_transition>>
+<<if $dec10_pending_map_thought == "lunch">>
+    <<set $dec10_pending_map_thought to "">>
+    <<dialogue_bottom_left true>>
+    Anin: (Already lunchtime? Guess the Cafetaria will be packed right around now.)
+    <<close_dialogue_bubble>>
+    <<dialogue_bottom_left false>>
+<<elseif $dec10_pending_map_thought == "after_school">>
+    <<set $dec10_pending_map_thought to "">>
+    <<dialogue_bottom_left true>>
+    Anin: (Time is setting already, I need to pick up the pace.)
+    <<close_dialogue_bubble>>
+    <<dialogue_bottom_left false>>
+<<endif>>
+===
+
+// ---------------------------------------------------------------------
+// NIGHT — THE MISSING KEY AND FAL
+// ---------------------------------------------------------------------
+
+title: Dec10_Lockers_MissingKey
+tags: december10 lockers night cutscene testing
+---
+<<set $dec10_missing_key_started to true>>
+// The incoming time transition fades to black and rings the school bell once.
+// The separate key sprite hides here when the variable changes.
+// Anin enters beside the SchoolMap door; the students are gone.
+Anin: (I think that's everywhere...)
+Anin: But it's weird though, i didn't see Fal anywhere today
+Anin: Wait, the Key Hook, it's empty
+Anin: I smell a case here
+<<quest_update "dec10" "Go to the rooftop">>
+// CONTROL ANIN. Fal has already used the key; no locker interaction is required.
+===
+
+title: Dec10_RooftopDoor
+tags: december10 lockers rooftop interactable testing
+---
+<<if $dec10_time_phase == "night" and $dec10_room_count >= 6>>
+    <<jump Dec10_Rooftop_Enter>>
+<<elseif $dec10_rooftop_checked is false>>
+    Anin: Ah. The door is locked
+    <<story_splash "rooftop_sign">>
+    Anin: (Aw, I wanted to see the view one last time.)
+    <<story_splash_end>>
+    // CAMERA TODO: Pan to the Key Hook, then the Janitor's Locker.
+    <<face_character "Anin" "right">>
+    Anin: (I think that is the key to the Janitor's Locker.)
+    Anin: (The rooftop key's probably in there.)
+    Anin: (...Yeah, I'm not touching that.)
+    Anin: (Guess I'll look around the school first.)
+    <<set $dec10_rooftop_checked to true>>
+    <<quest_update "dec10" "Explore the school">>
+<<else>>
+    Anin: Ah. The door is locked
+<<endif>>
+===
+
+title: Dec10_Stairway
+tags: december10 stairway cutscene testing
+---
+// Start this node on first arrival in the Rooftop Entrance scene.
+<<if $dec10_stairway_seen is false>>
+    // Anin sees the notice beside the unlocked rooftop door.
+    <<detour Dec10_Rooftop_Notice>>
+    <<set $dec10_stairway_seen to true>>
+    <<quest_update "dec10" "Enter the rooftop">>
+<<endif>>
+// CONTROL ANIN. Use this room's door to enter the Rooftop scene.
+===
+
+title: Dec10_Rooftop_Notice
+tags: december10 stairway interactable testing
+---
+NO ENTRY AFTER 6 PM.
+===
+
+title: Dec10_Rooftop_Enter
+tags: december10 rooftop door interactable testing
+---
+<<if $dec10_time_phase == "night" and $dec10_room_count >= 6>>
+    // Enter the stairway room. Its arrival node shows the rooftop notice.
+    <<scene_transition "Rooftop Entrance" "door">>
+<<endif>>
+===
+
+title: Dec10_Rooftop_Encounter
+tags: december10 rooftop cutscene testing
+---
+// Anin unexpectedly finds Fal by the railing, looking out over the school.
+// VISUAL TODO: Add Anin/Fal leaning poses when their art is ready.
+<<set $dec10_rooftop_entered to true>>
+Anin: Fal? Didn't expect to see you here.
+Fal: Just needed somewhere quiet.
+<<jump Dec10_Rooftop_Conversation>>
+===
+
+title: Dec10_Rooftop_Conversation
+tags: december10 rooftop cutscene testing
+---
+Anin: You always seem like you've got everything figured out.
+Fal: I know I want to study aerospace. Getting my parents to agree? That's another story.
+Anin: Really? I thought you'd know how to convince them.
+Fal: So did I.
+Anin: ...Guess even you don't have all the answers.
+Fal: Not even close.
+Anin: Want me to change the subject?
+Fal: Nah. It's nice talking to someone who listens.
+Anin: ...I can do that.
+Fal: I know. That's why I like talking to you.
+// A brief, comfortable silence.
+<<delay 0.7>>
+// Early night: the school is nearing closing time.
+<<sfx "day_transition">>
+Anin: We should probably head down.
+Fal: Yeah.
+Fal: ...I'm glad you came up here.
+Anin: Me too.
+<<quest_update "dec10" "Leave the rooftop">>
+<<set $dec10_rooftop_conversation_done to true>>
+// CONTROL ANIN. Rooftop exit interaction: Dec10_Rooftop_Exit.
+===
+
+title: Dec10_Rooftop_Exit
+tags: december10 rooftop exit testing
+---
+<<if $dec10_rooftop_conversation_done is false>>
+    Anin: I should talk to Fal first.
+    <<stop>>
+<<endif>>
+// Anin and Fal return downstairs together and part ways.
+// ROOFTOP EXIT TODO: Animate their descent when the character poses are ready.
+Fal: I'll see you tomorrow, Anin.
+Anin: Yeah. See you tomorrow.
+// HIDDEN CONTEXT: Fal is already experiencing a serious mental health crisis.
+// Anin does not recognize it. This connection is meaningful but does not resolve it.
+// Fal leaves. Anin walks back toward the Dorm through the quiet school.
+Anin: (I thought Fal had everything figured out.)
+Anin: (Guess we're all a little scared of tomorrow.)
+Anin: (I'm going to miss this.)
+<<scene_transition "Dorm">>
+===
+
+title: Dec10_Dorm_Return
+tags: december10 dorm night testing
+---
+<<if $dec10_wish_resume is true>>
+    <<set $dec10_wish_resume to false>>
+    <<jump Dec10_Wish_AfterFlashback>>
+<<endif>>
+// Anin returns alone. Continue directly into the wish cutscene.
+<<hide "Kirana">>
+<<quest_clear>>
+<<jump Dec10_Wish_Dorm>>
+===

@@ -1,0 +1,320 @@
+// DECEMBER 9 / DAY 1. Existing scene1.yarn is unchanged.
+// The player controls Anin between the Dorm conversation and the Classroom,
+// between the friends and Fal, between Fal and the friends, and at bedtime.
+// The keepsake choice happens inside the friends' dialogue; it is not an object interaction.
+// VISUAL TODO: Replace the temporary memory-box and photo-stack square sprites
+// with final art when it arrives. The ticket and group photo need no visible sprites.
+// Bind MemoryBox and PhotoStack in Classroom Dialogue > YarnCommands > Actors.
+// Bind the character names used by movement and visibility commands in each room's Actors list.
+// The Sleep choice starts December 10 in the Dorm.
+
+title: Dec9_Declarations
+tags: setup testing
+---
+// Never start this node. Yarn uses it for the new flow's persistent state.
+<<declare $dec9_dressed = false>>
+<<declare $dec9_keepsake = "none">>
+<<declare $dec9_classroom_phase = "intro">>
+<<declare $dec9_day_finished = false>>
+===
+
+title: Dec9_Dorm_Morning
+tags: december9 day1 dorm testing
+---
+// The new Dorm morning YarnCutscene handles Anin waking.
+// Kirana should already be standing near the desk when the fade opens.
+<<set $story_exit to true>>
+<<set $dec9_dressed to false>>
+// CharacterOutfit already uses this variable to choose casual clothes in the Dorm.
+<<set $anin_dressed to false>>
+<<set $dec9_keepsake to "none">>
+<<set $dec9_classroom_phase to "intro">>
+<<set $dec9_day_finished to false>>
+Kirana: You're up already? I usually have to wake you twice.
+Anin: You spent ten minutes looking for your hair tie.
+Kirana: And you found it before I did. Again.
+Anin: Three years of practice.
+Kirana: Hey, you've been pretty quiet since yesterday. Everything okay?
+-> Be honest
+    Anin: I guess I'm scared things will change after graduation.
+    Kirana: They will. But you're not getting rid of me that easily.
+-> Brush it off
+    Anin: Just thinking too much. I'll be fine.
+    Kirana: Alright. But you know you can talk to me, right?
+Kirana: Come on. Dira wants us to help clear up the festival leftovers.
+<<close_dialogue_bubble>>
+<<door_exit "Kirana" "Dorm">>
+<<quest_start "dec9" "Get ready and go to school">>
+// CONTROL ANIN. Desk: Dec9_Dorm_Desk. Door: Dec9_Dorm_Door.
+===
+
+title: Dec9_Dorm_Desk
+tags: december9 day1 dorm interactable testing
+---
+<<if $dec9_dressed is false>>
+    Anin: I should hurry.
+    -> Get dressed
+        <<set $dec9_dressed to true>>
+        <<set $anin_dressed to true>>
+        <<fade_outfit "Anin" "uniform">>
+    -> Cancel
+        <<stop>>
+<<else>>
+    Anin: I'm already wearing my uniform.
+<<endif>>
+===
+
+title: Dec9_Dorm_Door
+tags: december9 day1 dorm interactable testing
+---
+<<if $dec9_classroom_phase == "night">>
+    // The night scene ends at the bed; do not return to the Classroom.
+    Anin: I don't need to go outside
+<<elseif $dec9_dressed is false>>
+    Anin: I can't go out like this.
+<<else>>
+    <<scene_transition "Classroom" "door">>
+<<endif>>
+===
+
+title: Dec9_Classroom_Arrival
+tags: december9 day1 classroom testing
+---
+<<if $loop1_myth_flashback is true>>
+    <<jump Loop1_Classroom_MythFlashback>>
+<<endif>>
+<<if $dec10_wish_flashback is true>>
+    <<jump Dec9_Classroom_WishFlashback>>
+<<endif>>
+<<set $story_exit to true>>
+<<set $dec9_classroom_phase to "intro">>
+// Show the temporary props until their final sprites arrive.
+<<show "MemoryBox">>
+<<show "PhotoStack">>
+<<quest_update "dec9" "Talk with your friends">>
+// CONTROL ANIN. The friends' interaction starts Dec9_Classroom_Friends.
+// The Classroom map door runs Dec9_Classroom_Door until the scripted walk home.
+===
+
+title: Loop1_Classroom_MythFlashback
+tags: december9 classroom loop1 flashback testing
+---
+// Lila repeats her actual December 9 line; Anin remembers it from the same spot.
+Lila: You know, a senior once swore she repeated the same day.
+Lila: It's an old school myth. Circle today's date on a calendar, make a wish before midnight, and you'll wake up to the same day again.
+<<fade_black_out>>
+<<memory_montage false>>
+<<set $loop1_myth_flashback to false>>
+<<set $loop1_stage to "lockers_after_myth">>
+<<set $chapter_scene to 11>>
+<<set_time_of_day "morning">>
+<<replay_cutscene "Loop1_Lockers_Entry">>
+<<scene_transition_at_x "LockerRoom" -27.4375 "right">>
+===
+
+title: Dec9_Classroom_WishFlashback
+tags: december9 classroom wish flashback
+---
+// Revisit the real December 9 Classroom and its Lila for the two original lines.
+Lila: You know, a senior once swore she repeated the same day.
+<<fade_black_out>>
+<<fade_black_in>>
+Lila: It's an old school myth. Circle today's date on a calendar, make a wish before midnight, and you'll wake up to the same day again.
+<<fade_black_out>>
+<<memory_montage false>>
+<<set $dec10_wish_flashback to false>>
+<<set $dec10_wish_resume to true>>
+<<set $chapter_scene to 10>>
+<<set_time_of_day "night">>
+<<replay_cutscene "Dec10_Dorm_Return">>
+<<scene_transition_at_x "Dorm" -9 "right">>
+===
+
+title: Dec9_Classroom_Door
+tags: december9 day1 classroom interactable testing
+---
+Anin: I should stay here for now.
+===
+
+title: Dec9_Classroom_Friends
+tags: december9 day1 classroom interactable testing
+---
+<<if $dec9_classroom_phase == "intro">>
+    Dira: One last box. Let's keep something memorable and recycle the rest.
+    Lila: Then this ticket stays.
+    Dira: Lila, that's literally trash.
+    Lila: It's proof of Kirana's legendary ring-toss disaster!
+    Kirana: I almost won!
+    Anin: You missed every ring.
+    Lila: See? Anin laughed so hard she nearly cried.
+    Kirana: We could keep our group photo instead.
+    Dira: We only have room for one. Anin, you choose.
+    -> Keep the ring-toss ticket
+        <<set $dec9_keepsake to "ticket">>
+        Lila: YES! Our greatest achievement.
+        Kirana: My greatest embarrassment, you mean.
+        Lila: Same thing!
+    -> Keep the group photograph
+        <<set $dec9_keepsake to "photo">>
+        Kirana: Remember first year? You'd never let us take a photo of you.
+        Anin: You kept asking.
+        Kirana: And now you're the one making sure we're all in it.
+
+    <<delay 0.5>>
+    <<hide "PhotoStack">>
+    <<delay 0.5>>
+    Dira: That's everything. Hard to believe graduation's so close.
+    Dira: At least my university applications are finally done.
+    Lila: Of course yours are. I've got a media program interview next week. Apparently talking too much is a useful skill.
+    Kirana: My parents are already asking what I need for the move.
+    Anin: You're really moving that soon?
+    Kirana: Not tomorrow, silly. But yeah, it's actually happening!
+    Dira: What about you, Anin? Have you decided where you're applying?
+    Anin: I...
+    Anin: ...don't even know what I want to study yet.
+    Dira: I can help you compare some options.
+    Kirana: Dira, she doesn't need to figure everything out today.
+    Anin: …
+    <<close_dialogue_bubble>>
+    // Place Fal just off the camera's left edge in the Classroom scene.
+    <<show "FalSceneDec9">>
+    <<move_character_to_actor "FalSceneDec9" "Anin" -3.5 6 "walk">>
+    Fal: Hi all, having fun?
+    <<set $dec9_classroom_phase to "fal">>
+    <<quest_update "dec9" "Talk to Fal">>
+    // CONTROL ANIN.
+<<elseif $dec9_classroom_phase == "myth">>
+    // The group finishes sorting the keepsakes.
+    Dira: That's everything. One less thing to worry about before graduation.
+    Anin: I wish we could have another day like yesterday.
+    Lila: You know, a senior once swore she repeated the same day.
+    Kirana: What?
+    Dira: Not the calendar story again…
+    Lila: It's an old school myth. Circle today's date on a calendar, make a wish before midnight, and you'll wake up to the same day again.
+    Dira: And somehow nobody can prove it?
+    Lila: That's what makes it a mystery!
+    Anin: ...Before midnight?
+    Dira: Anin, it's just a rumor.
+    <<delay 0.6>>
+    // Hold on black for the school bell. The room returns after school with
+    // Anin alone, already partway toward the classroom door.
+    <<close_dialogue_bubble>>
+    <<set $dec9_classroom_phase to "day_end">>
+    <<fade_black_out>>
+    <<hide "KiranaSceneDec9">>
+    <<hide "DiraSceneDec9">>
+    <<hide "LilaSceneDec9">>
+    <<set_time_of_day "after_school">>
+    <<teleport_character "Anin" -16.3 "left">>
+    <<sfx "day_transition">>
+    <<delay 1>>
+    <<jump Dec9_Classroom_Day_End>>
+<<endif>>
+===
+
+title: Dec9_Classroom_Fal
+tags: december9 day1 classroom interactable testing
+---
+<<if $dec9_classroom_phase == "fal">>
+    Fal: Oh, what's up Anin?
+    Fal: Dira's planning your future again?
+    Anin: ...Pretty much.
+    Fal: Want me to change the subject?
+    Anin: You always know when to ask.
+    Fal: You did the same for me last week.
+    Anin: When your parents brought up medicine again?
+    Fal: Yeah. I ended up talking about aerospace for an hour.
+    Anin: You sounded happier.
+    Fal: And you stayed to listen.
+    Anin: I wanted to.
+    Fal: ...I'm glad you did.
+    Fal: See you tomorrow, Anin.
+    <<close_dialogue_bubble>>
+    <<move_character "FalSceneDec9" -17.22 6 "walk">>
+    <<hide "FalSceneDec9">>
+    <<set $dec9_classroom_phase to "myth">>
+    <<quest_update "dec9" "Go back to the group">>
+    // CONTROL ANIN. Return to Dec9_Classroom_Friends.
+<<endif>>
+===
+
+title: Dec9_Classroom_Day_End
+tags: december9 day1 classroom testing
+---
+// Start Anin's walk under black so she is already moving as the room fades in.
+// Kirana interrupts her after about 1.1 seconds of walking in total.
+<<hide "MemoryBox">>
+<<start_character_move "Anin" -21.5 2 "walk" 0>>
+<<fade_black_in>>
+<<delay 0.45>>
+<<stop_character_move "Anin">>
+<<teleport_character "KiranaSceneDec9" 8.6 "left">>
+<<show "KiranaSceneDec9">>
+Kirana: Anin, coming? We can walk back together.
+<<close_dialogue_bubble>>
+<<face_character "Anin" "right">>
+<<move_character_to_actor "KiranaSceneDec9" "Anin" 2.5 6 "walk">>
+Anin: Yeah. Just a second.
+// Anin's next line is an inner thought. Parentheses mark it until a thought style exists.
+Anin: (Tomorrow's our last day here…)
+Anin: Okay… let's go.
+<<close_dialogue_bubble>>
+<<start_character_move "Anin" -24 3 "walk" 0>>
+<<start_character_move "KiranaSceneDec9" -24 3 "walk" 0.3>>
+// Fade while they walk. Keep the screen black until both reach the door.
+<<fade_black_out>>
+<<wait_for_character_moves>>
+// Load the Dorm from black and switch to the Night look during the load.
+<<advance_time_to_scene_at_x_silent "night" "Dorm" 11.03 "left">>
+===
+
+title: Dec9_Dorm_Night
+tags: december9 day1 dorm night testing
+---
+// The scene loads empty; Anin and Kirana begin at the Dorm doorway.
+// Anin's arrival X is set by the preceding transition; position Kirana at that doorway in Unity.
+<<set $story_exit to true>>
+<<set $dec9_classroom_phase to "night">>
+// Hide both while the room transition opens, then let the player see the empty Dorm.
+<<hide "Anin">>
+<<hide "Kirana">>
+<<delay 0.5>>
+<<teleport_character "Kirana" 11.5 "left">>
+<<open_door "Dorm">>
+<<show "Anin">>
+<<start_character_move "Anin" -3.4 3 "walk" 0>>
+<<delay 1>>
+<<show "Kirana">>
+<<start_character_move "Kirana" 6.3 3 "walk" 0>>
+<<wait_for_character_moves>>
+<<face_character "Anin" "right">>
+<<close_door "Dorm">>
+Kirana: Last school day tomorrow. I'll wake you early.
+Anin: As usual.
+<<quest_update "dec9" "Go to bed">>
+// CONTROL ANIN. The Bed interaction starts Dec9_Dorm_Bed.
+===
+
+title: Dec9_Dorm_Kirana_Night
+tags: december9 day1 dorm night interactable testing
+---
+<<if $dec9_classroom_phase == "night">>
+    Kirana: Good Night, Anin
+<<endif>>
+===
+
+title: Dec9_Dorm_Bed
+tags: december9 day1 dorm night interactable testing
+---
+<<if $dec9_day_finished is false>>
+    -> Sleep
+        Anin: Let's enjoy tomorrow to the fullest
+        <<set $dec9_day_finished to true>>
+        <<quest_clear>>
+        <<set $chapter_scene to 10>>
+        <<set $anin_dressed to false>>
+        <<advance_time_to_scene "morning" "Dorm">>
+    -> Not now
+        // Return control to Anin; the bed can be used again later.
+<<endif>>
+===

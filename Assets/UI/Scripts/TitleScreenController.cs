@@ -26,6 +26,11 @@ namespace SunriseStudio.UI
                 configRoot.SetActive(false);
         }
 
+        void Start()
+        {
+            Haptics.Prepare();
+        }
+
         void OnEnable()
         {
             if (playButton != null)
@@ -56,6 +61,8 @@ namespace SunriseStudio.UI
 
         void HandlePlayClicked()
         {
+            Haptics.ButtonTap();
+
             if (string.IsNullOrWhiteSpace(gameplayScene))
             {
                 Debug.LogError("The title screen has no gameplay scene configured.", this);
@@ -77,6 +84,7 @@ namespace SunriseStudio.UI
 
         void HandleConfigClicked()
         {
+            Haptics.ButtonTap();
             onConfigRequested.Invoke();
             SetInteractable(false);
             if (configRoot != null)

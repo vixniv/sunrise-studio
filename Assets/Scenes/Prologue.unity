@@ -149,12 +149,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::YarnCutscene
   yarnDialog: {fileID: 381825478}
-  startNode: Cutscene_Prologue
+  startNode: Dec8_Festival_Cutscene
   narrator: {fileID: 0}
   dialogOffset: {x: 0, y: 0.25}
   startDelay: 0.5
   player: {fileID: 0}
+  initialFacing: 0
   nextScene: Dorm
+  nextSceneBlackFadeInSeconds: 2
   playOnce: 1
   keepPlayerPosition: 1
   wakeUp: {fileID: 0}

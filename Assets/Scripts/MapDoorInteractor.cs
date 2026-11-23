@@ -224,6 +224,9 @@ public class MapDoorInteractor : MonoBehaviour
             return;
         }
 
+        if (MapRoomAccessRules.TryShowBlockedLine(door.destinationScene, transform))
+            return;
+
         entering = true;
         ShowPrompt(false);
 
@@ -274,6 +277,9 @@ public class MapDoorInteractor : MonoBehaviour
 
     IEnumerator EnterDoor(MapDoor door)
     {
+        if (MapRoomAccessRules.TryShowBlockedLine(door.destinationScene, transform))
+            yield break;
+
         if (door.entryPoint == null)
         {
             Debug.LogError(
@@ -358,7 +364,7 @@ public class MapDoorInteractor : MonoBehaviour
 
         if (CircleTransition.Instance != null)
         {
-            CircleTransition.Instance.LoadScene(
+            CircleTransition.Instance.LoadSceneWithBlackFade(
                 targetScene,
                 transitionSound,
                 door.enterVolume);

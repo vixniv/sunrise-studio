@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,14 @@ using SunriseStudio.UI;
 // whether and where the player leaves; the node leaves with <<scene_transition>>.
 public class SceneDoor : MonoBehaviour, IInteractionTarget
 {
+    [Serializable]
+    private class QuestStoryNode
+    {
+        [Tooltip("Quest ID currently shown in the HUD, such as dec10.")]
+        public string questId;
+        [Tooltip("Yarn node to run for this quest instead of Story Node.")]
+        public string node;
+    }
     [Tooltip("Optional. Leave empty to use the InteractionCue on the Player, which shows above this object.")]
     [SerializeField] private GameObject cue;
     [Tooltip("Optional object name shown by InteractionCue. Empty derives it from Story Node or this GameObject name.")]
@@ -46,6 +55,8 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     [Tooltip("Optional. Run this door's Story Node while this quest and objective are active. Set both fields; leave them empty to disable.")]
     [SerializeField] private string storyNodeQuestId = "";
     [SerializeField] private string storyNodeQuestObjective = "";
+    [Tooltip("Optional quest-specific door nodes. These take priority over Story Node and leave older chapters unchanged.")]
+    [SerializeField] private List<QuestStoryNode> questStoryNodes = new List<QuestStoryNode>();
     [Tooltip("Plays the Story Node. Leave empty to use the one in the scene.")]
     [SerializeField] private YarnDialogPresenter yarnDialog;
     [Tooltip("World offset from the top of this object's sprite to the bottom of the dialog box.")]
@@ -76,11 +87,11 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
         if (yarnDialog == null) yarnDialog = FindAnyObjectByType<YarnDialogPresenter>();
         bubble = FindAnyObjectByType<DialogBubble>();
         wheel = FindAnyObjectByType<ChoiceWheel>();
-        if (!string.IsNullOrWhiteSpace(storyNode))
+        if (!string.IsNullOrWhiteSpace(storyNode) || (questStoryNodes != null && questStoryNodes.Count > 0))
         {
             runner = FindAnyObjectByType<DialogueRunner>();
             if (yarnDialog == null)
-                Debug.LogError($"{name} has a Story Node but there is no YarnDialogPresenter in the scene, so it always leaves freely.", this);
+                Debug.LogError($"{name} has a story node but there is no YarnDialogPresenter in the scene, so it always leaves freely.", this);
         }
     }
 
@@ -193,11 +204,12 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
     {
         // Story exits and missing destinations play their own SunriseAudio sound, so the shared interact sound
         // plays only for a real door transition.
-        if (StoryExitActive())
+        string activeStoryNode = ActiveStoryNode();
+        if (!string.IsNullOrEmpty(activeStoryNode))
         {
             tracking = false;
             SunriseAudio.Play("ui_interact");
-            yarnDialog.Play(storyNode.Trim(), transform, dialogOffset, nearbyPlayer, null);
+            yarnDialog.Play(activeStoryNode, transform, dialogOffset, nearbyPlayer, null);
             return;
         }
 
@@ -231,33 +243,44 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
         }
     }
 
-    private bool StoryExitActive()
+    private string ActiveStoryNode()
     {
-        if (string.IsNullOrWhiteSpace(storyNode) || yarnDialog == null)
-            return false;
+        if (yarnDialog == null)
+            return null;
+
+        if (questStoryNodes != null)
+            foreach (QuestStoryNode entry in questStoryNodes)
+                if (entry != null && !string.IsNullOrWhiteSpace(entry.questId) &&
+                    !string.IsNullOrWhiteSpace(entry.node) &&
+                    string.Equals(QuestTracker.QuestId, entry.questId.Trim(), StringComparison.OrdinalIgnoreCase))
+                    return entry.node.Trim();
+
+        if (string.IsNullOrWhiteSpace(storyNode))
+            return null;
 
         if (!string.IsNullOrWhiteSpace(storyNodeQuestId) &&
             !string.IsNullOrWhiteSpace(storyNodeQuestObjective) &&
             string.Equals(QuestTracker.QuestId, storyNodeQuestId.Trim(), StringComparison.OrdinalIgnoreCase) &&
             string.Equals(QuestTracker.Objective, storyNodeQuestObjective.Trim(), StringComparison.OrdinalIgnoreCase))
-            return true;
+            return storyNode.Trim();
 
         if (runner == null || runner.VariableStorage == null)
-            return false;
+            return null;
         try
         {
             if (runner.VariableStorage.TryGetValue(YarnCommands.StoryExitVariable, out bool active) && active)
-                return true;
+                return storyNode.Trim();
 
             bool inChapter = storyNodeChapterScene > 0 &&
                              runner.VariableStorage.TryGetValue("$chapter_scene", out float chapterScene) &&
                              chapterScene == storyNodeChapterScene;
-            return inChapter && (storyNodeUntilCutsceneStarts == null || !storyNodeUntilCutsceneStarts.HasStarted);
+            return inChapter && (storyNodeUntilCutsceneStarts == null || !storyNodeUntilCutsceneStarts.HasStarted)
+                ? storyNode.Trim() : null;
         }
         catch (Exception e)
         {
             Debug.LogError($"{name}: could not read {YarnCommands.StoryExitVariable}: {e.Message}", this);
-            return false;
+            return null;
         }
     }
 

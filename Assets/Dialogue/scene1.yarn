@@ -13,6 +13,8 @@
 //     <<scene_transition "Location">> fade + load a location
 //     <<advance_time "slot">>         morning / lunch / after_school
 //     <<cutscene "id">>               play a non-dialogue cutscene
+//     <<cinematic_start>>             black bars slide in, gameplay HUD hides
+//     <<cinematic_end>>               bars slide out, HUD returns (also auto at node end)
 //     <<hard_reset>>                  white flash, loop back to the wish
 //     <<fade>>                        short fade out and in, same scene
 //     <<outfit "Anin" "casual">>      swap outfit now ("casual" / "uniform")

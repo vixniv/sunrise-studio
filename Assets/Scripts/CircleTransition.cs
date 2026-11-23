@@ -9,6 +9,8 @@ public class CircleTransition : MonoBehaviour
     [Header("References")]
     public RectTransform circle;
     public CanvasGroup canvasGroup;
+    [Tooltip("Optional full-screen black Image with a CanvasGroup, used when a scene that is already black fades into the next scene.")]
+    [SerializeField] private CanvasGroup blackFadeGroup;
 
     [Header("Timing")]
     [Min(0.05f)]
@@ -23,8 +25,23 @@ public class CircleTransition : MonoBehaviour
     public AudioSource audioSource;
 
     bool transitioning;
+    string blackEntryScene;
+    float blackEntryOpenDuration;
 
     public bool IsTransitioning => transitioning;
+    public bool IsBlack => blackFadeGroup != null && blackFadeGroup.alpha >= 0.999f;
+
+    // A cutscene in the newly loaded room may lengthen this one map-entry reveal.
+    // The usual openDuration stays unchanged for later visits and other transitions.
+    public bool SetCurrentBlackEntryOpenDuration(string sceneName, float seconds)
+    {
+        if (blackEntryScene == null || !string.Equals(blackEntryScene, sceneName, System.StringComparison.Ordinal) ||
+            float.IsNaN(seconds) || float.IsInfinity(seconds) || seconds <= 0f)
+            return false;
+
+        blackEntryOpenDuration = seconds;
+        return true;
+    }
 
     void Awake()
     {
@@ -45,6 +62,12 @@ public class CircleTransition : MonoBehaviour
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;
+
+        if (blackFadeGroup != null)
+        {
+            blackFadeGroup.alpha = 0f;
+            blackFadeGroup.blocksRaycasts = false;
+        }
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
@@ -90,6 +113,55 @@ public class CircleTransition : MonoBehaviour
         StartCoroutine(TransitionRoutine(sceneName, whileCovered));
     }
 
+    // The current scene has already faded to black. Keep it covered during the load,
+    // then fade the new scene in without a circle reveal.
+    public void LoadSceneFromBlack(string sceneName, float fadeInDuration, System.Action whileCovered = null)
+    {
+        if (transitioning)
+            return;
+
+        if (blackFadeGroup == null)
+        {
+            Debug.LogError("CircleTransition needs a Black Fade Group for a full-screen fade. Using its circle transition instead.", this);
+            LoadScene(sceneName);
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"CircleTransition: scene \"{sceneName}\" is not in the Build Profile scene list, or the name is misspelled.", this);
+            return;
+        }
+
+        StartCoroutine(BlackFadeSceneRoutine(sceneName, Mathf.Max(0.05f, fadeInDuration), whileCovered));
+    }
+
+    // Used when entering a room from SchoolMap: fade fully to black, load the room,
+    // then fade back in. Other scene transitions can continue using the circle.
+    public void LoadSceneWithBlackFade(string sceneName, AudioClip sound = null, float volume = 1f)
+    {
+        if (transitioning)
+            return;
+
+        if (blackFadeGroup == null)
+        {
+            Debug.LogError("CircleTransition needs a Black Fade Group for map entry. Using its circle transition instead.", this);
+            LoadScene(sceneName, sound, volume);
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"CircleTransition: scene \"{sceneName}\" is not in the Build Profile scene list, or the name is misspelled.", this);
+            return;
+        }
+
+        if (sound != null)
+            audioSource.PlayOneShot(sound, volume);
+
+        StartCoroutine(BlackFadeEntryRoutine(sceneName));
+    }
+
     // Closes the circle, runs whileCovered, waits holdSeconds, then opens it again without loading a scene.
     // Returns false when a transition is already running or there is no circle.
     public bool Cover(System.Action whileCovered, float holdSeconds)
@@ -99,6 +171,40 @@ public class CircleTransition : MonoBehaviour
 
         StartCoroutine(CoverRoutine(whileCovered, holdSeconds));
         return true;
+    }
+
+    // Fades the full screen to or from black without loading a scene. Yarn can
+    // change time, move actors, and play audio while the screen stays black.
+    public bool FadeBlack(bool toBlack)
+    {
+        if (transitioning || blackFadeGroup == null)
+            return false;
+
+        StartCoroutine(FadeBlackRoutine(toBlack));
+        return true;
+    }
+
+    IEnumerator FadeBlackRoutine(bool toBlack)
+    {
+        transitioning = true;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        float startAlpha = blackFadeGroup.alpha;
+        float endAlpha = toBlack ? 1f : 0f;
+        float duration = toBlack ? closeDuration : openDuration;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, Mathf.Clamp01(elapsed / duration));
+            yield return null;
+        }
+
+        blackFadeGroup.alpha = endAlpha;
+        if (!toBlack && canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+        transitioning = false;
     }
 
     IEnumerator CoverRoutine(System.Action whileCovered, float holdSeconds)
@@ -167,6 +273,78 @@ public class CircleTransition : MonoBehaviour
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;
 
+        transitioning = false;
+    }
+
+    IEnumerator BlackFadeSceneRoutine(string sceneName, float fadeInDuration, System.Action whileCovered)
+    {
+        transitioning = true;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        circle.localScale = Vector3.zero;
+        blackFadeGroup.alpha = 1f;
+
+        whileCovered?.Invoke();
+
+        AsyncOperation loading = SceneManager.LoadSceneAsync(sceneName);
+        while (!loading.isDone)
+            yield return null;
+
+        // Give the destination's Awake and Start methods a frame to prepare its first pose.
+        yield return null;
+
+        float elapsed = 0f;
+        while (elapsed < fadeInDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = 1f - Mathf.Clamp01(elapsed / fadeInDuration);
+            yield return null;
+        }
+
+        blackFadeGroup.alpha = 0f;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+        transitioning = false;
+    }
+
+    IEnumerator BlackFadeEntryRoutine(string sceneName)
+    {
+        transitioning = true;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+
+        if (circle != null)
+            circle.localScale = Vector3.zero;
+        float startAlpha = blackFadeGroup.alpha;
+        float elapsed = 0f;
+        while (elapsed < closeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = Mathf.Lerp(startAlpha, 1f, Mathf.Clamp01(elapsed / closeDuration));
+            yield return null;
+        }
+        blackFadeGroup.alpha = 1f;
+
+        blackEntryScene = sceneName;
+        blackEntryOpenDuration = openDuration;
+        AsyncOperation loading = SceneManager.LoadSceneAsync(sceneName);
+        while (!loading.isDone)
+            yield return null;
+        yield return null;
+
+        float revealDuration = blackEntryOpenDuration;
+        blackEntryScene = null;
+        elapsed = 0f;
+        while (elapsed < revealDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            blackFadeGroup.alpha = 1f - Mathf.Clamp01(elapsed / revealDuration);
+            yield return null;
+        }
+        blackFadeGroup.alpha = 0f;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
         transitioning = false;
     }
 

@@ -16,14 +16,26 @@ public static class DoorSpawn
     private static float pendingX;
     private static bool pendingFaceRight;
     private static bool pendingSit;
+    private static string pendingDoorScene;
+    private static string pendingDoorDestination;
 
     // One-time arrival position requested by a Yarn scene transition.
     public static void SetNextSpawn(string sceneName, float x, bool faceRight, bool sit = false)
     {
         pendingScene = sceneName;
+        pendingDoorScene = null;
         pendingX = x;
         pendingFaceRight = faceRight;
         pendingSit = sit;
+    }
+
+    // The destination room chooses its own door's Spawn Point and Spawn Facing.
+    public static void SetNextSpawnAtDoor(string sceneName, string doorDestination)
+    {
+        pendingScene = null;
+        pendingSit = false;
+        pendingDoorScene = sceneName;
+        pendingDoorDestination = doorDestination;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -32,6 +44,8 @@ public static class DoorSpawn
         currentScene = "";
         pendingScene = null;
         pendingSit = false;
+        pendingDoorScene = null;
+        pendingDoorDestination = null;
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -50,9 +64,14 @@ public static class DoorSpawn
         currentScene = scene.name;
         bool usePendingSpawn = pendingScene != null &&
             string.Equals(pendingScene, scene.name, System.StringComparison.OrdinalIgnoreCase);
+        bool usePendingDoor = pendingDoorScene != null &&
+            string.Equals(pendingDoorScene, scene.name, System.StringComparison.OrdinalIgnoreCase);
+        string doorDestination = pendingDoorDestination;
         bool sitOnArrival = pendingSit;
         pendingScene = null;
         pendingSit = false;
+        pendingDoorScene = null;
+        pendingDoorDestination = null;
 
         // Searched in the new scene only: the old scene's objects (such as the Dorm's player) can still exist here.
         PlayerMove[] players = InScene<PlayerMove>(scene);
@@ -76,6 +95,29 @@ public static class DoorSpawn
             return;
         }
         PlayerMove player = players[0];
+
+        if (usePendingDoor)
+        {
+            foreach (SceneDoor candidate in InScene<SceneDoor>(scene))
+            {
+                if (!candidate.LeadsTo(doorDestination))
+                    continue;
+
+                Vector2 doorPosition = candidate.SpawnPosition(player.transform.position);
+                player.transform.position = new Vector3(doorPosition.x, doorPosition.y, player.transform.position.z);
+                Rigidbody2D body = player.GetComponent<Rigidbody2D>();
+                if (body != null)
+                {
+                    body.position = doorPosition;
+                    body.linearVelocity = Vector2.zero;
+                }
+                FacePlayer(scene, player, candidate, doorPosition.x);
+                Debug.Log($"DoorSpawn: story transition placed the player at {candidate.name}'s Spawn Point in {scene.name}.", candidate);
+                return;
+            }
+
+            Debug.LogError($"DoorSpawn: {scene.name} has no active door leading to {doorDestination}; using its normal entrance instead.", player);
+        }
 
         if (usePendingSpawn)
         {

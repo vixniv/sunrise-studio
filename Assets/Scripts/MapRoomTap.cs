@@ -38,6 +38,8 @@ public class MapRoomTap : MonoBehaviour
     static bool transitioning;
 
     Collider2D roomCollider;
+    YarnDialogPresenter dialogue;
+    int lastDialogueBusyFrame = -100;
     bool trackingTap;
     Vector2 pressPosition;
     float pressTime;
@@ -86,6 +88,7 @@ public class MapRoomTap : MonoBehaviour
     void Awake()
     {
         roomCollider = GetComponent<Collider2D>();
+        dialogue = FindAnyObjectByType<YarnDialogPresenter>();
     }
 
     void OnDisable()
@@ -95,7 +98,12 @@ public class MapRoomTap : MonoBehaviour
 
     void Update()
     {
-        if (transitioning || Time.timeScale <= 0f)
+        bool dialogueBusy = dialogue != null && dialogue.IsPlaying;
+        if (dialogueBusy) lastDialogueBusyFrame = Time.frameCount;
+
+        if (transitioning || Time.timeScale <= 0f ||
+            (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning) ||
+            dialogueBusy || Time.frameCount <= lastDialogueBusyFrame + 1)
         {
             trackingTap = false;
             return;
@@ -176,6 +184,9 @@ public class MapRoomTap : MonoBehaviour
             return;
         }
 
+        if (MapRoomAccessRules.TryShowBlockedLine(targetScene, ResolveMapPlayer()))
+            return;
+
         if (!Application.CanStreamedLevelBeLoaded(targetScene))
         {
             Debug.LogWarning(
@@ -220,7 +231,7 @@ public class MapRoomTap : MonoBehaviour
         }
 
         if (CircleTransition.Instance != null)
-            CircleTransition.Instance.LoadScene(targetScene);
+            CircleTransition.Instance.LoadSceneWithBlackFade(targetScene);
         else
             SceneManager.LoadScene(targetScene);
     }
