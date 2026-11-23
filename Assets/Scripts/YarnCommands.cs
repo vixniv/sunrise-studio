@@ -91,8 +91,12 @@ public class YarnCommands : MonoBehaviour
     // Number of <<hard_reset>>s and <<soft_reset>>s so far; 0 until the first loop ends.
     public static int LoopsCompleted { get; private set; }
 
+    // True only while the story is replaying a memory in another scene.
+    public static bool MemoryMontageActive { get; private set; }
+
     // Runs after TimeOfDay changes. During <<advance_time>> it runs while the screen is covered.
     public static event Action TimeOfDayChanged;
+    public static event Action MemoryMontageChanged;
 
     // Clears the static values when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -100,14 +104,18 @@ public class YarnCommands : MonoBehaviour
     {
         TimeOfDay = DefaultTimeOfDay;
         LoopsCompleted = 0;
+        MemoryMontageActive = false;
         TimeOfDayChanged = null;
+        MemoryMontageChanged = null;
     }
 
     public static void ResetForNewGame()
     {
         TimeOfDay = DefaultTimeOfDay;
         LoopsCompleted = 0;
+        MemoryMontageActive = false;
         TimeOfDayChanged?.Invoke();
+        MemoryMontageChanged?.Invoke();
     }
 
     // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
@@ -275,6 +283,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("gap_begin_awake", (Action)(() => Pending("gap_begin_awake")));
         runner.AddCommandHandler("memory_montage", (Action<bool>)(on =>
         {
+            MemoryMontageActive = on;
+            MemoryMontageChanged?.Invoke();
             SunriseAudio.Play(on ? "memory_transition_in" : "memory_transition_back");
             Pending($"memory_montage {on}");
         }));
