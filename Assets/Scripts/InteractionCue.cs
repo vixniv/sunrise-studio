@@ -150,7 +150,7 @@ public class InteractionCue : MonoBehaviour
     public static void PlayInteractSound()
     {
         if (instance == null || instance.interactSound == null) return;
-        instance.audioSource.PlayOneShot(instance.interactSound, instance.interactVolume);
+        instance.audioSource.PlayOneShot(instance.interactSound, instance.interactVolume * SunriseAudio.SfxVolume);
     }
 
     private void Awake()

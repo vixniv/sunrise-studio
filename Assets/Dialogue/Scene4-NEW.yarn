@@ -3,7 +3,7 @@
 // UI SETUP: Add CutsceneCanvas to Dorm and assign the four imported character highlights
 // in CutsceneView's Pictures list. Keep StorySplashOverlay for the calendar beats.
 // Assign calendar-1 and calendar-2 to that overlay.
-// ANIMATION TODO: A dedicated flinch, climb into bed, and eyes-open/close sleep art.
+// ANIMATION TODO: Climb into bed and eyes-open/close sleep art. The fear flinch uses the existing sprite.
 // CAMERA TODO: Close in on the circled calendar after Anin shuts her eyes.
 // The calendar reset now opens on the first playable repeat of December 10.
 
@@ -81,9 +81,11 @@ Anin: How do they all know what they want to do after school?
 Anin: All I wanted was to keep enjoying high school forever.
 Anin: And look where that got me. I still have no clue what I want to be. Graduation's tomorrow. Shoot, I'm too late.
 Anin: I'm... scared.
-// Anin steps back and flinches. The flinch animation needs art later.
+// Anin takes one backward step while still facing the window, then flinches.
 <<close_dialogue_bubble>>
-<<move_character "Anin" -9 2 "walk">>
+<<move_character_keep_facing "Anin" -8.3 2 "walk">>
+// <<flinch_character "Anin">>
+Anin: *flinches
 Anin: I'm... scared to move on with my life.
 Anin: I want to go back...
 Anin: Go back and rewind the time I have with my friends.

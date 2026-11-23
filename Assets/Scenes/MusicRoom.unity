@@ -5929,8 +5929,8 @@ MonoBehaviour:
     onChoose:
       m_PersistentCalls:
         m_Calls: []
-  approachBeforeTalking: 0
-  approachDistance: 1.5
+  approachBeforeTalking: 1
+  approachDistance: 2.5
   approachSide: 0
   approachAnchor: {fileID: 0}
   playInteractSound: 1

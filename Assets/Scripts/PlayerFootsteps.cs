@@ -133,6 +133,6 @@ public class PlayerFootsteps : MonoBehaviour
 
         lastStepAt = Time.time;
         source.pitch = Random.Range(surface.minPitch, surface.maxPitch);
-        source.PlayOneShot(clip, volume * volumeScale * Random.Range(surface.minVolume, surface.maxVolume));
+        source.PlayOneShot(clip, volume * volumeScale * Random.Range(surface.minVolume, surface.maxVolume) * SunriseAudio.SfxVolume);
     }
 }

@@ -22,6 +22,12 @@ namespace SunriseStudio.UI
         {
             Time.timeScale = 1f;
             AudioListener.pause = false;
+            if (CircleTransition.Instance != null)
+                CircleTransition.Instance.ResetForTitleScreen();
+            if (TimeTransition.Instance != null)
+                TimeTransition.Instance.ResetForTitleScreen();
+            if (TimeLoopResetTransition.Instance != null)
+                TimeLoopResetTransition.Instance.ResetForTitleScreen();
             if (configRoot != null)
                 configRoot.SetActive(false);
         }
@@ -69,6 +75,10 @@ namespace SunriseStudio.UI
                 return;
             }
 
+            PersistentVariableStorage.ClearForNewGame();
+            YarnCutscene.ForgetPlayed();
+            YarnCommands.ResetForNewGame();
+            QuestTracker.ClearQuest();
             onPlayRequested.Invoke();
             Time.timeScale = 1f;
             AudioListener.pause = false;
@@ -77,7 +87,7 @@ namespace SunriseStudio.UI
             string sceneName = gameplayScene.Trim();
 
             if (CircleTransition.Instance != null)
-                CircleTransition.Instance.LoadScene(sceneName);
+                CircleTransition.Instance.LoadSceneWithBlackFade(sceneName);
             else
                 SceneManager.LoadScene(sceneName);
         }

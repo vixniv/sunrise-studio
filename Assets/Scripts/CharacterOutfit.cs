@@ -12,7 +12,7 @@ using Yarn.Unity;
 // this object's scene is Room Scene, $chapter_scene equals the rule's Chapter Scene,
 // and the rule's Dressed Variable is false.
 // Yarn: <<outfit "Anin" "casual">> / <<outfit "Anin" "uniform">> swap right away,
-// <<fade_outfit "Anin" "uniform">> swaps while the circle transition covers the screen.
+// <<fade_outfit "Anin" "uniform">> swaps while a full-screen black fade covers the screen.
 [RequireComponent(typeof(Animator))]
 public class CharacterOutfit : MonoBehaviour
 {

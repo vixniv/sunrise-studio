@@ -137,9 +137,9 @@ public class WakeUpPose : MonoBehaviour
         waking = false;
         if (!posed) yield break;
 
-        // The circle transition closes, Anin stands at the player's spot in her idle animation, and it opens again.
+        // The black cover hides the change from the bed pose to standing idle.
         CircleTransition transition = CircleTransition.Instance;
-        if (transition == null || !transition.Cover(GetUp, coverHoldSeconds))
+        if (transition == null || !transition.CoverBlack(GetUp, coverHoldSeconds))
         {
             GetUp();
             yield break;

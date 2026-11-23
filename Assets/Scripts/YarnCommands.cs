@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -102,6 +103,13 @@ public class YarnCommands : MonoBehaviour
         TimeOfDayChanged = null;
     }
 
+    public static void ResetForNewGame()
+    {
+        TimeOfDay = DefaultTimeOfDay;
+        LoopsCompleted = 0;
+        TimeOfDayChanged?.Invoke();
+    }
+
     // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
     public static bool IsTimeOfDay(string slot) => Key(slot) == Key(TimeOfDay);
 
@@ -135,6 +143,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("scene_transition_from_black", (Func<string, float, YarnTask>)SceneTransitionFromBlack);
         runner.AddCommandHandler("scene_transition_at_x", (Func<string, float, string, YarnTask>)SceneTransitionAtX);
         runner.AddCommandHandler("advance_time", (Func<string, YarnTask>)AdvanceTime);
+        runner.AddCommandHandler("advance_time_stage", (Func<string, string, float, string, string, YarnTask>)AdvanceTimeStage);
         runner.AddCommandHandler("advance_time_silent", (Func<string, YarnTask>)AdvanceTimeSilent);
         runner.AddCommandHandler("advance_time_to_scene", (Func<string, string, YarnTask>)AdvanceTimeToScene);
         runner.AddCommandHandler("advance_time_to_scene_at_x", (Func<string, string, float, string, YarnTask>)AdvanceTimeToSceneAtX);
@@ -164,6 +173,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("npc_enter", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("npc_exit", (Action<string>)(actor => SetActorVisible(actor, false)));
         runner.AddCommandHandler("move_character", (Func<string, float, float, string, YarnTask>)MoveCharacter);
+        runner.AddCommandHandler("move_character_keep_facing", (Func<string, float, float, string, YarnTask>)MoveCharacterKeepFacing);
+        runner.AddCommandHandler("flinch_character", (Func<string, YarnTask>)FlinchCharacter);
         runner.AddCommandHandler("move_character_to_actor", (Func<string, string, float, float, string, YarnTask>)MoveCharacterToActor);
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
         runner.AddCommandHandler("start_character_move_to_actor", (Action<string, string, float, float, string, float>)StartCharacterMoveToActor);
@@ -393,6 +404,8 @@ public class YarnCommands : MonoBehaviour
                     transition.LoadSceneFromBlack(scene,
                         blackFadeInSeconds > 0f ? blackFadeInSeconds : transition.openDuration,
                         whileCovered);
+                else if (whileCovered == null)
+                    transition.LoadSceneWithBlackFade(scene, clip);
                 else
                     transition.LoadScene(scene, clip, 1f, whileCovered);
             }
@@ -427,6 +440,37 @@ public class YarnCommands : MonoBehaviour
             ? "night_transition"
             : "day_transition");
         return AdvanceTimeSilent(slot);
+    }
+
+    // Changes time and stages a room while the clock wipe fully covers it.
+    // Hidden actor names are comma-separated; all are resolved through this scene's Actors list.
+    private YarnTask AdvanceTimeStage(string slot, string actorName, float destinationX, string facing, string hiddenActors)
+    {
+        if (float.IsNaN(destinationX) || float.IsInfinity(destinationX))
+        {
+            Debug.LogError("<<advance_time_stage>>: destination X must be finite.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        Action stage = () =>
+        {
+            ApplyTimeOfDay(slot);
+            foreach (string actor in hiddenActors.Split(','))
+                if (!string.IsNullOrWhiteSpace(actor)) SetActorVisible(actor.Trim(), false);
+            TeleportCharacter(actorName, destinationX, facing);
+        };
+
+        SunriseAudio.Play(Key(slot) == Key(GapTimeOfDay) ? "night_transition" : "day_transition");
+        TimeTransition clockTransition = TimeTransition.Instance;
+        if (clockTransition != null && TryParseStoryTimeSlot(slot, out StoryTimeSlot toSlot))
+        {
+            StoryTimeSlot fromSlot = TryParseStoryTimeSlot(TimeOfDay, out StoryTimeSlot parsedFrom)
+                ? parsedFrom : (StoryTimeSlot)(((int)toSlot + 3) % 4);
+            HideDialogueLine();
+            if (clockTransition.PlayCycleTransition(fromSlot, toSlot, stage))
+                return YarnTask.WaitUntil(() => clockTransition == null || !clockTransition.IsTransitioning);
+        }
+        return Fade(stage);
     }
 
     // Covers the screen and changes time without starting a sound cue.
@@ -699,6 +743,14 @@ public class YarnCommands : MonoBehaviour
         Rigidbody2D body = target.GetComponent<Rigidbody2D>();
         if (body != null)
             body.position = new Vector2(destinationX, body.position.y);
+        if (target.GetComponent<PlayerMove>() != null)
+        {
+            CircleTransition transition = CircleTransition.Instance;
+            if (transition != null)
+                transition.SnapCameraToTarget(target.scene);
+            else
+                CinemachineCore.ResetCameraState();
+        }
         if (facingKey == "sit")
             SetSitting(target, true, "teleport_character");
         else if (facingKey == "stand")
@@ -831,12 +883,12 @@ public class YarnCommands : MonoBehaviour
             pose.GetUp();
     }
 
-    // Closes and reopens the CircleTransition without loading a scene; whileCovered runs while the screen is covered.
+    // Closes and reopens the full-screen black cover without loading a scene.
     private YarnTask Fade(Action whileCovered)
     {
         HideDialogueLine();
         CircleTransition transition = CircleTransition.Instance;
-        if (transition == null || !transition.Cover(whileCovered, fadeHoldSeconds))
+        if (transition == null || !transition.CoverBlack(whileCovered, fadeHoldSeconds))
         {
             whileCovered?.Invoke();
             return YarnTask.CompletedTask;
@@ -892,6 +944,77 @@ public class YarnCommands : MonoBehaviour
             return YarnTask.CompletedTask;
 
         return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
+    }
+
+    // Moves the actor without turning its sprite toward the destination, for a backward step.
+    private YarnTask MoveCharacterKeepFacing(string actorName, float destinationX, float speed, string animation)
+    {
+        GameObject target = FindActorTarget(actorName, "move_character_keep_facing");
+        if (target == null || !TryStartCharacterMove(target, destinationX, speed, animation, 0f, true))
+            return YarnTask.CompletedTask;
+
+        return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
+    }
+
+    // Uses the existing sprite shader's tint plus a tiny visual-only recoil. The player
+    // root, collision, and camera target stay at their stepped-back position.
+    private YarnTask FlinchCharacter(string actorName)
+    {
+        GameObject target = FindActorTarget(actorName, "flinch_character");
+        if (target == null)
+            return YarnTask.CompletedTask;
+
+        PlayerMove player = target.GetComponent<PlayerMove>();
+        SpriteRenderer sprite = player != null && player.visual != null
+            ? player.visual
+            : target.GetComponentInChildren<SpriteRenderer>(true);
+        if (sprite == null)
+        {
+            Debug.LogError($"<<flinch_character>>: \"{target.name}\" has no SpriteRenderer.", this);
+            return YarnTask.CompletedTask;
+        }
+
+        bool finished = false;
+        StartCoroutine(FlinchSpriteRoutine(sprite, () => finished = true));
+        return YarnTask.WaitUntil(() => this == null || sprite == null || finished);
+    }
+
+    private static IEnumerator FlinchSpriteRoutine(SpriteRenderer sprite, Action finished)
+    {
+        Transform visual = sprite.transform;
+        Vector3 originalPosition = visual.localPosition;
+        Vector3 originalScale = visual.localScale;
+        Color originalColor = sprite.color;
+        const float duration = 0.28f;
+        float elapsed = 0f;
+
+        try
+        {
+            while (elapsed < duration && sprite != null)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float progress = Mathf.Clamp01(elapsed / duration);
+                float strength = Mathf.Sin(progress * Mathf.PI);
+                float shake = Mathf.Sin(progress * Mathf.PI * 6f) * 0.07f * strength;
+                visual.localPosition = originalPosition + new Vector3(shake, 0f, 0f);
+                visual.localScale = Vector3.Scale(originalScale,
+                    new Vector3(1f - 0.06f * strength, 1f + 0.06f * strength, 1f));
+                sprite.color = Color.Lerp(originalColor,
+                    new Color(originalColor.r * 0.68f, originalColor.g * 0.76f,
+                        originalColor.b * 0.9f, originalColor.a), strength);
+                yield return null;
+            }
+        }
+        finally
+        {
+            if (sprite != null)
+            {
+                visual.localPosition = originalPosition;
+                visual.localScale = originalScale;
+                sprite.color = originalColor;
+            }
+            finished?.Invoke();
+        }
     }
 
     // <<move_character_to_actor "Fal" "Anin" -1 3 "walk">>: walks to Anin's current X minus one unit.
@@ -1133,7 +1256,7 @@ public class YarnCommands : MonoBehaviour
         return actor.target;
     }
 
-    private bool TryStartCharacterMove(GameObject target, float destinationX, float speed, string animation, float delay)
+    private bool TryStartCharacterMove(GameObject target, float destinationX, float speed, string animation, float delay, bool preserveFacing = false)
     {
         if (float.IsNaN(destinationX) || float.IsInfinity(destinationX))
         {
@@ -1164,7 +1287,7 @@ public class YarnCommands : MonoBehaviour
             Debug.LogError($"Move animation \"{animation}\" is not supported for \"{target.name}\". Use \"walk\" or \"run\"; the character will still move without an animation.", this);
 
         movingActors.Add(target);
-        StartCoroutine(MoveCharacterRoutine(target, destinationX, speed, moveAnimation, delay));
+        StartCoroutine(MoveCharacterRoutine(target, destinationX, speed, moveAnimation, delay, preserveFacing));
         return true;
     }
 
@@ -1179,7 +1302,7 @@ public class YarnCommands : MonoBehaviour
         }
     }
 
-    private IEnumerator MoveCharacterRoutine(GameObject target, float destinationX, float speed, MoveAnimation moveAnimation, float delay)
+    private IEnumerator MoveCharacterRoutine(GameObject target, float destinationX, float speed, MoveAnimation moveAnimation, float delay, bool preserveFacing)
     {
         Animator animator = null;
         SpriteFrameLoop[] frameLoops = null;
@@ -1188,6 +1311,7 @@ public class YarnCommands : MonoBehaviour
         bool[] playerMoveWasEnabled = null;
         Rigidbody2D[] bodies = null;
         bool[] bodyWasSimulated = null;
+        List<(CinemachineBrain brain, CinemachineBrain.UpdateMethods updateMethod)> cameraUpdates = null;
 
         try
         {
@@ -1205,7 +1329,8 @@ public class YarnCommands : MonoBehaviour
                 yield break;
 
             float facingDirection = Mathf.Sign(deltaX);
-            FaceActor(target, facingDirection);
+            if (!preserveFacing)
+                FaceActor(target, facingDirection);
 
             animator = target.GetComponentInChildren<Animator>(true);
             // NPCs without an Animator (Dira, Kirana, Lila, Fal) animate with SpriteFrameLoop instead.
@@ -1221,6 +1346,21 @@ public class YarnCommands : MonoBehaviour
                 playerMoveWasEnabled[i] = playerMoves[i] != null && playerMoves[i].enabled;
                 if (playerMoveWasEnabled[i])
                     playerMoves[i].enabled = false;
+            }
+
+            // Scripted player walks change Transform in this coroutine's normal frame.
+            // Smart Update can keep following its Rigidbody on physics frames instead,
+            // making the camera visibly stutter while the room-entry fade opens.
+            if (playerMoves.Length > 0)
+            {
+                cameraUpdates = new List<(CinemachineBrain, CinemachineBrain.UpdateMethods)>();
+                foreach (GameObject root in target.scene.GetRootGameObjects())
+                foreach (CinemachineBrain brain in root.GetComponentsInChildren<CinemachineBrain>(true))
+                {
+                    if (brain == null || !brain.isActiveAndEnabled) continue;
+                    cameraUpdates.Add((brain, brain.UpdateMethod));
+                    brain.UpdateMethod = CinemachineBrain.UpdateMethods.LateUpdate;
+                }
             }
 
             bodies = target.GetComponentsInChildren<Rigidbody2D>(true);
@@ -1282,6 +1422,10 @@ public class YarnCommands : MonoBehaviour
                     }
                 }
             }
+
+            if (cameraUpdates != null)
+                foreach (var entry in cameraUpdates)
+                    if (entry.brain != null) entry.brain.UpdateMethod = entry.updateMethod;
 
             interruptedMoves.Remove(target);
             movingActors.Remove(target);
@@ -1724,7 +1868,7 @@ public class YarnCommands : MonoBehaviour
             Debug.LogWarning($"<<sfx>>: {name} has no Audio Source.", this);
             return;
         }
-        sfxSource.PlayOneShot(sound.clip);
+        sfxSource.PlayOneShot(sound.clip, SunriseAudio.SfxVolume);
     }
 
     // Pauses every Audio Source in the game. AudioListener.pause outlives the scene, so it is undone on unload.

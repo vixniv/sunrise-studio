@@ -17,6 +17,8 @@ public class PersistentVariableStorage : VariableStorageBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetOnPlay() => variables.Clear();
 
+    public static void ClearForNewGame() => variables.Clear();
+
     // Playtesting only (Tools > Playtest Start): sets a value before any Dialogue Runner exists, such as $chapter_scene = 3.
     // value is a bool, float, or string, matching the variable's type in its <<declare>>.
     public static void SetValueForTesting(string variableName, object value)

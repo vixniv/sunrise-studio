@@ -121,6 +121,13 @@ public class TimeLoopResetTransition : MonoBehaviour
     bool transitioning;
     public bool IsTransitioning => transitioning;
 
+    public void ResetForTitleScreen()
+    {
+        StopAllCoroutines();
+        transitioning = false;
+        ResetIdleState();
+    }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -822,7 +829,7 @@ public class TimeLoopResetTransition : MonoBehaviour
                 audioSource.spatialBlend = 0f;
             }
         }
-        audioSource.PlayOneShot(clip, sfxVolume);
+        audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
     }
 
     static void SetImageAlpha(Image img, float alpha)
