@@ -82,6 +82,10 @@ public class SitPose : MonoBehaviour
             return;
         }
 
+        // Both poses pause the same Animator and move the same Visual, so only one may run at a time.
+        LeanPose leanPose = GetComponent<LeanPose>();
+        if (leanPose != null) leanPose.Stand();
+
         sitting = true;
         lookingLeft = false;
         sitStartTime = Time.time - (randomStart ? Random.Range(0, sitFrames.Length) / framesPerSecond : 0f);

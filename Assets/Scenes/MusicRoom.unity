@@ -399,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcSchedule
   times:
   - morning
-  chapterScenes: 09000000
+  chapterScenes: 090000000b000000
   targets: []
   followChanges: 1
   runner: {fileID: 0}
@@ -2307,6 +2307,8 @@ MonoBehaviour:
   lampLights:
   - light: {fileID: 1853198616}
   - light: {fileID: 1755201471}
+  useWindowLightsAtNight: 0
+  useCustomNightLights: 0
 --- !u!4 &827186010
 Transform:
   m_ObjectHideFlags: 0

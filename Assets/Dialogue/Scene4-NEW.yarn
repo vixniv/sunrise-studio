@@ -18,11 +18,13 @@ tags: setup testing
 title: Dec10_Wish_Dorm
 tags: december10 dorm night wish testing
 ---
-<<cinematic_start>>
 // Match the December 9 Dorm entrance: reveal the empty room, then open the door
 // and let Anin walk in. Her current stopping point remains X 5.48.
+// Hide before <<cinematic_start>>: it waits for the bars to slide in, and Anin would
+// show at the door spawn during that wait, then vanish (the glitch on arrival).
 <<hide "Kirana">>
 <<hide "Anin">>
+<<cinematic_start>>
 <<delay 0.5>>
 <<open_door "Dorm">>
 <<show "Anin">>
@@ -125,7 +127,9 @@ Anin: Me? Believing one of Lila's rumors? I must be really desperate, huh?
 
 // Anin walks to bed. The existing sleep pose is a placeholder for the eyes-open beat.
 <<close_dialogue_bubble>>
-<<move_character "Anin" -5 3 "walk">>
+// WakeUpPose places the bed art relative to Anin's root X, so stop at the Dorm Player's
+// scene X (-3.41), where every morning wake-up starts. Any other X shifts her in the bed.
+<<move_character "Anin" -3.41 3 "walk">>
 // Change to the bed pose while the screen is fully covered.
 <<fade_black_out>>
 <<lie_down "Anin">>

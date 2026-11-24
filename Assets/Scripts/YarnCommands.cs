@@ -167,12 +167,15 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("place_character_near_x", (Action<string, float, float>)PlaceCharacterNearX);
         runner.AddCommandHandler("place_character_near_actor", (Action<string, string, float, float>)PlaceCharacterNearActor);
         runner.AddCommandHandler("fade_teleport_character", (Func<string, float, string, YarnTask>)FadeTeleportCharacter);
+        runner.AddCommandHandler("teleport_character_to_actor", (Action<string, string, float, string>)TeleportCharacterToActor);
+        runner.AddCommandHandler("fade_teleport_character_to_actor", (Func<string, string, float, string, YarnTask>)FadeTeleportCharacterToActor);
         runner.AddCommandHandler("outfit", (Action<string, string>)SetOutfit);
         runner.AddCommandHandler("fade_outfit", (Func<string, string, YarnTask>)((actor, outfit) => Fade(() => SetOutfit(actor, outfit))));
         runner.AddCommandHandler("face_character", (Action<string, string>)FaceCharacter);
         runner.AddCommandHandler("face_character_to_actor", (Action<string, string>)FaceCharacterToActor);
         runner.AddCommandHandler("sit", (Action<string>)(actor => SetSitting(actor, true)));
         runner.AddCommandHandler("stand", (Action<string>)(actor => SetSitting(actor, false)));
+        runner.AddCommandHandler("lean", (Action<string>)SetLeaning);
         runner.AddCommandHandler("lie_down", (Action<string>)LieDown);
         runner.AddCommandHandler("show", (Action<string>)(actor => SetActorVisible(actor, true)));
         runner.AddCommandHandler("hide", (Action<string>)(actor => SetActorVisible(actor, false)));
@@ -721,8 +724,30 @@ public class YarnCommands : MonoBehaviour
         target.Wear(outfit);
     }
 
+    // <<fade_teleport_character_to_actor "Anin" "Fal" -1.6875 "lean">>: like <<fade_teleport_character>>,
+    // but the X is the reference actor's root X plus the offset (negative = to their left).
+    private YarnTask FadeTeleportCharacterToActor(string actorName, string referenceActorName, float offsetX, string facing)
+    {
+        return Fade(() => TeleportCharacterToActor(actorName, referenceActorName, offsetX, facing));
+    }
+
+    private void TeleportCharacterToActor(string actorName, string referenceActorName, float offsetX, string facing)
+    {
+        GameObject reference = FindActorTarget(referenceActorName, "teleport_character_to_actor");
+        if (reference == null)
+            return;
+
+        if (float.IsNaN(offsetX) || float.IsInfinity(offsetX))
+        {
+            Debug.LogError("<<teleport_character_to_actor>>: X offset must be finite.", this);
+            return;
+        }
+
+        TeleportCharacter(actorName, reference.transform.position.x + offsetX, facing);
+    }
+
     // <<teleport_character "Anin" -8 "left">>: changes world X and facing immediately, keeping Y and Z.
-    // "sit" seats the character; "stand" gets them up without changing their facing.
+    // "sit" seats the character; "lean" plays their LeanPose; "stand" gets them up without changing their facing.
     // <<fade_teleport_character>> applies either pose while the screen is covered.
     private void TeleportCharacter(string actorName, float destinationX, string facing)
     {
@@ -743,9 +768,9 @@ public class YarnCommands : MonoBehaviour
         }
 
         string facingKey = (facing ?? string.Empty).Trim().ToLowerInvariant();
-        if (facingKey != "left" && facingKey != "right" && facingKey != "keep" && facingKey != "sit" && facingKey != "stand")
+        if (facingKey != "left" && facingKey != "right" && facingKey != "keep" && facingKey != "sit" && facingKey != "lean" && facingKey != "stand")
         {
-            Debug.LogError($"<<teleport_character>>: facing must be \"left\", \"right\", \"keep\", \"sit\", or \"stand\" for \"{target.name}\".", this);
+            Debug.LogError($"<<teleport_character>>: facing must be \"left\", \"right\", \"keep\", \"sit\", \"lean\", or \"stand\" for \"{target.name}\".", this);
             return;
         }
 
@@ -764,6 +789,8 @@ public class YarnCommands : MonoBehaviour
         }
         if (facingKey == "sit")
             SetSitting(target, true, "teleport_character");
+        else if (facingKey == "lean")
+            SetLeaning(target, "teleport_character");
         else if (facingKey == "stand")
             SetSitting(target, false, "teleport_character");
         else if (facingKey != "keep")
@@ -834,6 +861,7 @@ public class YarnCommands : MonoBehaviour
     }
 
     // <<sit "Dira">> / <<stand "Dira">>: plays or stops the SitPose on the character's Visual child.
+    // <<stand>> also ends a LeanPose.
     // Sits in place: put the character on the chair first with <<teleport_character>> or <<move_character>>.
     // Looks for the enabled DialogSpeaker of that name first (like <<hide>>), then the Actors list.
     private void SetSitting(string actorName, bool sit)
@@ -856,9 +884,10 @@ public class YarnCommands : MonoBehaviour
         }
 
         SitPose[] poses = target.GetComponentsInChildren<SitPose>(true);
-        if (poses.Length == 0)
+        LeanPose[] leanPoses = sit ? Array.Empty<LeanPose>() : target.GetComponentsInChildren<LeanPose>(true);
+        if (poses.Length == 0 && leanPoses.Length == 0)
         {
-            Debug.LogError($"<<{command}>>: \"{target.name}\" has no SitPose on its Visual child.", this);
+            Debug.LogError($"<<{command}>>: \"{target.name}\" has no {(sit ? "SitPose" : "SitPose or LeanPose")} on its Visual child.", this);
             return;
         }
 
@@ -867,6 +896,39 @@ public class YarnCommands : MonoBehaviour
             if (sit) pose.Sit();
             else pose.Stand();
         }
+        foreach (LeanPose pose in leanPoses)
+            pose.Stand();
+    }
+
+    // <<lean "Fal">>: plays the LeanPose on the character's Visual child, in place. End it with <<stand "Fal">>.
+    // Looks for the enabled DialogSpeaker of that name first (like <<sit>>), then the Actors list.
+    private void SetLeaning(string actorName)
+    {
+        string key = (actorName ?? string.Empty).Trim();
+        GameObject target = DialogSpeaker.TryFind(key, out DialogSpeaker speaker)
+            ? speaker.gameObject
+            : FindActorTarget(key, "lean");
+        if (target != null)
+            SetLeaning(target, "lean");
+    }
+
+    private void SetLeaning(GameObject target, string command)
+    {
+        if (movingActors.Contains(target))
+        {
+            Debug.LogError($"<<{command}>>: \"{target.name}\" is still moving. Wait for its move to finish before leaning.", this);
+            return;
+        }
+
+        LeanPose[] poses = target.GetComponentsInChildren<LeanPose>(true);
+        if (poses.Length == 0)
+        {
+            Debug.LogError($"<<{command}>>: \"{target.name}\" has no LeanPose on its Visual child.", this);
+            return;
+        }
+
+        foreach (LeanPose pose in poses)
+            pose.Lean();
     }
 
     // Uses the Dorm's existing bed pose while the wish cutscene is in progress.
@@ -888,6 +950,8 @@ public class YarnCommands : MonoBehaviour
     private static void StandUp(GameObject target)
     {
         foreach (SitPose pose in target.GetComponentsInChildren<SitPose>(true))
+            pose.Stand();
+        foreach (LeanPose pose in target.GetComponentsInChildren<LeanPose>(true))
             pose.Stand();
         // Anin still in bed after her wake-up gets out of bed too.
         foreach (WakeUpPose pose in target.GetComponentsInChildren<WakeUpPose>(true))
@@ -1464,6 +1528,18 @@ public class YarnCommands : MonoBehaviour
                 ? (playerMove.artFacesLeft ? direction > 0f : direction < 0f)
                 : direction > 0f;
             pose.SetFacing(direction, flip);
+            seated = true;
+        }
+        // Leaning characters keep their front-facing lean art the same way.
+        foreach (LeanPose pose in target.GetComponentsInChildren<LeanPose>(true))
+        {
+            if (pose == null || !pose.IsLeaning)
+                continue;
+
+            bool flip = playerMove != null
+                ? (playerMove.artFacesLeft ? direction > 0f : direction < 0f)
+                : direction > 0f;
+            pose.SetFacing(flip);
             seated = true;
         }
         if (seated)
