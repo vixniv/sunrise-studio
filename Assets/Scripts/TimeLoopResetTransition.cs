@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -66,9 +67,17 @@ public class TimeLoopResetTransition : MonoBehaviour
     [SerializeField] Color deepRustColor = new Color32(0x4A, 0x07, 0x0E, 0xFF);
 
     [Header("Sleepy Eyelid & Blur Settings")]
+    [SerializeField] bool playEyelidClose = true;
+    [SerializeField] bool playEyelidOpen = true;
     [SerializeField] bool enableSceneBlur = true;
     [Range(0.5f, 1.5f)]
     [SerializeField] float maxBlurRadius = 1.5f;
+    [Min(0.05f)]
+    [SerializeField] float fadeToBlackDuration = 0.85f;
+    [Min(0.05f)]
+    [SerializeField] float calendarFadeInDuration = 0.45f;
+    [Min(0.05f)]
+    [SerializeField] float fadeFromBlackDuration = 0.85f;
     [Min(0.05f)]
     [SerializeField] float closeDroopDuration = 0.60f;
     [Min(0.05f)]
@@ -101,13 +110,12 @@ public class TimeLoopResetTransition : MonoBehaviour
     [SerializeField] float shakeIntensity = 9f;
     [SerializeField] float ghostSplitPixels = 6.5f;
 
-    [Header("Audio (Optional)")]
-    [SerializeField] AudioSource audioSource;
-    [SerializeField] AudioClip quadrantCutSfx;
-    [SerializeField] AudioClip finalSnapSfx;
-    [SerializeField] AudioClip wakeUpSfx;
-    [Range(0f, 1f)]
-    [SerializeField] float sfxVolume = 1f;
+    [Header("FMOD Audio")]
+    [Tooltip("Optional FMOD Studio Event Emitter on this object (auto-found if left empty). Plays when the calm calendar hold begins.")]
+    [SerializeField] StudioEventEmitter resetEmitter;
+    [SerializeField] EventReference quadrantCutEvent;
+    [SerializeField] EventReference finalSnapEvent;
+    [SerializeField] EventReference wakeUpEvent;
 
     Sprite runtimeRingSprite;
     Sprite runtimeVignetteSprite;
@@ -141,6 +149,9 @@ public class TimeLoopResetTransition : MonoBehaviour
 
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
+
+        if (resetEmitter == null)
+            resetEmitter = GetComponent<StudioEventEmitter>();
 
         EnsureProceduralTextures();
         EnsureBlurVolume();
@@ -179,6 +190,25 @@ public class TimeLoopResetTransition : MonoBehaviour
         return true;
     }
 
+    [ContextMenu("Test Time Loop Reset (Dec 10)")]
+    void TestTimeLoopReset()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("Enter Play Mode first to test TimeLoopResetTransition.", this);
+            return;
+        }
+
+        TimeLoopResetTransition target = Instance != null ? Instance : this;
+        if (!target.gameObject.scene.IsValid())
+        {
+            Debug.LogWarning("No active TimeLoopResetCanvas found in the scene. Drag TimeLoopResetCanvas into your scene and press Play.", this);
+            return;
+        }
+
+        target.PlayLoopReset("10");
+    }
+
     IEnumerator LoopResetRoutine(
         string dayLabel,
         Action whileCovered,
@@ -212,19 +242,54 @@ public class TimeLoopResetTransition : MonoBehaviour
         // Skip 1 frame to avoid Inspector menu deltaTime spikes
         yield return null;
 
-        // 1. SLEEPY EYELID CLOSE (droop -> resist bounce -> heavy close) + scene blur
-        yield return AnimateSleepyClose(closedHeight);
+        // 1. SLEEPY EYELID CLOSE (or blur + fade to black)
+        if (playEyelidClose)
+        {
+            yield return AnimateSleepyClose(closedHeight);
 
-        // 2. CALM CALENDAR INTRO (1s): White calendar sheet, red DECEMBER header, grid lines, weekdays, neighbor dates, PatrickHand "10" + full circle
-        fullBackdropImage.color = calmBackgroundColor;
-        SetImageAlpha(fullBackdropImage, 1f);
-        SetEyelidHeight(0f);
+            // 2. CALM CALENDAR INTRO (1s): White calendar sheet, red DECEMBER header, grid lines, weekdays, neighbor dates, PatrickHand "10" + full circle
+            fullBackdropImage.color = calmBackgroundColor;
+            SetImageAlpha(fullBackdropImage, 1f);
+            SetEyelidHeight(0f);
 
-        ApplyCalmCalendarStyle();
+            ApplyCalmCalendarStyle();
 
-        ApplyCameraFraming(Vector2.zero, 1f, 0f, Vector2.zero);
-        if (dateRigGroup != null)
-            dateRigGroup.alpha = 1f;
+            ApplyCameraFraming(Vector2.zero, 1f, 0f, Vector2.zero);
+            if (dateRigGroup != null)
+                dateRigGroup.alpha = 1f;
+        }
+        else
+        {
+            // Blur scene while fading full backdrop to pitch black
+            yield return AnimateFadeAndBlur(fullBackdropImage, abyssInkColor, 0f, 1f, 0f, 1f, fadeToBlackDuration, EaseInOutSine);
+
+            // 2. CALM CALENDAR INTRO: Prepare calendar at alpha 0, then fade both backdrop & calendar in from black
+            SetEyelidHeight(0f);
+            ApplyCalmCalendarStyle();
+            ApplyCameraFraming(Vector2.zero, 1f, 0f, Vector2.zero);
+
+            if (dateRigGroup != null)
+                dateRigGroup.alpha = 0f;
+
+            float elapsed = 0f;
+            while (elapsed < calendarFadeInDuration)
+            {
+                elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+                float t = EaseInOutSine(Mathf.Clamp01(elapsed / calendarFadeInDuration));
+                fullBackdropImage.color = Color.Lerp(abyssInkColor, calmBackgroundColor, t);
+                if (dateRigGroup != null)
+                    dateRigGroup.alpha = t;
+                yield return null;
+            }
+
+            fullBackdropImage.color = calmBackgroundColor;
+            SetImageAlpha(fullBackdropImage, 1f);
+            if (dateRigGroup != null)
+                dateRigGroup.alpha = 1f;
+        }
+
+        if (resetEmitter != null)
+            resetEmitter.Play();
 
         if (calmCalendarHoldDuration > 0f)
             yield return new WaitForSecondsRealtime(calmCalendarHoldDuration);
@@ -235,7 +300,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             vignetteGrainImage.color = new Color(1f, 1f, 1f, 0.85f);
 
         onRewindStart?.Invoke();
-        PlayClip(quadrantCutSfx);
+        PlayFmodEvent(quadrantCutEvent);
 
         if (horrorRevealHoldDuration > 0f)
         {
@@ -257,7 +322,7 @@ public class TimeLoopResetTransition : MonoBehaviour
         Vector2 q3Focus = new Vector2(-quadrantFocusOffset.x, -quadrantFocusOffset.y);
 
         // Quadrant I (Top-Right, 2s): 1.00 -> 0.75
-        PlayClip(quadrantCutSfx);
+        PlayFmodEvent(quadrantCutEvent);
         yield return RunHorrorQuadrant(
             startFill: 1.00f,
             endFill: 0.75f,
@@ -270,7 +335,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant II (Bottom-Right, 2s): 0.75 -> 0.50
-        PlayClip(quadrantCutSfx);
+        PlayFmodEvent(quadrantCutEvent);
         yield return RunHorrorQuadrant(
             startFill: 0.75f,
             endFill: 0.50f,
@@ -283,7 +348,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant III (Bottom-Left, 2s): 0.50 -> 0.25
-        PlayClip(quadrantCutSfx);
+        PlayFmodEvent(quadrantCutEvent);
         yield return RunHorrorQuadrant(
             startFill: 0.50f,
             endFill: 0.25f,
@@ -296,7 +361,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // Quadrant IV (Top-Left + Zoom Out, 2s): 0.25 -> 0.00
-        PlayClip(quadrantCutSfx);
+        PlayFmodEvent(quadrantCutEvent);
         yield return RunHorrorQuadrant(
             startFill: 0.25f,
             endFill: 0.00f,
@@ -309,7 +374,7 @@ public class TimeLoopResetTransition : MonoBehaviour
             duration: quadrantDuration);
 
         // 5. Sudden pitch-black cut + dead silence the instant the circle vanishes!
-        PlayClip(finalSnapSfx);
+        PlayFmodEvent(finalSnapEvent);
         whileCovered?.Invoke();
 
         if (dateRigGroup != null) dateRigGroup.alpha = 0f;
@@ -341,14 +406,22 @@ public class TimeLoopResetTransition : MonoBehaviour
             yield break;
         }
 
-        // 6. GROGGY WAKE-UP EYELID OPEN (halfway -> blink down -> full open) as scene blur clears
-        PlayClip(wakeUpSfx);
-        SetSceneBlur(1f);
-        SetImageAlpha(fullBackdropImage, 0f);
-        SetEyelidColor(abyssInkColor);
-        SetEyelidHeight(closedHeight);
+        // 6. GROGGY WAKE-UP EYELID OPEN (or fade from black + clear blur)
+        PlayFmodEvent(wakeUpEvent);
+        if (playEyelidOpen)
+        {
+            SetSceneBlur(1f);
+            SetImageAlpha(fullBackdropImage, 0f);
+            SetEyelidColor(abyssInkColor);
+            SetEyelidHeight(closedHeight);
 
-        yield return AnimateSleepyOpen(closedHeight);
+            yield return AnimateSleepyOpen(closedHeight);
+        }
+        else
+        {
+            SetEyelidHeight(0f);
+            yield return AnimateFadeAndBlur(fullBackdropImage, abyssInkColor, 1f, 0f, 1f, 0f, fadeFromBlackDuration, EaseOutCubic);
+        }
 
         ResetIdleState();
         transitioning = false;
@@ -380,8 +453,16 @@ public class TimeLoopResetTransition : MonoBehaviour
         if (calendarGridLines != null)
         {
             for (int i = 0; i < calendarGridLines.Length; i++)
-                if (calendarGridLines[i] != null)
-                    calendarGridLines[i].color = calmInkColor;
+            {
+                if (calendarGridLines[i] == null) continue;
+                string lineName = calendarGridLines[i].name;
+                if (lineName == "WeekdayBar_0")
+                    calendarGridLines[i].color = new Color32(0xF2, 0x5C, 0x66, 0xFF); // Sunday coral-red bar
+                else if (lineName.StartsWith("WeekdayBar_"))
+                    calendarGridLines[i].color = new Color32(0x78, 0x7B, 0x7D, 0xFF); // Mon-Sat grey bars
+                else
+                    calendarGridLines[i].color = new Color(calmInkColor.r, calmInkColor.g, calmInkColor.b, 0.55f);
+            }
         }
 
         if (weekdayTexts != null)
@@ -393,13 +474,19 @@ public class TimeLoopResetTransition : MonoBehaviour
 
         if (neighborDayTexts != null)
         {
+            Color holidayRed = new Color32(0xE0, 0x3E, 0x45, 0xFF);
+            Color mutedGrey = new Color(calmInkColor.r, calmInkColor.g, calmInkColor.b, 0.45f);
             for (int i = 0; i < neighborDayTexts.Length; i++)
             {
-                if (neighborDayTexts[i] != null)
-                {
-                    if (calmFont != null) neighborDayTexts[i].font = calmFont;
-                    neighborDayTexts[i].color = calmNeighborDayColor;
-                }
+                if (neighborDayTexts[i] == null) continue;
+                if (calmFont != null) neighborDayTexts[i].font = calmFont;
+                string t = neighborDayTexts[i].text;
+                if (t == "11")
+                    neighborDayTexts[i].color = calmInkColor;
+                else if (t == "7" || t == "14" || t == "21" || t == "24" || t == "25" || t == "26" || t == "28")
+                    neighborDayTexts[i].color = holidayRed;
+                else
+                    neighborDayTexts[i].color = mutedGrey;
             }
         }
     }
@@ -504,6 +591,48 @@ public class TimeLoopResetTransition : MonoBehaviour
             yield return null;
         }
         SetEyelidHeight(endH);
+        SetSceneBlur(endBlur);
+    }
+
+    IEnumerator AnimateFadeAndBlur(
+        Image overlay,
+        Color baseColor,
+        float startAlpha,
+        float endAlpha,
+        float startBlur,
+        float endBlur,
+        float duration,
+        Func<float, float> ease)
+    {
+        if (overlay != null)
+        {
+            Color c = baseColor;
+            c.a = startAlpha;
+            overlay.color = c;
+        }
+        SetSceneBlur(startBlur);
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float t = ease(Mathf.Clamp01(elapsed / duration));
+            if (overlay != null)
+            {
+                Color c = baseColor;
+                c.a = Mathf.Lerp(startAlpha, endAlpha, t);
+                overlay.color = c;
+            }
+            SetSceneBlur(Mathf.Lerp(startBlur, endBlur, t));
+            yield return null;
+        }
+
+        if (overlay != null)
+        {
+            Color c = baseColor;
+            c.a = endAlpha;
+            overlay.color = c;
+        }
         SetSceneBlur(endBlur);
     }
 
@@ -816,8 +945,14 @@ public class TimeLoopResetTransition : MonoBehaviour
         img.fillClockwise = false;
     }
 
-    void PlayClip(AudioClip clip)
+    static void PlayFmodEvent(EventReference eventRef)
     {
+        if (!eventRef.IsNull)
+        {
+            RuntimeManager.PlayOneShot(eventRef);
+            return;
+        }
+
         if (clip == null) return;
         if (audioSource == null)
         {
