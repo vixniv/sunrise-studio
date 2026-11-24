@@ -469,6 +469,6 @@ Anin: Why do I feel like I'm forgetting something important?
 // Cut directly from its final image to a black thank-you card.
 <<cutscene_black>>
 Thank you for playing.
-// The player taps the card before the Title Screen loads.
-<<scene_transition "TitleScreen">>
+// The player taps the card before fading out and into the Credit Scene.
+<<scene_transition "CreditScene">>
 ===

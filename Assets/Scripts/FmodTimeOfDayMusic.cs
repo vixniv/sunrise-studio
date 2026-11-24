@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public sealed class FmodTimeOfDayMusic : MonoBehaviour
 {
+    const string MainMenuPath = "event:/Music/Main_Menu";
     const string DaylightPath = "event:/Music/Daylight";
     const string EveningPath = "event:/Music/Evening";
     const string MidnightPath = "event:/Music/Midnight";
@@ -196,7 +197,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         if (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning)
             return;
 
-        string targetPath = GetTargetMusicPath();
+        string targetPath = scene.name == "CreditScene" ? MainMenuPath : GetTargetMusicPath();
         PlayManagedMusic(targetPath);
     }
 

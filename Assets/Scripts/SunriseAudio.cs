@@ -539,7 +539,7 @@ public sealed class SunriseAudio : MonoBehaviour
         if (!scene.IsValid() || !scene.isLoaded)
             return;
 
-        string cue = scene.name == "TitleScreen"
+        string cue = scene.name == "TitleScreen" || scene.name == "CreditScene"
             ? "music_main_menu"
             : YarnCommands.IsTimeOfDay(YarnCommands.GapTimeOfDay)
                 ? "music_midnight"
