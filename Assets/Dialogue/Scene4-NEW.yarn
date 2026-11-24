@@ -18,11 +18,13 @@ tags: setup testing
 title: Dec10_Wish_Dorm
 tags: december10 dorm night wish testing
 ---
-<<cinematic_start>>
 // Match the December 9 Dorm entrance: reveal the empty room, then open the door
 // and let Anin walk in. Her current stopping point remains X 5.48.
+// Hide before <<cinematic_start>>: it waits for the bars to slide in, and Anin would
+// show at the door spawn during that wait, then vanish (the glitch on arrival).
 <<hide "Kirana">>
 <<hide "Anin">>
+<<cinematic_start>>
 <<delay 0.5>>
 <<open_door "Dorm">>
 <<show "Anin">>

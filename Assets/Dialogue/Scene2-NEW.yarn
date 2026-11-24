@@ -270,14 +270,15 @@ Anin: Okay… let's go.
 title: Dec9_Dorm_Night
 tags: december9 day1 dorm night testing
 ---
-<<cinematic_start>>
 // The scene loads empty; Anin and Kirana begin at the Dorm doorway.
 // Anin's arrival X is set by the preceding transition; position Kirana at that doorway in Unity.
 <<set $story_exit to true>>
 <<set $dec9_classroom_phase to "night">>
 // Hide both while the room transition opens, then let the player see the empty Dorm.
+// Hide before <<cinematic_start>>, which waits for the bars and would show them for a moment.
 <<hide "Anin">>
 <<hide "Kirana">>
+<<cinematic_start>>
 <<delay 0.5>>
 <<teleport_character "Kirana" 11.5 "left">>
 <<open_door "Dorm">>
