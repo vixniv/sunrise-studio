@@ -145,8 +145,10 @@ public class TimeTransition : MonoBehaviour
     [SerializeField] EventReference lunchTransitionEvent;
     [Tooltip("Played when transitioning Lunch -> After School (Go-Home School Bell).")]
     [SerializeField] EventReference afterSchoolTransitionEvent;
-    [Tooltip("Played when transitioning After School -> Evening / Night.")]
+    [Tooltip("Played when transitioning After School -> Evening / Night (e.g. event:/Music/AfterSchool_To_Evening_Transition).")]
     [SerializeField] EventReference eveningTransitionEvent;
+    [Tooltip("When enabled, Evening Transition Event starts at 0.0s across the whole transition (ideal for the 6s AfterSchool_To_Evening_Transition track) and fades out current scene BGM.")]
+    [SerializeField] bool playEveningEventAtStart = true;
     [Tooltip("Optional fallback FMOD emitter on this object if the target phase event above is left empty.")]
     [SerializeField] StudioEventEmitter fallbackEmitter;
 
@@ -274,6 +276,14 @@ public class TimeTransition : MonoBehaviour
         // Skip 1 frame to avoid Inspector menu deltaTime spikes
         yield return null;
 
+        bool playedEveningAtStart = toSlot == StoryTimeSlot.Night && playEveningEventAtStart && !eveningTransitionEvent.IsNull;
+        if (playedEveningAtStart)
+        {
+            // Fade out active scene BGM (bus:/Music) and start the 6s evening transition track from 0.0s
+            FmodTimeOfDayMusic.FadeOutActiveMusic();
+            RuntimeManager.PlayOneShot(eveningTransitionEvent);
+        }
+
         // 1. Colored background sheet glides & fades in FIRST from right -> center
         if (mainWipeRect != null)
             yield return MoveAndFadeRectX(mainWipeRect, mainWipeImage, fromAccent, offscreenX, 0f, 0f, 1f, wipeInDuration, EaseInOutSine);
@@ -306,9 +316,16 @@ public class TimeTransition : MonoBehaviour
             float toTickAngle = targetAngleDeg + ((meetTickCount - tick) * degreesPerTick);
 
             if (isMeetingTick)
-                PlayPhaseTransitionAudio(toSlot);
+            {
+                if (playedEveningAtStart)
+                    PlayFmodEvent(clockTickEvent);
+                else
+                    PlayPhaseTransitionAudio(toSlot);
+            }
             else
+            {
                 PlayFmodEvent(clockTickEvent);
+            }
 
             // Crisp mechanical snap — keep colors strictly locked to fromAccent (no gradient!)
             yield return AnimateMeetingTick(
@@ -374,6 +391,7 @@ public class TimeTransition : MonoBehaviour
 
         ResetIdleState();
         transitioning = false;
+        FmodTimeOfDayMusic.RefreshForCurrentScene();
     }
 
     IEnumerator AnimateMeetingTick(
