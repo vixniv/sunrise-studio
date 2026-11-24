@@ -14,6 +14,8 @@ public class SceneLightingCycle2D : MonoBehaviour
     [SerializeField] private Volume afternoonVolume;
     [SerializeField] private Volume nightVolume;
     [SerializeField] private Volume dreamVolume;
+    [Tooltip("Optional memory look for this scene. Assign only where a flashback takes place.")]
+    [SerializeField] private Volume flashbackVolume;
 
     [Header("Global Light")]
     [Tooltip("The scene's Global Light 2D. Its intensity is set for the active time slot.")]
@@ -33,12 +35,14 @@ public class SceneLightingCycle2D : MonoBehaviour
     private void OnEnable()
     {
         YarnCommands.TimeOfDayChanged += ApplyCurrentTime;
+        YarnCommands.MemoryMontageChanged += ApplyCurrentTime;
         ApplyCurrentTime();
     }
 
     private void OnDisable()
     {
         YarnCommands.TimeOfDayChanged -= ApplyCurrentTime;
+        YarnCommands.MemoryMontageChanged -= ApplyCurrentTime;
     }
 
     private void ApplyCurrentTime()
@@ -85,10 +89,14 @@ public class SceneLightingCycle2D : MonoBehaviour
         if (globalLight != null)
             globalLight.intensity = activeLightIntensity;
 
+        if (YarnCommands.MemoryMontageActive && flashbackVolume != null)
+            activeVolume = flashbackVolume;
+
         SetWeight(dayVolume, activeVolume == dayVolume ? 1f : 0f);
         SetWeight(afternoonVolume, activeVolume == afternoonVolume ? 1f : 0f);
         SetWeight(nightVolume, activeVolume == nightVolume ? 1f : 0f);
         SetWeight(dreamVolume, activeVolume == dreamVolume ? 1f : 0f);
+        SetWeight(flashbackVolume, activeVolume == flashbackVolume ? 1f : 0f);
 
         if (dreamWiggleMaterial != null)
             dreamWiggleMaterial.SetFloat(WiggleStrengthProperty, isDreamSequence ? dreamWiggleStrength : 0f);

@@ -434,7 +434,7 @@ public sealed class SunriseAudio : MonoBehaviour
         if (!scene.IsValid() || !scene.isLoaded) return;
         foreach (GameObject root in scene.GetRootGameObjects())
         foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
-            if (emitter != null && EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
+            if (emitter != null && !IsFmodMusic(emitter))
                 sceneSfxEmitters.Add(emitter);
         ApplyFmodSfxVolume();
     }
@@ -452,7 +452,7 @@ public sealed class SunriseAudio : MonoBehaviour
         foreach (GameObject root in scene.GetRootGameObjects())
         foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
         {
-            if (emitter == null || EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
+            if (emitter == null || !IsFmodMusic(emitter))
                 continue;
 
             // Room emitters would start at Start, then stop when the room unloads.
@@ -475,6 +475,11 @@ public sealed class SunriseAudio : MonoBehaviour
                 StopFmodMusic();
             }
         }
+    }
+
+    static bool IsFmodMusic(StudioEventEmitter emitter)
+    {
+        return EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
     }
 
     void ApplyFmodMusicVolume()

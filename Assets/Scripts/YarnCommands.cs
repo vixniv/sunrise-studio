@@ -91,8 +91,12 @@ public class YarnCommands : MonoBehaviour
     // Number of <<hard_reset>>s and <<soft_reset>>s so far; 0 until the first loop ends.
     public static int LoopsCompleted { get; private set; }
 
+    // True only while the story is replaying a memory in another scene.
+    public static bool MemoryMontageActive { get; private set; }
+
     // Runs after TimeOfDay changes. During <<advance_time>> it runs while the screen is covered.
     public static event Action TimeOfDayChanged;
+    public static event Action MemoryMontageChanged;
 
     // Clears the static values when Play Mode starts, even with Domain Reload turned off.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -100,14 +104,18 @@ public class YarnCommands : MonoBehaviour
     {
         TimeOfDay = DefaultTimeOfDay;
         LoopsCompleted = 0;
+        MemoryMontageActive = false;
         TimeOfDayChanged = null;
+        MemoryMontageChanged = null;
     }
 
     public static void ResetForNewGame()
     {
         TimeOfDay = DefaultTimeOfDay;
         LoopsCompleted = 0;
+        MemoryMontageActive = false;
         TimeOfDayChanged?.Invoke();
+        MemoryMontageChanged?.Invoke();
     }
 
     // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
@@ -178,6 +186,7 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("move_character", (Func<string, float, float, string, YarnTask>)MoveCharacter);
         runner.AddCommandHandler("move_character_keep_facing", (Func<string, float, float, string, YarnTask>)MoveCharacterKeepFacing);
         runner.AddCommandHandler("flinch_character", (Func<string, YarnTask>)FlinchCharacter);
+        runner.AddCommandHandler("start_flinch_character", (Action<string>)StartFlinchCharacter);
         runner.AddCommandHandler("move_character_to_actor", (Func<string, string, float, float, string, YarnTask>)MoveCharacterToActor);
         runner.AddCommandHandler("start_character_move", (Action<string, float, float, string, float>)StartCharacterMove);
         runner.AddCommandHandler("start_character_move_to_actor", (Action<string, string, float, float, string, float>)StartCharacterMoveToActor);
@@ -277,6 +286,8 @@ public class YarnCommands : MonoBehaviour
         runner.AddCommandHandler("gap_begin_awake", (Action)(() => Pending("gap_begin_awake")));
         runner.AddCommandHandler("memory_montage", (Action<bool>)(on =>
         {
+            MemoryMontageActive = on;
+            MemoryMontageChanged?.Invoke();
             SunriseAudio.Play(on ? "memory_transition_in" : "memory_transition_back");
             Pending($"memory_montage {on}");
         }));
@@ -1020,13 +1031,32 @@ public class YarnCommands : MonoBehaviour
         return YarnTask.WaitUntil(() => this == null || target == null || !movingActors.Contains(target));
     }
 
-    // Uses the existing sprite shader's tint plus a tiny visual-only recoil. The player
-    // root, collision, and camera target stay at their stepped-back position.
+    // A brief nervous shudder on the visual alone. The sprite keeps its normal
+    // color and size, and the player root, collider, and camera target stay still.
     private YarnTask FlinchCharacter(string actorName)
     {
-        GameObject target = FindActorTarget(actorName, "flinch_character");
-        if (target == null)
+        SpriteRenderer sprite = FindFlinchSprite(actorName, "flinch_character");
+        if (sprite == null)
             return YarnTask.CompletedTask;
+
+        bool finished = false;
+        StartCoroutine(FlinchSpriteRoutine(sprite, () => finished = true));
+        return YarnTask.WaitUntil(() => this == null || sprite == null || finished);
+    }
+
+    // Starts the shudder without holding Yarn, so it can accompany a dialogue line.
+    private void StartFlinchCharacter(string actorName)
+    {
+        SpriteRenderer sprite = FindFlinchSprite(actorName, "start_flinch_character");
+        if (sprite != null)
+            StartCoroutine(FlinchSpriteRoutine(sprite, null));
+    }
+
+    private SpriteRenderer FindFlinchSprite(string actorName, string commandName)
+    {
+        GameObject target = FindActorTarget(actorName, commandName);
+        if (target == null)
+            return null;
 
         PlayerMove player = target.GetComponent<PlayerMove>();
         SpriteRenderer sprite = player != null && player.visual != null
@@ -1034,22 +1064,17 @@ public class YarnCommands : MonoBehaviour
             : target.GetComponentInChildren<SpriteRenderer>(true);
         if (sprite == null)
         {
-            Debug.LogError($"<<flinch_character>>: \"{target.name}\" has no SpriteRenderer.", this);
-            return YarnTask.CompletedTask;
+            Debug.LogError($"<<{commandName}>>: \"{target.name}\" has no SpriteRenderer.", this);
+            return null;
         }
-
-        bool finished = false;
-        StartCoroutine(FlinchSpriteRoutine(sprite, () => finished = true));
-        return YarnTask.WaitUntil(() => this == null || sprite == null || finished);
+        return sprite;
     }
 
     private static IEnumerator FlinchSpriteRoutine(SpriteRenderer sprite, Action finished)
     {
         Transform visual = sprite.transform;
         Vector3 originalPosition = visual.localPosition;
-        Vector3 originalScale = visual.localScale;
-        Color originalColor = sprite.color;
-        const float duration = 0.28f;
+        const float duration = 0.45f;
         float elapsed = 0f;
 
         try
@@ -1059,24 +1084,15 @@ public class YarnCommands : MonoBehaviour
                 elapsed += Time.unscaledDeltaTime;
                 float progress = Mathf.Clamp01(elapsed / duration);
                 float strength = Mathf.Sin(progress * Mathf.PI);
-                float shake = Mathf.Sin(progress * Mathf.PI * 6f) * 0.07f * strength;
-                visual.localPosition = originalPosition + new Vector3(shake, 0f, 0f);
-                visual.localScale = Vector3.Scale(originalScale,
-                    new Vector3(1f - 0.06f * strength, 1f + 0.06f * strength, 1f));
-                sprite.color = Color.Lerp(originalColor,
-                    new Color(originalColor.r * 0.68f, originalColor.g * 0.76f,
-                        originalColor.b * 0.9f, originalColor.a), strength);
+                float shake = Mathf.Sin(progress * Mathf.PI * 8f) * 0.055f * strength;
+                visual.localPosition = originalPosition + new Vector3(shake, -0.0125f * strength, 0f);
                 yield return null;
             }
         }
         finally
         {
             if (sprite != null)
-            {
                 visual.localPosition = originalPosition;
-                visual.localScale = originalScale;
-                sprite.color = originalColor;
-            }
             finished?.Invoke();
         }
     }
