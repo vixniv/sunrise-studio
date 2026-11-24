@@ -8,7 +8,8 @@
 // Anin's time-change thoughts play on SchoolMap after the transition.
 // The rooftop sign, separate Locker Room key sprite, Rooftop Entrance, and
 // Rooftop room art are imported. Their scene references must be assigned in Unity.
-// VISUAL TODO: Anin/Fal railing poses are unfinished.
+// Rooftop: Fal leans on the railing (LeanPose, Start Leaning). When Anin walks near,
+// the screen fades and she reappears leaning beside Fal before the conversation.
 // CAMERA TODO: Pan from rooftop sign to Key Hook, then Janitor's Locker.
 // AUDIO TODO: No dedicated closing-bell cue was found. The day_transition cue
 // supplies the time-change bell and the late bell placeholder.
@@ -467,8 +468,11 @@ title: Dec10_Rooftop_Encounter
 tags: december10 rooftop cutscene testing
 ---
 // Anin unexpectedly finds Fal by the railing, looking out over the school.
-// VISUAL TODO: Add Anin/Fal leaning poses when their art is ready.
+// Fal is already leaning (LeanPose with Start Leaning in the Rooftop scene).
+// The screen fades; Anin reappears leaning on Fal's left. Tune the X offset to the art:
+// -1.6875 = 27 px left of Fal's root (25 px wide Anin sprite + 2 px gap).
 <<set $dec10_rooftop_entered to true>>
+<<fade_teleport_character_to_actor "Anin" "Fal" -1.6875 "lean">>
 Anin: Fal? Didn't expect to see you here.
 Fal: Just needed somewhere quiet.
 <<jump Dec10_Rooftop_Conversation>>
@@ -496,6 +500,11 @@ Anin: We should probably head down.
 Fal: Yeah.
 Fal: ...I'm glad you came up here.
 Anin: Me too.
+// Fade again: Anin steps off the railing and stands beside Fal, facing him. Fal keeps leaning.
+// Facing set while leaning is kept for when she stands. -0.375 = 6 px left of Fal's root,
+// which leaves ~15 px between standing Anin and leaning Fal (his Lean Offset X is 1.9).
+<<face_character_to_actor "Anin" "Fal">>
+<<fade_teleport_character_to_actor "Anin" "Fal" -0.375 "stand">>
 <<quest_update "dec10" "Leave the rooftop">>
 <<set $dec10_rooftop_conversation_done to true>>
 // CONTROL ANIN. Rooftop exit interaction: Dec10_Rooftop_Exit.

@@ -1427,9 +1427,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.13515754
-    width: 0.24485126
-    height: 0.24527535
+    y: 0.5199005
+    width: 0.27116707
+    height: 0.27163672
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1595,6 +1595,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
   nonRigidbodyVelocity: 0
   attenuationObject: {fileID: 0}
+--- !u!1 &494246372 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1481673783785582252, guid: 17d425e74547c42348d440f08eec36fb, type: 3}
+  m_PrefabInstance: {fileID: 1889397480}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &536746195
 GameObject:
   m_ObjectHideFlags: 0
@@ -2179,6 +2184,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: leanScale
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: leanOffset.x
+      value: 2.375
+      objectReference: {fileID: 0}
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: leanOffset.y
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: overrideSorting
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: leanSortingLayer
+      value: Characters
+      objectReference: {fileID: 0}
+    - target: {fileID: 1629800781780979392, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
+      propertyPath: leanSortingOrder
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 1775734492480913724, guid: b9e217707813e44d39b952b2ae4d1cd7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -53.1
@@ -5091,13 +5120,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1481673783785582252, guid: 17d425e74547c42348d440f08eec36fb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1889397485}
   m_SourcePrefab: {fileID: 100100000, guid: 17d425e74547c42348d440f08eec36fb, type: 3}
 --- !u!4 &1889397481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8752840328986555028, guid: 17d425e74547c42348d440f08eec36fb, type: 3}
   m_PrefabInstance: {fileID: 1889397480}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1889397485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494246372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f05f24590591345a0b7cbf8558908648, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeanPose
+  leanFrames:
+  - {fileID: -4995572205583387936, guid: f369451320323427e8d129def84e85db, type: 3}
+  - {fileID: 5045996478224841750, guid: f369451320323427e8d129def84e85db, type: 3}
+  - {fileID: 7439155912579045234, guid: f369451320323427e8d129def84e85db, type: 3}
+  framesPerSecond: 5
+  randomStart: 1
+  startLeaning: 1
+  leanOffset: {x: 1.9, y: 0}
+  leanScale: 1
+  faceFront: 1
+  overrideSorting: 0
+  leanSortingLayer: Default
+  leanSortingOrder: 5
 --- !u!1 &1906878408
 GameObject:
   m_ObjectHideFlags: 0
