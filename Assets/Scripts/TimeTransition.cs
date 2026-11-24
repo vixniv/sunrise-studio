@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using FMODUnity;
 using SunriseStudio.UI;
 using TMPro;
 using UnityEngine;
@@ -135,12 +136,21 @@ public class TimeTransition : MonoBehaviour
     [Min(0.05f)]
     [SerializeField] float wipeOutDuration = 0.65f;
 
-    [Header("Audio (Optional)")]
-    [SerializeField] AudioSource audioSource;
-    [SerializeField] AudioClip clockTickSfx;
-    [SerializeField] AudioClip finalChimeSfx;
-    [Range(0f, 1f)]
-    [SerializeField] float sfxVolume = 1f;
+    [Header("FMOD Audio")]
+    [Tooltip("Played on each clock tick before the hands meet.")]
+    [SerializeField] EventReference clockTickEvent;
+    [Tooltip("Played when transitioning to Morning (Alarm Clock).")]
+    [SerializeField] EventReference morningTransitionEvent;
+    [Tooltip("Played when transitioning Morning -> Lunch (School Bell).")]
+    [SerializeField] EventReference lunchTransitionEvent;
+    [Tooltip("Played when transitioning Lunch -> After School (Go-Home School Bell).")]
+    [SerializeField] EventReference afterSchoolTransitionEvent;
+    [Tooltip("Played when transitioning After School -> Evening / Night (e.g. event:/Music/AfterSchool_To_Evening_Transition).")]
+    [SerializeField] EventReference eveningTransitionEvent;
+    [Tooltip("When enabled, Evening Transition Event starts at 0.0s across the whole transition (ideal for the 6s AfterSchool_To_Evening_Transition track) and fades out current scene BGM.")]
+    [SerializeField] bool playEveningEventAtStart = true;
+    [Tooltip("Optional fallback FMOD emitter on this object if the target phase event above is left empty.")]
+    [SerializeField] StudioEventEmitter fallbackEmitter;
 
     Vector2 accentSlashBasePos;
     Vector2 watermarkBasePos;
@@ -169,6 +179,9 @@ public class TimeTransition : MonoBehaviour
 
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
+
+        if (fallbackEmitter == null)
+            fallbackEmitter = GetComponent<StudioEventEmitter>();
 
         CacheBasePositions();
         ResetIdleState();
@@ -270,6 +283,14 @@ public class TimeTransition : MonoBehaviour
         // Skip 1 frame to avoid Inspector menu deltaTime spikes
         yield return null;
 
+        bool playedEveningAtStart = toSlot == StoryTimeSlot.Night && playEveningEventAtStart && !eveningTransitionEvent.IsNull;
+        if (playedEveningAtStart)
+        {
+            // Fade out active scene BGM (bus:/Music) and start the 6s evening transition track from 0.0s
+            FmodTimeOfDayMusic.FadeOutActiveMusic();
+            RuntimeManager.PlayOneShot(eveningTransitionEvent);
+        }
+
         // 1. Colored background sheet glides & fades in FIRST from right -> center
         if (mainWipeRect != null)
             yield return MoveAndFadeRectX(mainWipeRect, mainWipeImage, fromAccent, offscreenX, 0f, 0f, 1f, wipeInDuration, EaseInOutSine);
@@ -301,7 +322,17 @@ public class TimeTransition : MonoBehaviour
             float fromTickAngle = targetAngleDeg + ((meetTickCount - (tick - 1)) * degreesPerTick);
             float toTickAngle = targetAngleDeg + ((meetTickCount - tick) * degreesPerTick);
 
-            PlayClip(isMeetingTick && finalChimeSfx != null ? finalChimeSfx : clockTickSfx);
+            if (isMeetingTick)
+            {
+                if (playedEveningAtStart)
+                    PlayFmodEvent(clockTickEvent);
+                else
+                    PlayPhaseTransitionAudio(toSlot);
+            }
+            else
+            {
+                PlayFmodEvent(clockTickEvent);
+            }
 
             // Crisp mechanical snap — keep colors strictly locked to fromAccent (no gradient!)
             yield return AnimateMeetingTick(
@@ -370,6 +401,7 @@ public class TimeTransition : MonoBehaviour
 
         ResetIdleState();
         transitioning = false;
+        FmodTimeOfDayMusic.RefreshForCurrentScene();
     }
 
     IEnumerator AnimateMeetingTick(
@@ -699,22 +731,52 @@ public class TimeTransition : MonoBehaviour
         cachedBasePositions = true;
     }
 
-    void PlayClip(AudioClip clip)
+    void PlayPhaseTransitionAudio(StoryTimeSlot toSlot)
     {
-        if (clip == null) return;
-
-        if (audioSource == null)
+        EventReference targetEvent = toSlot switch
         {
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-                audioSource.playOnAwake = false;
-                audioSource.spatialBlend = 0f;
-            }
+            StoryTimeSlot.Morning => morningTransitionEvent,
+            StoryTimeSlot.Lunch => lunchTransitionEvent,
+            StoryTimeSlot.AfterSchool => afterSchoolTransitionEvent,
+            StoryTimeSlot.Night => eveningTransitionEvent,
+            _ => default
+        };
+
+        if (!targetEvent.IsNull)
+        {
+            RuntimeManager.PlayOneShot(targetEvent);
+            return;
         }
 
-        audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
+        if (fallbackEmitter != null)
+        {
+            fallbackEmitter.Play();
+            return;
+        }
+
+        if (clip != null)
+        {
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+                if (audioSource == null)
+                {
+                    audioSource = gameObject.AddComponent<AudioSource>();
+                    audioSource.playOnAwake = false;
+                    audioSource.spatialBlend = 0f;
+                }
+            }
+            audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
+            return;
+        }
+
+        PlayFmodEvent(clockTickEvent);
+    }
+
+    static void PlayFmodEvent(EventReference eventRef)
+    {
+        if (!eventRef.IsNull)
+            RuntimeManager.PlayOneShot(eventRef);
     }
 
     Color GetSlotAccentColor(StoryTimeSlot slot)
