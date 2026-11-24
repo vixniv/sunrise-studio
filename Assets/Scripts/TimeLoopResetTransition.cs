@@ -129,6 +129,13 @@ public class TimeLoopResetTransition : MonoBehaviour
     bool transitioning;
     public bool IsTransitioning => transitioning;
 
+    public void ResetForTitleScreen()
+    {
+        StopAllCoroutines();
+        transitioning = false;
+        ResetIdleState();
+    }
+
     void Awake()
     {
         if (Instance != null && Instance != this)

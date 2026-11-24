@@ -20,6 +20,12 @@ public class CycleLightActivation2D : MonoBehaviour
     [Tooltip("Their GameObjects are active during night / after school, and inactive otherwise.")]
     [SerializeField] private List<LightEntry> lampLights = new List<LightEntry>();
 
+    [Tooltip("Use the afternoon window lights instead of lamps during Night in this scene only (for example, Rooftop's sunset story scene).")]
+    [SerializeField] private bool useWindowLightsAtNight;
+
+    [Tooltip("Turn off both legacy light groups during Night so separate sunset lights can light this scene. Takes precedence over Use Window Lights At Night.")]
+    [SerializeField] private bool useCustomNightLights;
+
     private void OnEnable()
     {
         YarnCommands.TimeOfDayChanged += ApplyCurrentTime;
@@ -52,8 +58,8 @@ public class CycleLightActivation2D : MonoBehaviour
                 break;
 
             case "night":
-                useWindowLight = false;
-                useLampLight = true;
+                useWindowLight = !useCustomNightLights && useWindowLightsAtNight;
+                useLampLight = !useCustomNightLights && !useWindowLightsAtNight;
                 break;
 
             default:

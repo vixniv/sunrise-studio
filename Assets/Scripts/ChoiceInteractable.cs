@@ -47,6 +47,8 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
     [Header("Approach")]
     [Tooltip("Before a choice's dialogue starts, the player walks to a spot beside this object and turns to face it, so the two do not overlap.")]
     [SerializeField] private bool approachBeforeTalking;
+    [Tooltip("Keep this character's current facing when Anin approaches to talk.")]
+    [SerializeField] private bool keepSpeakerFacingOnApproach;
     [Tooltip("Horizontal distance, in world units, between this object and the spot the player walks to. 1 unit = 16 pixels.")]
     [SerializeField, Min(0f)] private float approachDistance = 1.5f;
     [Tooltip("Side of this object the player stands on. Nearest keeps the player on the side they came from.")]
@@ -287,6 +289,13 @@ public class ChoiceInteractable : MonoBehaviour, IInteractionTarget
         {
             approaching = false;
             if (this == null || !isActiveAndEnabled || player == null) return;
+            // NPCs face the side from which Anin actually approached.
+            if (!keepSpeakerFacingOnApproach && GetComponent<DialogSpeaker>() != null)
+            {
+                bool faceRight = side > 0f;
+                foreach (SpriteRenderer sprite in GetComponentsInChildren<SpriteRenderer>(true))
+                    sprite.flipX = faceRight;
+            }
             player.InteractionMenuOpen = false;
             arrived();
         });

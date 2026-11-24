@@ -33,6 +33,7 @@
 title: Gap4_Start
 tags: scene8 gap4 dorm
 ---
+<<cinematic_start>>
 <<quest_clear>>
 <<set $ending_started to false>>
 // Lets the Dorm door run Gap4_Door instead of leaving freely.
@@ -41,6 +42,7 @@ tags: scene8 gap4 dorm
 <<gap_mode true>>
 Anin: Kirana?
 Anin: ...This is the dream. I'm awake, and it's the dream.
+<<cinematic_end>>
 <<enable_control>>
 // Interactables: Gap4_Calendar, Gap4_Door
 ===
@@ -77,6 +79,7 @@ Anin: I need to end this.
 title: Gap4_Auditorium
 tags: scene8 gap4 auditorium event
 ---
+<<cinematic_start>>
 Anin: Hey.
 <<sfx "night_anin_reveal">>
 <<npc_enter "Night Anin">>
@@ -123,6 +126,7 @@ Night Anin: The same thing you do. Just with a tomorrow.
 title: Gap4_Festival
 tags: scene8 gap4 festival cutscene
 ---
+<<cinematic_start>>
 <<sfx "festival_memory">>
 // The festival is a cutscene, not a playable room, and its scene doesn't
 // exist yet. Until it does, these lines play on the auditorium stage.
@@ -137,6 +141,7 @@ Anin: I still want it.
 <<fade "out">>
 <<sfx "separation_transition">>
 <<gap_mode false>>
+<<cinematic_end>>
 <<jump Ending_LoopContinues>>
 ===
 
@@ -158,31 +163,37 @@ tags: scene8 ending
 title: Ending_Dorm
 tags: scene8 ending dorm
 ---
+<<cinematic_start>>
 <<fade "in">>
 // Dec 10 morning. Kirana's bed is empty. Mirrors the first line of the game.
 Anin: Looks like Kirana left early. Not really her thing.
+<<cinematic_end>>
 <<scene_transition "Classroom">>
 ===
 
 title: Ending_Classroom
 tags: scene8 ending classroom
 ---
+<<cinematic_start>>
 Kirana: Hi Anin, where have you been?
 // Hold on the group laughing at the window table. Warm, peaceful,
 // unchanged. This is what Anin chose, and it should feel good.
 <<fade "out">>
+<<cinematic_end>>
 <<scene_transition_at_x "Auditorium" -36.589 "left">>
 ===
 
 title: Ending_Auditorium
 tags: scene8 ending auditorium
 ---
+<<cinematic_start>>
 <<gap_mode true>>
 <<ticking_clock>>
 // The hall is empty and silent. Every clock is frozen at 00:00.
 // Night Anin sits alone on the edge of the stage, beside the flagpole.
 // The clock on the wall above her is still ticking.
 Night Anin: ...Again.
+<<cinematic_end>>
 <<end_card "Chapter 1">>
 // Bittersweet: day Anin got what she wanted; night Anin is left alone in
 // time that only moves for her. Hook for Chapter 2.

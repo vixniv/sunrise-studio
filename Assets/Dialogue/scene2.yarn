@@ -40,6 +40,7 @@
 title: Gap1_Start
 tags: scene2 gap1 dorm
 ---
+<<cinematic_start>>
 <<gap_mode true>>
 // Lets the Dorm door run Gap1_Dorm_Door instead of leaving freely.
 <<set $story_exit to true>>
@@ -59,6 +60,7 @@ tags: scene2 gap1 dorm
 // Double reading: first play = tired deja vu. Replay = night Anin's
 // weary "again", the same word she ends Chapter 1 on (Scene 8).
 Anin: ...Again.
+<<cinematic_end>>
 <<quest_start "gap1" "Something's wrong with Fal">>
 // Interactables: Gap1_Dorm_Clock, Gap1_Dorm_KiranaBed,
 // Gap1_Dorm_Window, Gap1_Dorm_Door
@@ -284,10 +286,12 @@ Anin: He's carrying all of this alone. Someone has to say something to him.
 title: Gap1_WriteNotes
 tags: scene2 gap1 lockers
 ---
+<<cinematic_start>>
 <<quest_update "gap1" "Write something for Fal">>
 Anin: Something he'll read when he needs it most.
 <<blur_writing "notes_for_fal">>
 Anin: No name. It'll mean more that way.
+<<cinematic_end>>
 <<jump Gap1_MathBook>>
 ===
 
@@ -334,12 +338,14 @@ tags: scene2 gap1 lockers
 title: Gap1_Dorm_End
 tags: scene2 gap1 dorm
 ---
+<<cinematic_start>>
 // Anin lies down. The clock still reads 00:00.
 <<sfx "bed_drop">>
 Anin: Please. Let this be the last time.
 // The second hand moves.
 <<gap_mode false>>
 <<set $chapter_scene to 3>>
+<<cinematic_end>>
 <<end_gap>>
 // TRANSITION → Scene 3: Day 2 (Dec 10 morning)
 ===

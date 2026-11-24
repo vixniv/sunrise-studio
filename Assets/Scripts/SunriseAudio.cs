@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using SunriseStudio.UI;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,6 +10,7 @@ public sealed class SunriseAudio : MonoBehaviour
 {
     const string ResourceName = "SunriseAudioLibrary";
     const string MusicVolumeKey = "Sunrise.Settings.MusicVolume";
+    const string SfxVolumeKey = "Sunrise.Settings.SfxVolume";
 
     static SunriseAudio instance;
     static SunriseAudioLibrary library;
@@ -23,6 +26,11 @@ public sealed class SunriseAudio : MonoBehaviour
     bool ambienceTransitioning;
     float musicCueVolume = 1f;
     float musicVolumeScale = 1f;
+    float sfxVolumeScale = 1f;
+    float loopCueVolume = 1f;
+    FMOD.Studio.EventInstance fmodMusic;
+    string fmodMusicPath;
+    readonly List<StudioEventEmitter> sceneSfxEmitters = new List<StudioEventEmitter>();
 
     static SunriseAudio Instance
     {
@@ -37,6 +45,8 @@ public sealed class SunriseAudio : MonoBehaviour
             return instance;
         }
     }
+
+    public static float SfxVolume => Instance.sfxVolumeScale;
 
     static SunriseAudioLibrary Library
     {
@@ -105,6 +115,7 @@ public sealed class SunriseAudio : MonoBehaviour
         musicSource.loop = true;
         musicSource.spatialBlend = 0f;
         musicVolumeScale = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumeKey, 1f));
+        sfxVolumeScale = Mathf.Clamp01(PlayerPrefs.GetFloat(SfxVolumeKey, 1f));
 
         // Keep the cutscene filter off the host: filtering the host would also muffle music and UI sounds.
         var ambienceObject = new GameObject("Cutscene Ambience");
@@ -113,6 +124,7 @@ public sealed class SunriseAudio : MonoBehaviour
         ambienceSource.playOnAwake = false;
         ambienceSource.loop = true;
         ambienceSource.spatialBlend = 0f;
+        ambienceSource.mute = sfxVolumeScale <= 0.0001f;
         ambienceFilter = ambienceObject.AddComponent<AudioLowPassFilter>();
         ambienceFilter.cutoffFrequency = 22000f;
 
@@ -124,12 +136,15 @@ public sealed class SunriseAudio : MonoBehaviour
 
     void OnDestroy()
     {
+        StopFmodMusic();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         YarnCommands.TimeOfDayChanged -= RefreshMusicForCurrentScene;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        KeepFmodMusicAcrossScenes(scene);
+        CacheFmodSfx(scene);
         WireButtons(scene);
         RefreshMusic(scene);
         if (!pendingDoorClose)
@@ -201,7 +216,7 @@ public sealed class SunriseAudio : MonoBehaviour
         float volume;
         AudioClip clip = Library.GetClip(key, out volume);
         if (clip != null)
-            Instance.oneShotSource.PlayOneShot(clip, Mathf.Clamp01(volume * volumeScale));
+            Instance.oneShotSource.PlayOneShot(clip, Mathf.Clamp01(volume * volumeScale) * Instance.sfxVolumeScale);
         return clip;
     }
 
@@ -237,7 +252,8 @@ public sealed class SunriseAudio : MonoBehaviour
             return;
         source.Stop();
         source.clip = clip;
-        source.volume = volume;
+        Instance.loopCueVolume = volume;
+        source.volume = volume * Instance.sfxVolumeScale;
         source.Play();
     }
 
@@ -345,6 +361,7 @@ public sealed class SunriseAudio : MonoBehaviour
                 continue;
 
             audio.musicVolumeScale = clamped;
+            audio.ApplyFmodMusicVolume();
             AudioSource source = audio.musicSource;
             if (source == null)
             {
@@ -371,6 +388,114 @@ public sealed class SunriseAudio : MonoBehaviour
 
         if (instance == null)
             _ = Instance;
+    }
+
+    public static void SetSfxVolume(float volume)
+    {
+        SunriseAudio audio = Instance;
+        audio.sfxVolumeScale = Mathf.Clamp01(volume);
+        if (audio.loopSource != null && audio.loopSource.clip != null)
+            audio.loopSource.volume = audio.loopCueVolume * audio.sfxVolumeScale;
+        if (audio.ambienceSource != null)
+            audio.ambienceSource.mute = audio.sfxVolumeScale <= 0.0001f;
+        audio.ApplyFmodSfxVolume();
+    }
+
+    void LateUpdate()
+    {
+        // Some UI emitters create a new FMOD instance only when clicked.
+        if (sfxVolumeScale < 0.999f)
+            ApplyFmodSfxVolume();
+    }
+
+    void CacheFmodSfx(Scene scene)
+    {
+        sceneSfxEmitters.Clear();
+        if (!scene.IsValid() || !scene.isLoaded) return;
+        foreach (GameObject root in scene.GetRootGameObjects())
+        foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
+            if (emitter != null && !IsFmodMusic(emitter))
+                sceneSfxEmitters.Add(emitter);
+        ApplyFmodSfxVolume();
+    }
+
+    void ApplyFmodSfxVolume()
+    {
+        foreach (StudioEventEmitter emitter in sceneSfxEmitters)
+            if (emitter != null && emitter.EventInstance.isValid())
+                emitter.EventInstance.setVolume(sfxVolumeScale);
+    }
+
+    void KeepFmodMusicAcrossScenes(Scene scene)
+    {
+        if (!scene.IsValid() || !scene.isLoaded) return;
+        foreach (GameObject root in scene.GetRootGameObjects())
+        foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
+        {
+            if (emitter == null || !IsFmodMusic(emitter))
+                continue;
+
+            // Room emitters would start at Start, then stop when the room unloads.
+            emitter.enabled = false;
+            string path = FmodEventPath(emitter);
+            if (path == fmodMusicPath && fmodMusic.isValid())
+                continue;
+
+            StopFmodMusic();
+            try
+            {
+                fmodMusic = RuntimeManager.CreateInstance(emitter.EventReference);
+                fmodMusicPath = path;
+                ApplyFmodMusicVolume();
+                fmodMusic.start();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"Unable to play FMOD music {path}: {exception.Message}", this);
+                StopFmodMusic();
+            }
+        }
+    }
+
+    static bool IsFmodMusic(StudioEventEmitter emitter)
+    {
+        return FmodEventPath(emitter)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    static string FmodEventPath(StudioEventEmitter emitter)
+    {
+#if UNITY_EDITOR
+        return emitter.EventReference.Path;
+#else
+        if (emitter.EventReference.IsNull)
+            return null;
+
+        try
+        {
+            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(emitter.EventReference);
+            return description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
+        }
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+#endif
+    }
+
+    void ApplyFmodMusicVolume()
+    {
+        if (fmodMusic.isValid()) fmodMusic.setVolume(musicVolumeScale);
+    }
+
+    void StopFmodMusic()
+    {
+        if (fmodMusic.isValid())
+        {
+            fmodMusic.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            fmodMusic.release();
+            fmodMusic.clearHandle();
+        }
+        fmodMusicPath = null;
     }
 
     static void RefreshMusicForCurrentScene()

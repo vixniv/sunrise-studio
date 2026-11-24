@@ -772,6 +772,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -1045,6 +1046,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -1226,6 +1228,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -2153,6 +2156,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -3128,6 +3132,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -3599,6 +3604,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -3765,6 +3771,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4074,6 +4081,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4536,6 +4544,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -4677,8 +4686,8 @@ Transform:
   m_GameObject: {fileID: 686158465}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4127, y: -2.3559, z: 0}
-  m_LocalScale: {x: 5.41557, y: 2.7799098, z: 1}
+  m_LocalPosition: {x: 0.4127, y: -1.2321, z: 0}
+  m_LocalScale: {x: 5.41557, y: 5.0274673, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1544670716}
@@ -4734,6 +4743,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -5241,6 +5251,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -5683,6 +5694,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -5918,8 +5930,8 @@ MonoBehaviour:
   Composition:
     ScreenPosition: {x: 0, y: 0}
     DeadZone:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
+      Enabled: 1
+      Size: {x: 0.04, y: 0.08}
     HardLimits:
       Enabled: 0
       Size: {x: 0.8, y: 0.8}
@@ -6244,6 +6256,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -6487,6 +6500,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -6871,6 +6885,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -7037,6 +7052,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -8263,6 +8279,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -8460,7 +8477,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 1
-  approachDistance: 1.5
+  keepSpeakerFacingOnApproach: 0
+  approachDistance: 2.5
   approachSide: 0
   approachAnchor: {fileID: 0}
   playInteractSound: 1
@@ -8598,6 +8616,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -8795,8 +8814,8 @@ Transform:
   m_GameObject: {fileID: 1398253037}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4127, y: -2.3559, z: 0}
-  m_LocalScale: {x: 5.41557, y: 2.7799098, z: 1}
+  m_LocalPosition: {x: 0.4127, y: -1.2321, z: 0}
+  m_LocalScale: {x: 5.41557, y: 5.0274673, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1384904746}
@@ -8852,6 +8871,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -9033,6 +9053,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -9899,6 +9920,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -10173,6 +10195,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -10792,8 +10815,8 @@ Transform:
   m_GameObject: {fileID: 1696924447}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4127, y: -2.3559, z: 0}
-  m_LocalScale: {x: 5.41557, y: 2.7799098, z: 1}
+  m_LocalPosition: {x: 0.4127, y: -1.2321, z: 0}
+  m_LocalScale: {x: 5.41557, y: 5.0274673, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 91504178}
@@ -10849,6 +10872,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -11030,6 +11054,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -11211,6 +11236,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -11409,6 +11435,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -11953,6 +11980,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -13311,6 +13339,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -13929,6 +13958,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -14095,6 +14125,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}
@@ -14291,6 +14322,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   approachBeforeTalking: 0
+  keepSpeakerFacingOnApproach: 0
   approachDistance: 1.5
   approachSide: 0
   approachAnchor: {fileID: 0}

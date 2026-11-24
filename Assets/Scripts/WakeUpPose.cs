@@ -41,6 +41,7 @@ public class WakeUpPose : MonoBehaviour
 
     private bool posed;
     private bool waking;
+    private Sprite poseSprite;
     private bool animatorWasEnabled;
     private Vector3 standLocalPosition;
     private bool standFlipX;
@@ -96,7 +97,13 @@ public class WakeUpPose : MonoBehaviour
             spriteRenderer.sortingLayerName = poseSortingLayer;
             spriteRenderer.sortingOrder = poseSortingOrder;
         }
-        spriteRenderer.sprite = wakeFrames[0];
+        ShowFrame(wakeFrames[0]);
+    }
+
+    private void ShowFrame(Sprite frame)
+    {
+        poseSprite = frame;
+        spriteRenderer.sprite = frame;
     }
 
     // Plays asleep hold, an optional sound, the wake-up frames, and the after hold.
@@ -122,7 +129,7 @@ public class WakeUpPose : MonoBehaviour
         float frameTime = 1f / framesPerSecond;
         for (int i = 1; i < wakeFrames.Length && posed; i++)
         {
-            spriteRenderer.sprite = wakeFrames[i];
+            ShowFrame(wakeFrames[i]);
             yield return new WaitForSeconds(frameTime);
         }
 
@@ -130,9 +137,9 @@ public class WakeUpPose : MonoBehaviour
         waking = false;
         if (!posed) yield break;
 
-        // The circle transition closes, Anin stands at the player's spot in her idle animation, and it opens again.
+        // The black cover hides the change from the bed pose to standing idle.
         CircleTransition transition = CircleTransition.Instance;
-        if (transition == null || !transition.Cover(GetUp, coverHoldSeconds))
+        if (transition == null || !transition.CoverBlack(GetUp, coverHoldSeconds))
         {
             GetUp();
             yield break;
@@ -175,6 +182,16 @@ public class WakeUpPose : MonoBehaviour
             transform.localPosition = standLocalPosition + (Vector3)poseOffset;
         }
 #endif
+    }
+
+    // Something else can write the sprite while Anin is in bed: CharacterOutfit swapping the Animator
+    // controller rebinds the disabled Animator, which puts the SpriteRenderer's default sprite back.
+    // Whether that runs before or after LieDown depends on Start order, which differs between the Editor and a build.
+    // LateUpdate runs after all of that, so the bed frame always wins.
+    private void LateUpdate()
+    {
+        if (!posed || poseSprite == null) return;
+        if (spriteRenderer.sprite != poseSprite) spriteRenderer.sprite = poseSprite;
     }
 
     private void OnDisable()

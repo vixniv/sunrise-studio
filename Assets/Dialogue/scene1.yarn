@@ -151,6 +151,7 @@ Anin: Good old desk. I'll miss you after graduation... or not. :p
 title: Classroom_Friends
 tags: scene1 classroom interactable required
 ---
+<<cinematic_start>>
 <<face_character "DiraScene1" "left">>
 Kirana: Hi Anin, where have you been?
 -> Why didn't you wake me up?
@@ -178,6 +179,7 @@ Lila: Weird flex.
 title: Classroom_LunchBreak
 tags: scene1 classroom
 ---
+<<cinematic_start>>
 Kirana: Finally, lunch break. Imagine what would happen to us without Dira.
 Lila: Dira is today's MVP. Thank you so muchhhh! I'll buy you bakwan at Warmus as a thank-you.
 Dira: You don't have to go that far, but I'm not complaining.
@@ -207,6 +209,7 @@ Anin: Alright, see you there.
 // Kirana exits.
 <<hide "Kirana">>
 Anin: Now what should I do?
+<<cinematic_end>>
 <<quest_start "scene1_explore" "Have a lunch with your friends">>
 <<set $story_exit to false>>
 // Player can explore the school. Events that advance time:
@@ -222,6 +225,7 @@ Anin: Now what should I do?
 title: Lunch_Warmus
 tags: scene1 cafeteria event
 ---
+<<cinematic_start>>
 Kirana: No, but it's weird how we've been li—
 Anin: Sup. Have you guys ordered yet?
 Kirana: Oh, Anin! We've been waiting for you. Yeah, we all got nasi goreng. You should order now, look at the queue.
@@ -250,6 +254,7 @@ Anin: Thanks, Ma'am.
 title: Lunch_Table
 tags: scene1 cafeteria event
 ---
+<<cinematic_start>>
 Anin: What are you guys talking about?
 Kirana: Not much. Just ranking the guys in school by attractiveness.
 Dira: Anin, have you been feeling weird lately?
@@ -294,6 +299,7 @@ Anin: Figure of speech.
 <<hide "Lila">>
 
 <<advance_time_teleport_character "after_school" "Anin" -5.5 "stand">>
+<<cinematic_end>>
 <<quest_update "scene1_explore" "Meet Fal at the lockers">>
 ===
 
@@ -346,6 +352,7 @@ title: Lockers_Check
 tags: scene1 lockers
 ---
 <<if $lockers_clock and $lockers_fal and $lockers_hook>>
+    <<cinematic_start>>
     Anin: Well, let's wait for him a while longer.
     <<close_dialogue_bubble>>
     <<move_character "Anin" -15.8 10 "walk">>
@@ -356,6 +363,7 @@ tags: scene1 lockers
 title: Lockers_FriendsArrive
 tags: scene1 lockers event
 ---
+<<cinematic_start>>
 // Footsteps. Kirana, Dira, Lila enter from the hallway, heading to the dorm.
 // Lila stops at her locker and shoves her sketchbook inside.
 <<show "Lila">>
@@ -377,6 +385,7 @@ Kirana: Don't stay too late, Sleeping Beauty. I'm not waking you up twice.
 // <<wait_for_character_moves>>
 
 // Picture cutscene of Fal's fall (cutscenes.yarn), then back here.
+<<cinematic_end>>
 <<detour Cutscene_FalFall>>
 // Kirana runs out. Lila's locker is left hanging open. Dira freezes.
 <<hide "Kirana">>

@@ -32,7 +32,7 @@ public class YarnCutscene : MonoBehaviour
     [SerializeField] private InitialFacing initialFacing;
     [Tooltip("Scene to load when the cutscene ends. Must be in the Build Profile scene list. Leave empty to stay in this scene.")]
     [SerializeField] private string nextScene = "Dorm";
-    [Tooltip("Use only when this scene is already black at the end. Fades the next scene in from black for this many seconds; 0 uses the usual circle transition.")]
+    [Tooltip("Use only when this scene is already black at the end. Fades the next scene in from black for this many seconds; 0 uses the usual black room transition.")]
     [SerializeField, Min(0f)] private float nextSceneBlackFadeInSeconds;
     [Tooltip("Plays the node only the first time this scene opens, until <<hard_reset>> starts the day over.")]
     [SerializeField] private bool playOnce = true;
@@ -40,7 +40,7 @@ public class YarnCutscene : MonoBehaviour
              "Off: the player still starts at the door (see DoorSpawn).")]
     [SerializeField] private bool keepPlayerPosition = true;
     [Tooltip("Optional: Anin's WakeUpPose (on her Visual child). Anin lies in bed while the scene fades in, " +
-             "plays the wake-up animation after Start Delay, a circle transition puts her back in her standing idle, " +
+             "plays the wake-up animation after Start Delay, a black fade puts her back in her standing idle, " +
              "then the node starts. Leave empty for no wake-up.")]
     [SerializeField] private WakeUpPose wakeUp;
 
@@ -158,7 +158,7 @@ public class YarnCutscene : MonoBehaviour
             if (nextSceneBlackFadeInSeconds > 0f)
                 CircleTransition.Instance.LoadSceneFromBlack(nextScene.Trim(), nextSceneBlackFadeInSeconds);
             else
-                CircleTransition.Instance.LoadScene(nextScene.Trim());
+                CircleTransition.Instance.LoadSceneWithBlackFade(nextScene.Trim());
         }
         else
             SceneManager.LoadScene(nextScene.Trim());

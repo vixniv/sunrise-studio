@@ -235,7 +235,7 @@ public class SceneDoor : MonoBehaviour, IInteractionTarget
         SunriseAudio.QueueDoorClose(enterVolume);
 
         if (CircleTransition.Instance != null)
-            CircleTransition.Instance.LoadScene(destinationScene.Trim(), transitionSound, enterVolume);
+            CircleTransition.Instance.LoadSceneWithBlackFade(destinationScene.Trim(), transitionSound, enterVolume);
         else
         {
             SunriseAudio.Play("door_open", enterVolume);

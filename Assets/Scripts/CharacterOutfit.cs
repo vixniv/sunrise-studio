@@ -12,7 +12,7 @@ using Yarn.Unity;
 // this object's scene is Room Scene, $chapter_scene equals the rule's Chapter Scene,
 // and the rule's Dressed Variable is false.
 // Yarn: <<outfit "Anin" "casual">> / <<outfit "Anin" "uniform">> swap right away,
-// <<fade_outfit "Anin" "uniform">> swaps while the circle transition covers the screen.
+// <<fade_outfit "Anin" "uniform">> swaps while a full-screen black fade covers the screen.
 [RequireComponent(typeof(Animator))]
 public class CharacterOutfit : MonoBehaviour
 {
@@ -74,7 +74,8 @@ public class CharacterOutfit : MonoBehaviour
     private void OnDisable() => active.Remove(this);
 
     // Start, not Awake: the Dialogue Runner and its Variable Storage are set up by then.
-    // The wake-up pose has the Animator disabled at this point, so the swap only shows once Anin stands up.
+    // The wake-up pose may already have the Animator disabled (Start order varies, and differs between the Editor
+    // and a build); Wear keeps the bed frame showing then, and the swap shows once Anin stands up.
     private void Start()
     {
         Wear(ShouldStartCasual() ? Casual : Uniform);
@@ -149,7 +150,13 @@ public class CharacterOutfit : MonoBehaviour
 
         // Changing the controller resets the Animator to its default (idle) state; PlayerMove sets
         // IsWalking/IsRunning again every frame, so walking picks up on the next frame.
+        // It also rebinds the Animator, which writes the SpriteRenderer's default sprite (the prefab's
+        // anin.png) back even while the Animator is disabled. WakeUpPose and SitPose disable it and show their
+        // own frames, so keep whatever sprite is showing when the Animator is not running.
+        SpriteRenderer spriteRenderer = animator.isActiveAndEnabled ? null : GetComponent<SpriteRenderer>();
+        Sprite shownSprite = spriteRenderer != null ? spriteRenderer.sprite : null;
         animator.runtimeAnimatorController = controller;
+        if (spriteRenderer != null) spriteRenderer.sprite = shownSprite;
         return true;
     }
 
