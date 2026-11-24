@@ -43,6 +43,7 @@
 title: Gap2_Start
 tags: scene4 gap2 dorm
 ---
+<<cinematic_start>>
 <<gap_mode true>>
 // Lets the Dorm door run Gap2_Dorm_Door instead of leaving freely.
 <<set $story_exit to true>>
@@ -55,6 +56,7 @@ tags: scene4 gap2 dorm
 // Double reading: first play = the notes failed to save him.
 // Replay = the notes didn't break the loop.
 Anin: The notes didn't work. Something else, then.
+<<cinematic_end>>
 <<quest_start "gap2" "Find a way to keep him off the roof">>
 // Interactables: Gap2_Dorm_Clock, Gap2_Dorm_KiranaBed, Gap2_Dorm_Door
 ===
@@ -140,6 +142,7 @@ tags: scene4 gap2 lockers interactable
 title: Gap2_Auditorium_Enter
 tags: scene4 gap2 auditorium
 ---
+<<cinematic_start>>
 // Skipped once the pole is done, so the "Go back to bed" quest never goes backwards.
 <<if $gap2_pole_done is false>>
     <<if $gap2_seen_flag is true>>
@@ -149,6 +152,7 @@ tags: scene4 gap2 auditorium
     <<endif>>
 <<endif>>
 Anin: Tomorrow's ceremony is supposed to happen here.
+<<cinematic_end>>
 ===
 
 title: Gap2_Hoop
@@ -190,12 +194,14 @@ tags: scene4 gap2 auditorium interactable
 <<if $gap2_seen_flag is false>>
     // Should not be reachable; base is disabled until the flag is examined.
 <<elseif $gap2_pole_done is false>>
+    <<cinematic_start>>
     Anin: Let me check the base.
     <<blur_action "flagpole_base">>
     // Double reading: player hears "tightened". It's loosened.
     Anin: It's done.
     <<set $gap2_pole_done to true>>
     <<quest_update "gap2" "Go back to bed">>
+    <<cinematic_end>>
     // Same as Gap 1: back to the Dorm, where Gap2_Dorm_End is the start
     // node while $gap2_pole_done is true.
     <<scene_transition "Dorm">>
@@ -214,12 +220,14 @@ tags: scene4 gap2 auditorium interactable
 title: Gap2_Dorm_End
 tags: scene4 gap2 dorm
 ---
+<<cinematic_start>>
 // Anin lies down. The clock still reads 00:00.
 // Double reading: true, and the worst thing she's said yet.
 Anin: He'll be safe from the roof. That's what matters.
 // The second hand moves.
 <<gap_mode false>>
 <<set $chapter_scene to 5>>
+<<cinematic_end>>
 <<end_gap>>
 // TRANSITION → Scene 5: Day 3. Keep "rooftop_key" in the inventory.
 ===

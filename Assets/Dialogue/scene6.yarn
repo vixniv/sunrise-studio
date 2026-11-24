@@ -32,6 +32,7 @@
 title: Gap3_Start
 tags: scene6 gap3 dorm
 ---
+<<cinematic_start>>
 <<gap_mode true>>
 // Lets the Dorm door run Gap3_Door instead of leaving freely.
 <<set $story_exit to true>>
@@ -42,6 +43,7 @@ Night Anin: He lived.
 Night Anin: She learned how to save him. Of course she did. So did I, once.
 Night Anin: Killing him only teaches her to save him. Fine.
 Night Anin: If she won't let go for him, maybe she'll let go for them.
+<<cinematic_end>>
 <<quest_start "gap3" "Make them notice. Start with Kirana's things">>
 ===
 
@@ -89,12 +91,14 @@ title: Gap3_DiraBook
 tags: scene6 gap3 classroom interactable required
 ---
 <<if $gap3_dira is false>>
+    <<cinematic_start>>
     Night Anin: She always reads the same page. Every morning, the same page.
     Night Anin: She told us she already knows what's written there. She does.
     // Underline a line on the page and write in the margin.
     <<sfx "book_note">>
     Note: "You've read this before."
     <<set $gap3_dira to true>>
+    <<cinematic_end>>
     <<quest_update "gap3" "Lila's drawing is still unfinished">>
 <<else>>
     Night Anin: She'll know the handwriting.
@@ -119,12 +123,14 @@ tags: scene6 gap3 lockers interactable required
 <<if $gap3_dira is false>>
     Night Anin: Dira first.
 <<elseif $gap3_lila is false>>
+    <<cinematic_start>>
     Night Anin: The drawing of the four of them. Still not finished.
     Night Anin: She'll never finish it. Not here.
     // No blur this time. Night Anin hides nothing anymore.
     <<draw_sketchbook>>
     Night Anin: Lunch at Warmus. The four of them. Same table, same food. Again. And again. And again.
     <<set $gap3_lila to true>>
+    <<cinematic_end>>
     <<quest_update "gap3" "Go back to the dorm">>
     // Same as Gap 1: back to the Dorm, where Gap3_Dorm_End is the start
     // node while $gap3_lila is true.
@@ -142,12 +148,14 @@ tags: scene6 gap3 lockers interactable required
 title: Gap3_Dorm_End
 tags: scene6 gap3 dorm
 ---
+<<cinematic_start>>
 Night Anin: She's lost count of how many times she's watched him die.
 Night Anin: I stopped counting long before she did.
 Night Anin: I don't even remember what Dira's laugh sounds like anymore.
 // The second hand moves.
 <<gap_mode false>>
 <<set $chapter_scene to 7>>
+<<cinematic_end>>
 <<end_gap>>
 // TRANSITION → Scene 7: Day 4
 ===

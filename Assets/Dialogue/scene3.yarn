@@ -36,6 +36,7 @@
 title: Day2_Start
 tags: scene3 day2 dorm
 ---
+<<cinematic_start>>
 // Lets the Dorm door run Day2_Dorm_Door instead of leaving freely.
 <<set $story_exit to true>>
 <<set $d2_dressed to false>>
@@ -57,6 +58,7 @@ Anin: Or did I actually get up and sleepwalk around school last night?
 Anin: Why did it feel so real?
 Anin: Did I really go to Fal's locker and find out all of that?
 Anin: I dreamt I wrote him something. Something kind... I think. In his math book.
+<<cinematic_end>>
 <<enable_control>>
 <<quest_start "day2" "Get ready for school">>
 // Interactables: Day2_Dorm_Bed, Day2_Dorm_Poster, Day2_Dorm_Desk,
@@ -138,10 +140,12 @@ tags: scene3 day2
 title: Day2_Lockers_Morning
 tags: scene3 day2 lockers event
 ---
+<<cinematic_start>>
 // Keep both Locker Room exits on their existing Story Nodes until the day ends.
 <<set $story_exit to true>>
 <<event_marker "day2_fal_notes" false>>
 Anin: It looks exactly the same as in my dream. So... it wasn't a dream?
+<<cinematic_end>>
 ===
 
 title: Day2_Morning_FalLocker
@@ -182,6 +186,7 @@ title: Day2_Morning_Check
 tags: scene3 day2 lockers
 ---
 <<if $d2_morning_examined >= 2 and $d2_fal_arrived is false>>
+    <<cinematic_start>>
     <<set $d2_fal_arrived to true>>
     <<jump Day2_FalReads>>
 <<endif>>
@@ -246,12 +251,14 @@ Anin: He went quiet. That's good, right? It means it reached him.
 title: Day2_Lockers_Evening
 tags: scene3 day2 lockers
 ---
+<<cinematic_start>>
 // Keep both exits on their existing Story Nodes until the day-ending reset.
 <<set $story_exit to true>>
 // Late sunlight through the high window. Anin waits beside Fal's
 // locker, two math books under her arm.
 <<quest_update "day2" "Wait for Fal and look around the lockers">>
 Anin: Today's different. He read them. Today's different.
+<<cinematic_end>>
 ===
 
 title: Day2_Eve_Clock
@@ -285,6 +292,7 @@ tags: scene3 day2 lockers
 title: Day2_FriendsArrive
 tags: scene3 day2 lockers event
 ---
+<<cinematic_start>>
 // Footsteps. Kirana, Dira and Lila come in from the hallway.
 // Lila shoves her sketchbook into her locker.
 <<npc_enter "Kirana">>
@@ -324,12 +332,14 @@ Anin: But I... I helped him.
 // Make it interactable: Day2_CrumpledPaper (required to end the scene).
 // Shows the paper (ActiveIfYarnVariable with Follow Changes).
 <<set $d2_paper_dropped to true>>
+<<cinematic_end>>
 <<quest_update "day2" "Check what Fal dropped">>
 ===
 
 title: Day2_CrumpledPaper
 tags: scene3 day2 lockers interactable required
 ---
+<<cinematic_start>>
 // Fal dropped this on his way to take the rooftop key.
 // Only the torn end is readable. Do not show the rest anywhere.
 <<sfx "crumpled_note_unfold">>
@@ -338,6 +348,7 @@ Anin: "...not enough."
 Anin: His dad's words. Even now.
 <<set $d2_found_paper to true>>
 <<set $chapter_scene to 4>>
+<<cinematic_end>>
 <<hard_reset>>
 // TRANSITION → Scene 4: Gap 2
 ===

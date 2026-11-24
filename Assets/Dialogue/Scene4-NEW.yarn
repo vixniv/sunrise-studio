@@ -18,6 +18,7 @@ tags: setup testing
 title: Dec10_Wish_Dorm
 tags: december10 dorm night wish testing
 ---
+<<cinematic_start>>
 // Match the December 9 Dorm entrance: reveal the empty room, then open the door
 // and let Anin walk in. Her current stopping point remains X 5.48.
 <<hide "Kirana">>
@@ -37,6 +38,7 @@ Anin: It feels like i knew them since forever.
 <<delay 1>>
 
 // Full-screen picture cutscene: text appears beneath each character image, as in Scene1-NEW.
+<<cinematic_end>>
 <<cutscene_image "highlight-kirana">>
 Kirana.
 My best friend and my roommate.
@@ -75,6 +77,7 @@ But lately he's seemed down. I wonder what happened.
 <<cutscene_end>>
 
 // Anin walks to the far-left window. Keep the normal dialogue bubble over her.
+<<cinematic_start>>
 <<close_dialogue_bubble>>
 <<move_character "Anin" -8.98748 3 "walk">>
 Anin: How do they all know what they want to do after school?
@@ -106,6 +109,7 @@ Anin: And I don't want to lose my future, either.
 title: Dec10_Wish_AfterFlashback
 tags: december10 dorm night wish return
 ---
+<<cinematic_start>>
 Anin: ...
 
 // Anin approaches the calendar. Tune the X destination to the calendar prop tomorrow.
@@ -130,6 +134,7 @@ Anin: Me? Believing one of Lila's rumors? I must be really desperate, huh?
 Anin: Thank you...
 Anin: And goodbye, everyone...
 <<dialogue_speed 0>>
+<<cinematic_end>>
 // Camera close-up remains a centered calendar still until the camera shot is made.
 <<story_splash "calendar_circled">>
 <<begin_loop_one>>

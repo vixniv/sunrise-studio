@@ -34,6 +34,7 @@
 title: Day3_Start
 tags: scene5 day3 dorm
 ---
+<<cinematic_start>>
 // Lets the Dorm door run Day3_Dorm_Door instead of leaving freely.
 <<set $story_exit to true>>
 <<set $d3_dressed to false>>
@@ -45,6 +46,7 @@ tags: scene5 day3 dorm
 // Kirana is still asleep.
 Anin: Ugh, that dream again. What is it, anyway?
 Anin: And why does Fal always die, even when I tried to stop it the night before?
+<<cinematic_end>>
 <<enable_control>>
 <<quest_start "day3" "Get dressed for school">>
 ===
@@ -110,6 +112,7 @@ tags: scene5 day3 dorm interactable
 title: Day3_Auditorium
 tags: scene5 day3 auditorium event
 ---
+<<cinematic_start>>
 <<event_marker "day3_auditorium" false>>
 <<sfx "basketball_practice">>
 // Skipped after the base is found, so coming back never replaces "Undo what I did" or the later quests.
@@ -118,6 +121,7 @@ tags: scene5 day3 auditorium event
 <<endif>>
 Anin: Everything looks the same as in my dream. Except for the people.
 Anin: Now... what did I do last night?
+<<cinematic_end>>
 ===
 
 title: Day3_Aud_Hoop
@@ -159,6 +163,7 @@ tags: scene5 day3 auditorium interactable
 <<if $d3_seen_flag is false>>
     // Should not be reachable; the base is hidden until the flag is examined.
 <<elseif $d3_seen_base is false>>
+    <<cinematic_start>>
     // Anin kneels. Nobody in the hall notices.
     Anin: One of the screws. It's loose.
     Anin: Loose by hand. Not by time.
@@ -178,6 +183,7 @@ tags: scene5 day3 auditorium interactable
 title: Day3_Montage
 tags: scene5 day3 auditorium cutscene
 ---
+<<cinematic_start>>
 <<memory_montage true>>
 // Each line plays in night Anin's voice, the exact words from the gaps.
 Night Anin: "If I understand him, I can end this."
@@ -199,6 +205,7 @@ Anin: I've been killing him.
 // MIDPOINT: Anin now believes she sleepwalks and that her dream self is
 // a bad side of her. She does NOT know yet that it's another Anin.
 Anin: ...Then I can undo it.
+<<cinematic_end>>
 <<quest_update "day3_event" "Undo what I did">>
 // Player must now use the flagpole base again, then the flag.
 ===
@@ -221,6 +228,7 @@ tags: scene5 day3 auditorium
 title: Day3_Lockers
 tags: scene5 day3 lockers event
 ---
+<<cinematic_start>>
 <<npc_enter "Fal">>
 <<quest_update "day3_event" "Take Fal to the library">>
 Fal: There you are. I almost went to the auditorium.
@@ -232,6 +240,7 @@ Fal: You left this in my locker, right? Looks like your writing.
 -> I didn't write that. Not awake, anyway.
     Fal: What?
 Anin: Nothing. Library. Come on.
+<<cinematic_end>>
 <<scene_transition_at_x "Library" -0.7 "sit">>
 <<jump Day3_Library>>
 ===
@@ -248,6 +257,7 @@ tags: scene5 day3 library event
 // Anin sits on the left chair; Fal is already seated on the right one (SitPose Start Sitting).
 // The X here sets her seat, also when Play starts in the Library (Playtest Start skips the lockers transition).
 <<teleport_character "Anin" -0.7 "sit">>
+<<cinematic_start>>
 Fal: Okay. Integrals. Go easy on me.
 -> You're better at this than you think.
 -> Your dad's not here. It's just us.
@@ -263,6 +273,7 @@ Fal: Tomorrow. After graduation. I'll tell you then.
 Anin: ...Tomorrow.
 <<quest_update "day3_event" "Go back to the dorm">>
 <<npc_exit "Fal">>
+<<cinematic_end>>
 <<scene_transition "Dorm">>
 <<jump Day3_Dorm_Evening>>
 ===
@@ -275,6 +286,7 @@ Anin: ...Tomorrow.
 title: Day3_Dorm_Evening
 tags: scene5 day3 dorm
 ---
+<<cinematic_start>>
 // Anin on her bed, watching the window. The sky goes dark.
 // No sound from above. No screams.
 Anin: He's alive.
@@ -290,6 +302,7 @@ Kirana: You look like you saw a ghost.
 Anin: I can't sleep tonight. I won't.
 <<stay_awake "fail">>
 <<set $chapter_scene to 6>>
+<<cinematic_end>>
 <<soft_reset>>
 // TRANSITION → Scene 6: Gap 3
 ===

@@ -237,7 +237,7 @@ public class CircleTransition : MonoBehaviour
             yield break;
 
         var composers = new List<(CinemachinePositionComposer component, Vector3 damping)>();
-        var confiners = new List<(CinemachineConfiner2D component, float damping, float slowingDistance)>();
+        var confiners = new List<(CinemachineVirtualCameraBase camera, CinemachineConfiner2D component, float damping, float slowingDistance)>();
         foreach (GameObject root in scene.GetRootGameObjects())
         foreach (CinemachineVirtualCameraBase camera in root.GetComponentsInChildren<CinemachineVirtualCameraBase>(true))
         {
@@ -247,9 +247,9 @@ public class CircleTransition : MonoBehaviour
                 composers.Add((composer, composer.Damping));
                 composer.Damping = Vector3.zero;
             }
-            if (camera.TryGetComponent(out CinemachineConfiner2D confiner))
+            if (camera.TryGetComponent(out CinemachineConfiner2D confiner) && confiner.isActiveAndEnabled)
             {
-                confiners.Add((confiner, confiner.Damping, confiner.SlowingDistance));
+                confiners.Add((camera, confiner, confiner.Damping, confiner.SlowingDistance));
                 confiner.Damping = 0f;
                 confiner.SlowingDistance = 0f;
             }
@@ -257,6 +257,34 @@ public class CircleTransition : MonoBehaviour
 
         try
         {
+            // Confiner2D bakes its shape over several frames. On a phone, the
+            // first two frames can finish before the camera bounds are ready.
+            // Keep the room covered until its active confiners have baked for
+            // this device's actual aspect ratio.
+            yield return new WaitForEndOfFrame();
+            float deadline = Time.realtimeSinceStartup + 5f;
+            bool allBaked;
+            do
+            {
+                allBaked = true;
+                foreach (var entry in confiners)
+                {
+                    if (entry.camera == null || entry.component == null ||
+                        entry.component.BoundingShape2D == null)
+                        continue;
+
+                    if (!entry.component.BoundingShapeIsBaked &&
+                        !entry.component.BakeBoundingShape(entry.camera, 0.02f))
+                        allBaked = false;
+                }
+                if (!allBaked && Time.realtimeSinceStartup < deadline)
+                    yield return new WaitForEndOfFrame();
+            }
+            while (!allBaked && Time.realtimeSinceStartup < deadline);
+
+            if (!allBaked)
+                Debug.LogWarning($"CircleTransition: camera bounds were not ready before revealing {sceneName}.", this);
+
             SnapCameraToTarget(scene);
             yield return new WaitForEndOfFrame();
             SnapCameraToTarget(scene);
@@ -279,6 +307,11 @@ public class CircleTransition : MonoBehaviour
     {
         yield return null;
         yield return new WaitForEndOfFrame();
+        // DoorSpawn calls PrimeCameraForScene during the scene load. Do not
+        // restore the authored blend while the new room is still being shown:
+        // mobile confiner baking can take longer than these two frames.
+        while (transitioning || (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning))
+            yield return null;
         foreach (var entry in restore)
             if (entry.brain != null) entry.brain.DefaultBlend = entry.blend;
     }
@@ -392,8 +425,7 @@ public class CircleTransition : MonoBehaviour
         while (!loading.isDone)
             yield return null;
 
-        // Let the newly loaded scene finish one frame of setup.
-        yield return null;
+        yield return SettleCameraBeforeReveal(sceneName);
 
         coverScale = CalculateCoverScale();
         circle.localScale = Vector3.one * coverScale;
