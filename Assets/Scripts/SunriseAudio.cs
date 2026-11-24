@@ -28,6 +28,10 @@ public sealed class SunriseAudio : MonoBehaviour
     float musicVolumeScale = 1f;
     float sfxVolumeScale = 1f;
     float loopCueVolume = 1f;
+    bool audioInterrupted;
+    bool resumeMusicAfterInterruption;
+    bool resumeLoopAfterInterruption;
+    bool resumeAmbienceAfterInterruption;
     readonly List<StudioEventEmitter> sceneSfxEmitters = new List<StudioEventEmitter>();
 
     static SunriseAudio Instance
@@ -128,6 +132,7 @@ public sealed class SunriseAudio : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         YarnCommands.TimeOfDayChanged += RefreshMusicForCurrentScene;
+        AudioSettings.OnAudioConfigurationChanged += HandleAudioConfigurationChanged;
         WireButtons(SceneManager.GetActiveScene());
         RefreshMusicForCurrentScene();
     }
@@ -136,6 +141,82 @@ public sealed class SunriseAudio : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         YarnCommands.TimeOfDayChanged -= RefreshMusicForCurrentScene;
+        AudioSettings.OnAudioConfigurationChanged -= HandleAudioConfigurationChanged;
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus)
+            CapturePlaybackStateForInterruption();
+        else
+            RecoverAudioAfterInterruption();
+    }
+
+    void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+            CapturePlaybackStateForInterruption();
+        else
+            RecoverAudioAfterInterruption();
+    }
+
+    void HandleAudioConfigurationChanged(bool deviceWasChanged)
+    {
+        RestoreInterruptedSources();
+        FmodTimeOfDayMusic.ResumeAfterInterruption();
+    }
+
+    void CapturePlaybackStateForInterruption()
+    {
+        if (audioInterrupted)
+            return;
+
+        audioInterrupted = true;
+        resumeMusicAfterInterruption = musicSource != null && musicSource.clip != null && musicSource.isPlaying;
+        resumeLoopAfterInterruption = loopSource != null && loopSource.clip != null && loopSource.isPlaying;
+        resumeAmbienceAfterInterruption = ambienceSource != null && ambienceSource.clip != null && ambienceSource.isPlaying;
+    }
+
+    void RecoverAudioAfterInterruption()
+    {
+        if (!audioInterrupted)
+            return;
+
+        audioInterrupted = false;
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+        AudioSettings.Reset(AudioSettings.GetConfiguration());
+#endif
+        RestoreInterruptedSources();
+        FmodTimeOfDayMusic.ResumeAfterInterruption();
+    }
+
+    void RestoreInterruptedSources()
+    {
+        if (musicSource != null)
+        {
+            musicSource.mute = musicVolumeScale <= 0.0001f;
+            musicSource.volume = musicCueVolume * musicVolumeScale;
+            if (resumeMusicAfterInterruption && musicSource.clip != null && !musicSource.isPlaying)
+                musicSource.Play();
+        }
+
+        if (loopSource != null)
+        {
+            loopSource.volume = loopCueVolume * sfxVolumeScale;
+            if (resumeLoopAfterInterruption && loopSource.clip != null && !loopSource.isPlaying)
+                loopSource.Play();
+        }
+
+        if (ambienceSource != null)
+        {
+            ambienceSource.mute = sfxVolumeScale <= 0.0001f;
+            if (resumeAmbienceAfterInterruption && ambienceSource.clip != null && !ambienceSource.isPlaying)
+                ambienceSource.Play();
+        }
+
+        resumeMusicAfterInterruption = false;
+        resumeLoopAfterInterruption = false;
+        resumeAmbienceAfterInterruption = false;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

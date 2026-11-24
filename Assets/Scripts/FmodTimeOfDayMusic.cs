@@ -109,6 +109,62 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         EnsureInstance().Refresh(SceneManager.GetActiveScene());
     }
 
+    public static void ResumeAfterInterruption()
+    {
+        if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
+        {
+            RuntimeManager.CoreSystem.mixerResume();
+            RuntimeManager.PauseAllEvents(false);
+        }
+
+        if (instance != null)
+            instance.EnsureActiveMusicAfterInterruption();
+    }
+
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus)
+            ResumeAfterInterruption();
+    }
+
+    void OnApplicationPause(bool pauseStatus)
+    {
+        if (!pauseStatus)
+            ResumeAfterInterruption();
+    }
+#endif
+
+    void EnsureActiveMusicAfterInterruption()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid() || !scene.isLoaded)
+            return;
+
+        if (scene.name == "TitleScreen")
+        {
+            StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
+            for (int i = 0; i < emitters.Length; i++)
+            {
+                StudioEventEmitter emitter = emitters[i];
+                if (emitter == null || !IsMusicEmitter(emitter))
+                    continue;
+
+                if (!emitter.IsPlaying())
+                    emitter.Play();
+
+                if (emitter.EventInstance.isValid())
+                    emitter.EventInstance.setVolume(musicVolumeScale);
+            }
+            return;
+        }
+
+        if (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning)
+            return;
+
+        PlayManagedMusic(GetTargetMusicPath());
+    }
+
     void Refresh(Scene scene)
     {
         if (!scene.IsValid() || !scene.isLoaded)

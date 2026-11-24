@@ -3794,6 +3794,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TimeTransitionCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4186522725043985381, guid: 6d0f45778e9ec4a668e7ac4ded2ed9cd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4319554075784391356, guid: 6d0f45778e9ec4a668e7ac4ded2ed9cd, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 2364470263
