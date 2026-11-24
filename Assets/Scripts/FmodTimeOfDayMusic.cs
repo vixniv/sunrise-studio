@@ -16,11 +16,13 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
     const string DaylightPath = "event:/Music/Daylight";
     const string EveningPath = "event:/Music/Evening";
     const string MidnightPath = "event:/Music/Midnight";
+    const string MusicVolumeKey = "Sunrise.Settings.MusicVolume";
 
     static FmodTimeOfDayMusic instance;
 
     EventInstance managedMusicInstance;
     string managedMusicPath;
+    float musicVolumeScale = 1f;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
@@ -28,7 +30,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         instance = null;
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Boot()
     {
         EnsureInstance();
@@ -55,6 +57,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+        musicVolumeScale = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumeKey, 1f));
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         YarnCommands.TimeOfDayChanged += RefreshForCurrentScene;
@@ -94,6 +97,13 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         }
     }
 
+    public static void SetMusicVolume(float volume)
+    {
+        FmodTimeOfDayMusic active = EnsureInstance();
+        active.musicVolumeScale = Mathf.Clamp01(volume);
+        active.ApplyVolumeToActiveMusic();
+    }
+
     public static void RefreshForCurrentScene()
     {
         EnsureInstance().Refresh(SceneManager.GetActiveScene());
@@ -108,7 +118,22 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         if (scene.name == "TitleScreen")
         {
             StopManagedMusic();
+            ApplyVolumeToSceneMusicEmitters();
             return;
+        }
+
+        // Disable room music emitters so BGM stays seamless across rooms and never doubles up
+        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Include);
+        for (int i = 0; i < emitters.Length; i++)
+        {
+            StudioEventEmitter emitter = emitters[i];
+            if (emitter != null && IsMusicEmitter(emitter))
+            {
+                emitter.AllowFadeout = true;
+                if (emitter.IsPlaying())
+                    emitter.Stop();
+                emitter.enabled = false;
+            }
         }
 
         // Wait until TimeTransition finishes so Evening BGM crossfades in cleanly after the transition track
@@ -116,41 +141,6 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
             return;
 
         string targetPath = GetTargetMusicPath();
-        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
-
-        // If the scene already has an emitter playing the exact target track, let it play
-        if (targetPath == DaylightPath)
-        {
-            bool sceneHasDaylight = false;
-            for (int i = 0; i < emitters.Length; i++)
-            {
-                StudioEventEmitter emitter = emitters[i];
-                if (emitter != null && emitter.EventReference.Path == DaylightPath)
-                {
-                    sceneHasDaylight = true;
-                    if (!emitter.IsPlaying())
-                        emitter.Play();
-                }
-            }
-
-            if (sceneHasDaylight)
-            {
-                StopManagedMusic();
-                return;
-            }
-        }
-
-        // Stop any scene music emitters playing a different track (e.g. Daylight when it's now Evening/Midnight)
-        for (int i = 0; i < emitters.Length; i++)
-        {
-            StudioEventEmitter emitter = emitters[i];
-            if (emitter != null && IsMusicEmitter(emitter) && emitter.EventReference.Path != targetPath)
-            {
-                emitter.AllowFadeout = true;
-                emitter.Stop();
-            }
-        }
-
         PlayManagedMusic(targetPath);
     }
 
@@ -163,7 +153,10 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         {
             managedMusicInstance.getPlaybackState(out PLAYBACK_STATE state);
             if (state == PLAYBACK_STATE.PLAYING || state == PLAYBACK_STATE.STARTING)
+            {
+                managedMusicInstance.setVolume(musicVolumeScale);
                 return;
+            }
         }
 
         StopManagedMusic();
@@ -171,6 +164,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         try
         {
             managedMusicInstance = RuntimeManager.CreateInstance(eventPath);
+            managedMusicInstance.setVolume(musicVolumeScale);
             managedMusicInstance.start();
             managedMusicPath = eventPath;
         }
@@ -178,6 +172,24 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         {
             Debug.LogWarning($"FmodTimeOfDayMusic: FMOD event '{eventPath}' not found. Run FMOD -> Refresh Banks in Unity Editor.", this);
             managedMusicPath = null;
+        }
+    }
+
+    void ApplyVolumeToActiveMusic()
+    {
+        if (managedMusicInstance.isValid())
+            managedMusicInstance.setVolume(musicVolumeScale);
+        ApplyVolumeToSceneMusicEmitters();
+    }
+
+    void ApplyVolumeToSceneMusicEmitters()
+    {
+        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
+        for (int i = 0; i < emitters.Length; i++)
+        {
+            StudioEventEmitter emitter = emitters[i];
+            if (emitter != null && IsMusicEmitter(emitter) && emitter.EventInstance.isValid())
+                emitter.EventInstance.setVolume(musicVolumeScale);
         }
     }
 
@@ -194,8 +206,28 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
     static bool IsMusicEmitter(StudioEventEmitter emitter)
     {
-        string path = emitter.EventReference.Path;
-        return !string.IsNullOrEmpty(path) && path.StartsWith("event:/Music/");
+        string path = GetEventPath(emitter);
+        return !string.IsNullOrEmpty(path) && path.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    static string GetEventPath(StudioEventEmitter emitter)
+    {
+        if (emitter == null || emitter.EventReference.IsNull)
+            return null;
+
+#if UNITY_EDITOR
+        return emitter.EventReference.Path;
+#else
+        try
+        {
+            EventDescription description = RuntimeManager.GetEventDescription(emitter.EventReference);
+            return description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
+        }
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+#endif
     }
 
     static string GetTargetMusicPath()

@@ -28,8 +28,6 @@ public sealed class SunriseAudio : MonoBehaviour
     float musicVolumeScale = 1f;
     float sfxVolumeScale = 1f;
     float loopCueVolume = 1f;
-    FMOD.Studio.EventInstance fmodMusic;
-    string fmodMusicPath;
     readonly List<StudioEventEmitter> sceneSfxEmitters = new List<StudioEventEmitter>();
 
     static SunriseAudio Instance
@@ -136,14 +134,12 @@ public sealed class SunriseAudio : MonoBehaviour
 
     void OnDestroy()
     {
-        StopFmodMusic();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         YarnCommands.TimeOfDayChanged -= RefreshMusicForCurrentScene;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        KeepFmodMusicAcrossScenes(scene);
         CacheFmodSfx(scene);
         WireButtons(scene);
         RefreshMusic(scene);
@@ -355,13 +351,14 @@ public sealed class SunriseAudio : MonoBehaviour
     public static void SetMusicVolume(float volume)
     {
         float clamped = Mathf.Clamp01(volume);
+        FmodTimeOfDayMusic.SetMusicVolume(clamped);
+
         foreach (SunriseAudio audio in Resources.FindObjectsOfTypeAll<SunriseAudio>())
         {
             if (audio == null)
                 continue;
 
             audio.musicVolumeScale = clamped;
-            audio.ApplyFmodMusicVolume();
             AudioSource source = audio.musicSource;
             if (source == null)
             {
@@ -426,37 +423,6 @@ public sealed class SunriseAudio : MonoBehaviour
                 emitter.EventInstance.setVolume(sfxVolumeScale);
     }
 
-    void KeepFmodMusicAcrossScenes(Scene scene)
-    {
-        if (!scene.IsValid() || !scene.isLoaded) return;
-        foreach (GameObject root in scene.GetRootGameObjects())
-        foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
-        {
-            if (emitter == null || !IsFmodMusic(emitter))
-                continue;
-
-            // Room emitters would start at Start, then stop when the room unloads.
-            emitter.enabled = false;
-            string path = FmodEventPath(emitter);
-            if (path == fmodMusicPath && fmodMusic.isValid())
-                continue;
-
-            StopFmodMusic();
-            try
-            {
-                fmodMusic = RuntimeManager.CreateInstance(emitter.EventReference);
-                fmodMusicPath = path;
-                ApplyFmodMusicVolume();
-                fmodMusic.start();
-            }
-            catch (System.Exception exception)
-            {
-                Debug.LogError($"Unable to play FMOD music {path}: {exception.Message}", this);
-                StopFmodMusic();
-            }
-        }
-    }
-
     static bool IsFmodMusic(StudioEventEmitter emitter)
     {
         return FmodEventPath(emitter)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
@@ -480,22 +446,6 @@ public sealed class SunriseAudio : MonoBehaviour
             return null;
         }
 #endif
-    }
-
-    void ApplyFmodMusicVolume()
-    {
-        if (fmodMusic.isValid()) fmodMusic.setVolume(musicVolumeScale);
-    }
-
-    void StopFmodMusic()
-    {
-        if (fmodMusic.isValid())
-        {
-            fmodMusic.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            fmodMusic.release();
-            fmodMusic.clearHandle();
-        }
-        fmodMusicPath = null;
     }
 
     static void RefreshMusicForCurrentScene()
