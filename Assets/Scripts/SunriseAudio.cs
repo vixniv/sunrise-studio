@@ -408,13 +408,33 @@ public sealed class SunriseAudio : MonoBehaviour
             ApplyFmodSfxVolume();
     }
 
+    // EventReference.Path exists only in the Editor; builds look the path up by GUID
+    // (needs Master.strings.bank, which FMOD loads with the other banks).
+    static string EventPath(EventReference reference)
+    {
+#if UNITY_EDITOR
+        if (!string.IsNullOrEmpty(reference.Path))
+            return reference.Path;
+#endif
+        if (reference.Guid.IsNull) return null;
+        try
+        {
+            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(reference.Guid);
+            return description.isValid() && description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
+        }
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+    }
+
     void CacheFmodSfx(Scene scene)
     {
         sceneSfxEmitters.Clear();
         if (!scene.IsValid() || !scene.isLoaded) return;
         foreach (GameObject root in scene.GetRootGameObjects())
         foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
-            if (emitter != null && emitter.EventReference.Path?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
+            if (emitter != null && EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
                 sceneSfxEmitters.Add(emitter);
         ApplyFmodSfxVolume();
     }
@@ -432,12 +452,12 @@ public sealed class SunriseAudio : MonoBehaviour
         foreach (GameObject root in scene.GetRootGameObjects())
         foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
         {
-            if (emitter == null || emitter.EventReference.Path?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
+            if (emitter == null || EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) != true)
                 continue;
 
             // Room emitters would start at Start, then stop when the room unloads.
             emitter.enabled = false;
-            string path = emitter.EventReference.Path;
+            string path = EventPath(emitter.EventReference);
             if (path == fmodMusicPath && fmodMusic.isValid())
                 continue;
 
