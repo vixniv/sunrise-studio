@@ -125,7 +125,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
             for (int i = 0; i < emitters.Length; i++)
             {
                 StudioEventEmitter emitter = emitters[i];
-                if (emitter != null && emitter.EventReference.Path == DaylightPath)
+                if (emitter != null && SunriseAudio.EventPath(emitter.EventReference) == DaylightPath)
                 {
                     sceneHasDaylight = true;
                     if (!emitter.IsPlaying())
@@ -144,7 +144,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         for (int i = 0; i < emitters.Length; i++)
         {
             StudioEventEmitter emitter = emitters[i];
-            if (emitter != null && IsMusicEmitter(emitter) && emitter.EventReference.Path != targetPath)
+            if (emitter != null && IsMusicEmitter(emitter) && SunriseAudio.EventPath(emitter.EventReference) != targetPath)
             {
                 emitter.AllowFadeout = true;
                 emitter.Stop();
@@ -194,7 +194,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
     static bool IsMusicEmitter(StudioEventEmitter emitter)
     {
-        string path = emitter.EventReference.Path;
+        string path = SunriseAudio.EventPath(emitter.EventReference);
         return !string.IsNullOrEmpty(path) && path.StartsWith("event:/Music/");
     }
 

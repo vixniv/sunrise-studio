@@ -408,6 +408,26 @@ public sealed class SunriseAudio : MonoBehaviour
             ApplyFmodSfxVolume();
     }
 
+    // EventReference.Path exists only in the Editor; builds look the path up by GUID
+    // (needs Master.strings.bank, which FMOD loads with the other banks).
+    public static string EventPath(EventReference reference)
+    {
+#if UNITY_EDITOR
+        if (!string.IsNullOrEmpty(reference.Path))
+            return reference.Path;
+#endif
+        if (reference.Guid.IsNull) return null;
+        try
+        {
+            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(reference.Guid);
+            return description.isValid() && description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
+        }
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+    }
+
     void CacheFmodSfx(Scene scene)
     {
         sceneSfxEmitters.Clear();
@@ -437,7 +457,7 @@ public sealed class SunriseAudio : MonoBehaviour
 
             // Room emitters would start at Start, then stop when the room unloads.
             emitter.enabled = false;
-            string path = FmodEventPath(emitter);
+            string path = EventPath(emitter.EventReference);
             if (path == fmodMusicPath && fmodMusic.isValid())
                 continue;
 
@@ -459,27 +479,7 @@ public sealed class SunriseAudio : MonoBehaviour
 
     static bool IsFmodMusic(StudioEventEmitter emitter)
     {
-        return FmodEventPath(emitter)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
-    }
-
-    static string FmodEventPath(StudioEventEmitter emitter)
-    {
-#if UNITY_EDITOR
-        return emitter.EventReference.Path;
-#else
-        if (emitter.EventReference.IsNull)
-            return null;
-
-        try
-        {
-            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(emitter.EventReference);
-            return description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
-        }
-        catch (EventNotFoundException)
-        {
-            return null;
-        }
-#endif
+        return EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
     }
 
     void ApplyFmodMusicVolume()

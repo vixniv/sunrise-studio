@@ -754,22 +754,6 @@ public class TimeTransition : MonoBehaviour
             return;
         }
 
-        if (clip != null)
-        {
-            if (audioSource == null)
-            {
-                audioSource = GetComponent<AudioSource>();
-                if (audioSource == null)
-                {
-                    audioSource = gameObject.AddComponent<AudioSource>();
-                    audioSource.playOnAwake = false;
-                    audioSource.spatialBlend = 0f;
-                }
-            }
-            audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
-            return;
-        }
-
         PlayFmodEvent(clockTickEvent);
     }
 
