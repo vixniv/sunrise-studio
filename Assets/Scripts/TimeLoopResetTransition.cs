@@ -948,23 +948,7 @@ public class TimeLoopResetTransition : MonoBehaviour
     static void PlayFmodEvent(EventReference eventRef)
     {
         if (!eventRef.IsNull)
-        {
             RuntimeManager.PlayOneShot(eventRef);
-            return;
-        }
-
-        if (clip == null) return;
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-                audioSource.playOnAwake = false;
-                audioSource.spatialBlend = 0f;
-            }
-        }
-        audioSource.PlayOneShot(clip, sfxVolume * SunriseAudio.SfxVolume);
     }
 
     static void SetImageAlpha(Image img, float alpha)

@@ -410,7 +410,7 @@ public sealed class SunriseAudio : MonoBehaviour
 
     // EventReference.Path exists only in the Editor; builds look the path up by GUID
     // (needs Master.strings.bank, which FMOD loads with the other banks).
-    static string EventPath(EventReference reference)
+    public static string EventPath(EventReference reference)
     {
 #if UNITY_EDITOR
         if (!string.IsNullOrEmpty(reference.Path))
