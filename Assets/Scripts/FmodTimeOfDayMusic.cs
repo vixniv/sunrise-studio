@@ -1,3 +1,7 @@
+using System.Collections;
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
@@ -13,14 +17,27 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public sealed class FmodTimeOfDayMusic : MonoBehaviour
 {
+    const string MainMenuPath = "event:/Music/Main_Menu";
     const string DaylightPath = "event:/Music/Daylight";
     const string EveningPath = "event:/Music/Evening";
     const string MidnightPath = "event:/Music/Midnight";
+    const string MusicVolumeKey = "Sunrise.Settings.MusicVolume";
 
     static FmodTimeOfDayMusic instance;
 
     EventInstance managedMusicInstance;
     string managedMusicPath;
+    float musicVolumeScale = 1f;
+    bool appHasFocus = true;
+    bool appIsPaused;
+    bool mixerSuspended;
+    bool needsMixerRecovery;
+    Coroutine pendingResumeCoroutine;
+
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    static extern bool SunriseAudioSession_EnsureActive();
+#endif
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
@@ -28,7 +45,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         instance = null;
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Boot()
     {
         EnsureInstance();
@@ -55,6 +72,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+        musicVolumeScale = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumeKey, 1f));
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         YarnCommands.TimeOfDayChanged += RefreshForCurrentScene;
@@ -94,9 +112,168 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         }
     }
 
+    public static void SetMusicVolume(float volume)
+    {
+        FmodTimeOfDayMusic active = EnsureInstance();
+        active.musicVolumeScale = Mathf.Clamp01(volume);
+        active.ApplyVolumeToActiveMusic();
+    }
+
     public static void RefreshForCurrentScene()
     {
         EnsureInstance().Refresh(SceneManager.GetActiveScene());
+    }
+
+    public static void ResumeAfterInterruption()
+    {
+        if (instance != null)
+        {
+            instance.needsMixerRecovery = true;
+            instance.ScheduleResumeAfterInterruption();
+            return;
+        }
+
+        if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
+        {
+            RuntimeManager.CoreSystem.mixerResume();
+            RuntimeManager.PauseAllEvents(false);
+        }
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        appHasFocus = hasFocus;
+        HandleApplicationLifecycleChange();
+    }
+
+    void OnApplicationPause(bool pauseStatus)
+    {
+        appIsPaused = pauseStatus;
+        HandleApplicationLifecycleChange();
+    }
+
+    void HandleApplicationLifecycleChange()
+    {
+        if (!appHasFocus || appIsPaused)
+        {
+            if (pendingResumeCoroutine != null)
+            {
+                StopCoroutine(pendingResumeCoroutine);
+                pendingResumeCoroutine = null;
+            }
+            SuspendForInterruption();
+        }
+        else if (mixerSuspended || needsMixerRecovery)
+        {
+            ScheduleResumeAfterInterruption();
+        }
+    }
+
+    void SuspendForInterruption()
+    {
+        needsMixerRecovery = true;
+        if (mixerSuspended)
+            return;
+
+        if (!RuntimeManager.IsInitialized || !RuntimeManager.StudioSystem.isValid())
+            return;
+
+        RuntimeManager.PauseAllEvents(true);
+        RuntimeManager.CoreSystem.mixerSuspend();
+        mixerSuspended = true;
+    }
+
+    void ScheduleResumeAfterInterruption()
+    {
+        if (!appHasFocus || appIsPaused)
+            return;
+
+        if (pendingResumeCoroutine != null)
+            StopCoroutine(pendingResumeCoroutine);
+
+        pendingResumeCoroutine = StartCoroutine(ResumeAfterInterruptionRoutine());
+    }
+
+    IEnumerator ResumeAfterInterruptionRoutine()
+    {
+        // Let iOS finish UIApplicationDidBecomeActive and AVAudioSession handoff.
+        yield return null;
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingResumeCoroutine = null;
+            yield break;
+        }
+
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+        // Retry briefly if iOS is still dismissing Control Center / Notification Center / Siri.
+        for (int attempt = 0; attempt < 6; attempt++)
+        {
+            if (!appHasFocus || appIsPaused)
+            {
+                pendingResumeCoroutine = null;
+                yield break;
+            }
+
+            if (SunriseAudioSession_EnsureActive())
+                break;
+
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
+#endif
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingResumeCoroutine = null;
+            yield break;
+        }
+
+        if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
+        {
+            // Force a suspend->resume cycle if FMOD was not explicitly suspended, so CoreAudio
+            // always reattaches its AudioUnit after route/session disruptions.
+            if (!mixerSuspended)
+                RuntimeManager.CoreSystem.mixerSuspend();
+
+            RuntimeManager.CoreSystem.mixerResume();
+            RuntimeManager.PauseAllEvents(false);
+            mixerSuspended = false;
+        }
+
+        needsMixerRecovery = false;
+        EnsureActiveMusicAfterInterruption();
+        pendingResumeCoroutine = null;
+    }
+
+    void EnsureActiveMusicAfterInterruption()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid() || !scene.isLoaded)
+            return;
+
+        if (scene.name == "TitleScreen")
+        {
+            StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
+            for (int i = 0; i < emitters.Length; i++)
+            {
+                StudioEventEmitter emitter = emitters[i];
+                if (emitter == null || !IsMusicEmitter(emitter))
+                    continue;
+
+                if (!emitter.IsPlaying())
+                    emitter.Play();
+
+                if (emitter.EventInstance.isValid())
+                    emitter.EventInstance.setVolume(musicVolumeScale);
+            }
+            return;
+        }
+
+        if (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning)
+            return;
+
+        string targetPath = scene.name == "CreditScene" ? MainMenuPath : GetTargetMusicPath();
+        PlayManagedMusic(targetPath);
     }
 
     void Refresh(Scene scene)
@@ -108,49 +285,29 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         if (scene.name == "TitleScreen")
         {
             StopManagedMusic();
+            ApplyVolumeToSceneMusicEmitters();
             return;
+        }
+
+        // Disable room music emitters so BGM stays seamless across rooms and never doubles up
+        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Include);
+        for (int i = 0; i < emitters.Length; i++)
+        {
+            StudioEventEmitter emitter = emitters[i];
+            if (emitter != null && IsMusicEmitter(emitter))
+            {
+                emitter.AllowFadeout = true;
+                if (emitter.IsPlaying())
+                    emitter.Stop();
+                emitter.enabled = false;
+            }
         }
 
         // Wait until TimeTransition finishes so Evening BGM crossfades in cleanly after the transition track
         if (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning)
             return;
 
-        string targetPath = GetTargetMusicPath();
-        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
-
-        // If the scene already has an emitter playing the exact target track, let it play
-        if (targetPath == DaylightPath)
-        {
-            bool sceneHasDaylight = false;
-            for (int i = 0; i < emitters.Length; i++)
-            {
-                StudioEventEmitter emitter = emitters[i];
-                if (emitter != null && SunriseAudio.EventPath(emitter.EventReference) == DaylightPath)
-                {
-                    sceneHasDaylight = true;
-                    if (!emitter.IsPlaying())
-                        emitter.Play();
-                }
-            }
-
-            if (sceneHasDaylight)
-            {
-                StopManagedMusic();
-                return;
-            }
-        }
-
-        // Stop any scene music emitters playing a different track (e.g. Daylight when it's now Evening/Midnight)
-        for (int i = 0; i < emitters.Length; i++)
-        {
-            StudioEventEmitter emitter = emitters[i];
-            if (emitter != null && IsMusicEmitter(emitter) && SunriseAudio.EventPath(emitter.EventReference) != targetPath)
-            {
-                emitter.AllowFadeout = true;
-                emitter.Stop();
-            }
-        }
-
+        string targetPath = scene.name == "CreditScene" ? MainMenuPath : GetTargetMusicPath();
         PlayManagedMusic(targetPath);
     }
 
@@ -163,7 +320,10 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         {
             managedMusicInstance.getPlaybackState(out PLAYBACK_STATE state);
             if (state == PLAYBACK_STATE.PLAYING || state == PLAYBACK_STATE.STARTING)
+            {
+                managedMusicInstance.setVolume(musicVolumeScale);
                 return;
+            }
         }
 
         StopManagedMusic();
@@ -171,6 +331,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         try
         {
             managedMusicInstance = RuntimeManager.CreateInstance(eventPath);
+            managedMusicInstance.setVolume(musicVolumeScale);
             managedMusicInstance.start();
             managedMusicPath = eventPath;
         }
@@ -178,6 +339,24 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         {
             Debug.LogWarning($"FmodTimeOfDayMusic: FMOD event '{eventPath}' not found. Run FMOD -> Refresh Banks in Unity Editor.", this);
             managedMusicPath = null;
+        }
+    }
+
+    void ApplyVolumeToActiveMusic()
+    {
+        if (managedMusicInstance.isValid())
+            managedMusicInstance.setVolume(musicVolumeScale);
+        ApplyVolumeToSceneMusicEmitters();
+    }
+
+    void ApplyVolumeToSceneMusicEmitters()
+    {
+        StudioEventEmitter[] emitters = FindObjectsByType<StudioEventEmitter>(FindObjectsInactive.Exclude);
+        for (int i = 0; i < emitters.Length; i++)
+        {
+            StudioEventEmitter emitter = emitters[i];
+            if (emitter != null && IsMusicEmitter(emitter) && emitter.EventInstance.isValid())
+                emitter.EventInstance.setVolume(musicVolumeScale);
         }
     }
 
@@ -194,8 +373,28 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
     static bool IsMusicEmitter(StudioEventEmitter emitter)
     {
-        string path = SunriseAudio.EventPath(emitter.EventReference);
-        return !string.IsNullOrEmpty(path) && path.StartsWith("event:/Music/");
+        string path = GetEventPath(emitter);
+        return !string.IsNullOrEmpty(path) && path.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    static string GetEventPath(StudioEventEmitter emitter)
+    {
+        if (emitter == null || emitter.EventReference.IsNull)
+            return null;
+
+#if UNITY_EDITOR
+        return emitter.EventReference.Path;
+#else
+        try
+        {
+            EventDescription description = RuntimeManager.GetEventDescription(emitter.EventReference);
+            return description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
+        }
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+#endif
     }
 
     static string GetTargetMusicPath()

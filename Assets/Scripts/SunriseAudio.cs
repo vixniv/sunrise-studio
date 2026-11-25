@@ -28,8 +28,13 @@ public sealed class SunriseAudio : MonoBehaviour
     float musicVolumeScale = 1f;
     float sfxVolumeScale = 1f;
     float loopCueVolume = 1f;
-    FMOD.Studio.EventInstance fmodMusic;
-    string fmodMusicPath;
+    bool audioInterrupted;
+    bool appHasFocus = true;
+    bool appIsPaused;
+    bool resumeMusicAfterInterruption;
+    bool resumeLoopAfterInterruption;
+    bool resumeAmbienceAfterInterruption;
+    Coroutine pendingRecoveryCoroutine;
     readonly List<StudioEventEmitter> sceneSfxEmitters = new List<StudioEventEmitter>();
 
     static SunriseAudio Instance
@@ -130,20 +135,117 @@ public sealed class SunriseAudio : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         YarnCommands.TimeOfDayChanged += RefreshMusicForCurrentScene;
+        AudioSettings.OnAudioConfigurationChanged += HandleAudioConfigurationChanged;
         WireButtons(SceneManager.GetActiveScene());
         RefreshMusicForCurrentScene();
     }
 
     void OnDestroy()
     {
-        StopFmodMusic();
         SceneManager.sceneLoaded -= OnSceneLoaded;
         YarnCommands.TimeOfDayChanged -= RefreshMusicForCurrentScene;
+        AudioSettings.OnAudioConfigurationChanged -= HandleAudioConfigurationChanged;
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        appHasFocus = hasFocus;
+        HandleApplicationStateChange();
+    }
+
+    void OnApplicationPause(bool pauseStatus)
+    {
+        appIsPaused = pauseStatus;
+        HandleApplicationStateChange();
+    }
+
+    void HandleApplicationStateChange()
+    {
+        if (!appHasFocus || appIsPaused)
+        {
+            if (pendingRecoveryCoroutine != null)
+            {
+                StopCoroutine(pendingRecoveryCoroutine);
+                pendingRecoveryCoroutine = null;
+            }
+            CapturePlaybackStateForInterruption();
+        }
+        else if (audioInterrupted && pendingRecoveryCoroutine == null)
+        {
+            pendingRecoveryCoroutine = StartCoroutine(RecoverAudioRoutine());
+        }
+    }
+
+    void HandleAudioConfigurationChanged(bool deviceWasChanged)
+    {
+        if (!appHasFocus || appIsPaused)
+            return;
+
+        RestoreInterruptedSources();
+        FmodTimeOfDayMusic.ResumeAfterInterruption();
+    }
+
+    void CapturePlaybackStateForInterruption()
+    {
+        if (audioInterrupted)
+            return;
+
+        audioInterrupted = true;
+        resumeMusicAfterInterruption = musicSource != null && musicSource.clip != null && musicSource.isPlaying;
+        resumeLoopAfterInterruption = loopSource != null && loopSource.clip != null && loopSource.isPlaying;
+        resumeAmbienceAfterInterruption = ambienceSource != null && ambienceSource.clip != null && ambienceSource.isPlaying;
+    }
+
+    IEnumerator RecoverAudioRoutine()
+    {
+        // Wait a frame so iOS UIApplicationDidBecomeActive finishes before touching audio.
+        // Do NOT call AudioSettings.Reset() here: resetting Unity's CoreAudio session on iOS
+        // detaches/silences FMOD Studio's shared CoreAudio output unit.
+        yield return null;
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingRecoveryCoroutine = null;
+            yield break;
+        }
+
+        audioInterrupted = false;
+        pendingRecoveryCoroutine = null;
+        RestoreInterruptedSources();
+        FmodTimeOfDayMusic.ResumeAfterInterruption();
+    }
+
+    void RestoreInterruptedSources()
+    {
+        if (musicSource != null)
+        {
+            musicSource.mute = musicVolumeScale <= 0.0001f;
+            musicSource.volume = musicCueVolume * musicVolumeScale;
+            if (resumeMusicAfterInterruption && musicSource.clip != null && !musicSource.isPlaying)
+                musicSource.Play();
+        }
+
+        if (loopSource != null)
+        {
+            loopSource.volume = loopCueVolume * sfxVolumeScale;
+            if (resumeLoopAfterInterruption && loopSource.clip != null && !loopSource.isPlaying)
+                loopSource.Play();
+        }
+
+        if (ambienceSource != null)
+        {
+            ambienceSource.mute = sfxVolumeScale <= 0.0001f;
+            if (resumeAmbienceAfterInterruption && ambienceSource.clip != null && !ambienceSource.isPlaying)
+                ambienceSource.Play();
+        }
+
+        resumeMusicAfterInterruption = false;
+        resumeLoopAfterInterruption = false;
+        resumeAmbienceAfterInterruption = false;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        KeepFmodMusicAcrossScenes(scene);
         CacheFmodSfx(scene);
         WireButtons(scene);
         RefreshMusic(scene);
@@ -355,13 +457,14 @@ public sealed class SunriseAudio : MonoBehaviour
     public static void SetMusicVolume(float volume)
     {
         float clamped = Mathf.Clamp01(volume);
+        FmodTimeOfDayMusic.SetMusicVolume(clamped);
+
         foreach (SunriseAudio audio in Resources.FindObjectsOfTypeAll<SunriseAudio>())
         {
             if (audio == null)
                 continue;
 
             audio.musicVolumeScale = clamped;
-            audio.ApplyFmodMusicVolume();
             AudioSource source = audio.musicSource;
             if (source == null)
             {
@@ -408,26 +511,6 @@ public sealed class SunriseAudio : MonoBehaviour
             ApplyFmodSfxVolume();
     }
 
-    // EventReference.Path exists only in the Editor; builds look the path up by GUID
-    // (needs Master.strings.bank, which FMOD loads with the other banks).
-    public static string EventPath(EventReference reference)
-    {
-#if UNITY_EDITOR
-        if (!string.IsNullOrEmpty(reference.Path))
-            return reference.Path;
-#endif
-        if (reference.Guid.IsNull) return null;
-        try
-        {
-            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(reference.Guid);
-            return description.isValid() && description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
-        }
-        catch (EventNotFoundException)
-        {
-            return null;
-        }
-    }
-
     void CacheFmodSfx(Scene scene)
     {
         sceneSfxEmitters.Clear();
@@ -446,56 +529,29 @@ public sealed class SunriseAudio : MonoBehaviour
                 emitter.EventInstance.setVolume(sfxVolumeScale);
     }
 
-    void KeepFmodMusicAcrossScenes(Scene scene)
-    {
-        if (!scene.IsValid() || !scene.isLoaded) return;
-        foreach (GameObject root in scene.GetRootGameObjects())
-        foreach (StudioEventEmitter emitter in root.GetComponentsInChildren<StudioEventEmitter>(true))
-        {
-            if (emitter == null || !IsFmodMusic(emitter))
-                continue;
-
-            // Room emitters would start at Start, then stop when the room unloads.
-            emitter.enabled = false;
-            string path = EventPath(emitter.EventReference);
-            if (path == fmodMusicPath && fmodMusic.isValid())
-                continue;
-
-            StopFmodMusic();
-            try
-            {
-                fmodMusic = RuntimeManager.CreateInstance(emitter.EventReference);
-                fmodMusicPath = path;
-                ApplyFmodMusicVolume();
-                fmodMusic.start();
-            }
-            catch (System.Exception exception)
-            {
-                Debug.LogError($"Unable to play FMOD music {path}: {exception.Message}", this);
-                StopFmodMusic();
-            }
-        }
-    }
-
     static bool IsFmodMusic(StudioEventEmitter emitter)
     {
-        return EventPath(emitter.EventReference)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
+        return FmodEventPath(emitter)?.StartsWith("event:/Music/", System.StringComparison.OrdinalIgnoreCase) == true;
     }
 
-    void ApplyFmodMusicVolume()
+    static string FmodEventPath(StudioEventEmitter emitter)
     {
-        if (fmodMusic.isValid()) fmodMusic.setVolume(musicVolumeScale);
-    }
+#if UNITY_EDITOR
+        return emitter.EventReference.Path;
+#else
+        if (emitter.EventReference.IsNull)
+            return null;
 
-    void StopFmodMusic()
-    {
-        if (fmodMusic.isValid())
+        try
         {
-            fmodMusic.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            fmodMusic.release();
-            fmodMusic.clearHandle();
+            FMOD.Studio.EventDescription description = RuntimeManager.GetEventDescription(emitter.EventReference);
+            return description.getPath(out string path) == FMOD.RESULT.OK ? path : null;
         }
-        fmodMusicPath = null;
+        catch (EventNotFoundException)
+        {
+            return null;
+        }
+#endif
     }
 
     static void RefreshMusicForCurrentScene()
@@ -508,7 +564,7 @@ public sealed class SunriseAudio : MonoBehaviour
         if (!scene.IsValid() || !scene.isLoaded)
             return;
 
-        string cue = scene.name == "TitleScreen"
+        string cue = scene.name == "TitleScreen" || scene.name == "CreditScene"
             ? "music_main_menu"
             : YarnCommands.IsTimeOfDay(YarnCommands.GapTimeOfDay)
                 ? "music_midnight"
