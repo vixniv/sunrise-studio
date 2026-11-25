@@ -393,6 +393,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863320879}
   m_CullTransparentMesh: 1
+--- !u!1 &919137929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 919137931}
+  - component: {fileID: 919137930}
+  m_Layer: 0
+  m_Name: CreditSceneReturn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &919137930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919137929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282108910d2604857a75911ab5d432cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CreditSceneReturn
+  titleScene: TitleScreen
+  returnAfterSeconds: 12
+  tapToSkip: 1
+  skipLockSeconds: 2
+  fadeOutSeconds: 1
+  fadeInSeconds: 0.75
+  deleteSaveOnArrival: 1
+--- !u!4 &919137931
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919137929}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &944326594
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,3 +1292,4 @@ SceneRoots:
   - {fileID: 1103987007}
   - {fileID: 1516041770}
   - {fileID: 944326597}
+  - {fileID: 919137931}
