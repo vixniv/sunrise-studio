@@ -29,9 +29,12 @@ public sealed class SunriseAudio : MonoBehaviour
     float sfxVolumeScale = 1f;
     float loopCueVolume = 1f;
     bool audioInterrupted;
+    bool appHasFocus = true;
+    bool appIsPaused;
     bool resumeMusicAfterInterruption;
     bool resumeLoopAfterInterruption;
     bool resumeAmbienceAfterInterruption;
+    Coroutine pendingRecoveryCoroutine;
     readonly List<StudioEventEmitter> sceneSfxEmitters = new List<StudioEventEmitter>();
 
     static SunriseAudio Instance
@@ -146,22 +149,38 @@ public sealed class SunriseAudio : MonoBehaviour
 
     void OnApplicationFocus(bool hasFocus)
     {
-        if (!hasFocus)
-            CapturePlaybackStateForInterruption();
-        else
-            RecoverAudioAfterInterruption();
+        appHasFocus = hasFocus;
+        HandleApplicationStateChange();
     }
 
     void OnApplicationPause(bool pauseStatus)
     {
-        if (pauseStatus)
+        appIsPaused = pauseStatus;
+        HandleApplicationStateChange();
+    }
+
+    void HandleApplicationStateChange()
+    {
+        if (!appHasFocus || appIsPaused)
+        {
+            if (pendingRecoveryCoroutine != null)
+            {
+                StopCoroutine(pendingRecoveryCoroutine);
+                pendingRecoveryCoroutine = null;
+            }
             CapturePlaybackStateForInterruption();
-        else
-            RecoverAudioAfterInterruption();
+        }
+        else if (audioInterrupted && pendingRecoveryCoroutine == null)
+        {
+            pendingRecoveryCoroutine = StartCoroutine(RecoverAudioRoutine());
+        }
     }
 
     void HandleAudioConfigurationChanged(bool deviceWasChanged)
     {
+        if (!appHasFocus || appIsPaused)
+            return;
+
         RestoreInterruptedSources();
         FmodTimeOfDayMusic.ResumeAfterInterruption();
     }
@@ -177,15 +196,21 @@ public sealed class SunriseAudio : MonoBehaviour
         resumeAmbienceAfterInterruption = ambienceSource != null && ambienceSource.clip != null && ambienceSource.isPlaying;
     }
 
-    void RecoverAudioAfterInterruption()
+    IEnumerator RecoverAudioRoutine()
     {
-        if (!audioInterrupted)
-            return;
+        // Wait a frame so iOS UIApplicationDidBecomeActive finishes before touching audio.
+        // Do NOT call AudioSettings.Reset() here: resetting Unity's CoreAudio session on iOS
+        // detaches/silences FMOD Studio's shared CoreAudio output unit.
+        yield return null;
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingRecoveryCoroutine = null;
+            yield break;
+        }
 
         audioInterrupted = false;
-#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
-        AudioSettings.Reset(AudioSettings.GetConfiguration());
-#endif
+        pendingRecoveryCoroutine = null;
         RestoreInterruptedSources();
         FmodTimeOfDayMusic.ResumeAfterInterruption();
     }

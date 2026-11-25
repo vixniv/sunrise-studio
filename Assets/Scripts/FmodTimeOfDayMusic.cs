@@ -1,3 +1,7 @@
+using System.Collections;
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
@@ -24,6 +28,16 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
     EventInstance managedMusicInstance;
     string managedMusicPath;
     float musicVolumeScale = 1f;
+    bool appHasFocus = true;
+    bool appIsPaused;
+    bool mixerSuspended;
+    bool needsMixerRecovery;
+    Coroutine pendingResumeCoroutine;
+
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    static extern bool SunriseAudioSession_EnsureActive();
+#endif
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
@@ -112,29 +126,124 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
     public static void ResumeAfterInterruption()
     {
+        if (instance != null)
+        {
+            instance.needsMixerRecovery = true;
+            instance.ScheduleResumeAfterInterruption();
+            return;
+        }
+
         if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
         {
             RuntimeManager.CoreSystem.mixerResume();
             RuntimeManager.PauseAllEvents(false);
         }
-
-        if (instance != null)
-            instance.EnsureActiveMusicAfterInterruption();
     }
 
-#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
     void OnApplicationFocus(bool hasFocus)
     {
-        if (hasFocus)
-            ResumeAfterInterruption();
+        appHasFocus = hasFocus;
+        HandleApplicationLifecycleChange();
     }
 
     void OnApplicationPause(bool pauseStatus)
     {
-        if (!pauseStatus)
-            ResumeAfterInterruption();
+        appIsPaused = pauseStatus;
+        HandleApplicationLifecycleChange();
     }
+
+    void HandleApplicationLifecycleChange()
+    {
+        if (!appHasFocus || appIsPaused)
+        {
+            if (pendingResumeCoroutine != null)
+            {
+                StopCoroutine(pendingResumeCoroutine);
+                pendingResumeCoroutine = null;
+            }
+            SuspendForInterruption();
+        }
+        else if (mixerSuspended || needsMixerRecovery)
+        {
+            ScheduleResumeAfterInterruption();
+        }
+    }
+
+    void SuspendForInterruption()
+    {
+        needsMixerRecovery = true;
+        if (mixerSuspended)
+            return;
+
+        if (!RuntimeManager.IsInitialized || !RuntimeManager.StudioSystem.isValid())
+            return;
+
+        RuntimeManager.PauseAllEvents(true);
+        RuntimeManager.CoreSystem.mixerSuspend();
+        mixerSuspended = true;
+    }
+
+    void ScheduleResumeAfterInterruption()
+    {
+        if (!appHasFocus || appIsPaused)
+            return;
+
+        if (pendingResumeCoroutine != null)
+            StopCoroutine(pendingResumeCoroutine);
+
+        pendingResumeCoroutine = StartCoroutine(ResumeAfterInterruptionRoutine());
+    }
+
+    IEnumerator ResumeAfterInterruptionRoutine()
+    {
+        // Let iOS finish UIApplicationDidBecomeActive and AVAudioSession handoff.
+        yield return null;
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingResumeCoroutine = null;
+            yield break;
+        }
+
+#if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
+        // Retry briefly if iOS is still dismissing Control Center / Notification Center / Siri.
+        for (int attempt = 0; attempt < 6; attempt++)
+        {
+            if (!appHasFocus || appIsPaused)
+            {
+                pendingResumeCoroutine = null;
+                yield break;
+            }
+
+            if (SunriseAudioSession_EnsureActive())
+                break;
+
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
 #endif
+
+        if (!appHasFocus || appIsPaused)
+        {
+            pendingResumeCoroutine = null;
+            yield break;
+        }
+
+        if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
+        {
+            // Force a suspend->resume cycle if FMOD was not explicitly suspended, so CoreAudio
+            // always reattaches its AudioUnit after route/session disruptions.
+            if (!mixerSuspended)
+                RuntimeManager.CoreSystem.mixerSuspend();
+
+            RuntimeManager.CoreSystem.mixerResume();
+            RuntimeManager.PauseAllEvents(false);
+            mixerSuspended = false;
+        }
+
+        needsMixerRecovery = false;
+        EnsureActiveMusicAfterInterruption();
+        pendingResumeCoroutine = null;
+    }
 
     void EnsureActiveMusicAfterInterruption()
     {
@@ -163,7 +272,8 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         if (TimeTransition.Instance != null && TimeTransition.Instance.IsTransitioning)
             return;
 
-        PlayManagedMusic(GetTargetMusicPath());
+        string targetPath = scene.name == "CreditScene" ? MainMenuPath : GetTargetMusicPath();
+        PlayManagedMusic(targetPath);
     }
 
     void Refresh(Scene scene)
