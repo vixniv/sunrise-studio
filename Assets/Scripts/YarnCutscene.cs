@@ -81,6 +81,23 @@ public class YarnCutscene : MonoBehaviour
         firstVisitFadesPlayed.Clear();
     }
 
+    // Save file support (SaveSystem): the start nodes already played, and the first-visit fades already used.
+    public static List<string> GetPlayedNodes() => new List<string>(played);
+    public static List<string> GetFirstVisitFadesPlayed() => new List<string>(firstVisitFadesPlayed);
+
+    // Save file support (SaveSystem): replaces both lists with a saved game's, before the saved scene loads.
+    public static void RestorePlayed(IEnumerable<string> playedNodes, IEnumerable<string> firstVisitFades)
+    {
+        played.Clear();
+        firstVisitFadesPlayed.Clear();
+        if (playedNodes != null)
+            foreach (string node in playedNodes)
+                if (!string.IsNullOrWhiteSpace(node)) played.Add(node.Trim());
+        if (firstVisitFades != null)
+            foreach (string node in firstVisitFades)
+                if (!string.IsNullOrWhiteSpace(node)) firstVisitFadesPlayed.Add(node.Trim());
+    }
+
     // Lets a story flashback replay one existing scene intro without resetting every cutscene.
     public static void ForgetPlayedNode(string node)
     {

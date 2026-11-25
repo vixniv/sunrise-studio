@@ -73,4 +73,6 @@ ProjectSettings/Packages/dev.yarnspinner/*-generated.ysls.json
 # Machine-specific FMOD paths and editor diagnostics.
 /Assets/Plugins/FMOD/Resources/FMODStudioSettings.asset
 /Assets/Plugins/FMOD/Resources/FMODStudioSettings.asset.meta
+/Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset
+/Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset.meta
 /fmod_editor.log

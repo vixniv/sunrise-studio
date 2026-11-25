@@ -118,6 +118,16 @@ public class YarnCommands : MonoBehaviour
         MemoryMontageChanged?.Invoke();
     }
 
+    // Save file support (SaveSystem): puts back the time slot and loop count of a saved game.
+    public static void RestoreFromSave(string timeOfDay, int loopsCompleted)
+    {
+        TimeOfDay = string.IsNullOrWhiteSpace(timeOfDay) ? DefaultTimeOfDay : timeOfDay.Trim();
+        LoopsCompleted = Mathf.Max(0, loopsCompleted);
+        MemoryMontageActive = false;
+        TimeOfDayChanged?.Invoke();
+        MemoryMontageChanged?.Invoke();
+    }
+
     // Time slot names ignore case, spaces, and underscores, so "After School" matches "after_school".
     public static bool IsTimeOfDay(string slot) => Key(slot) == Key(TimeOfDay);
 

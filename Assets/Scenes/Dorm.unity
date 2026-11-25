@@ -2731,10 +2731,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00076277653
+    x: 0.54691076
     y: 0
-    width: 0.99827105
-    height: 1
+    width: 0.05959827
+    height: 0.05970149
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -6090,7 +6090,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.03125, y: 2.4375}
+  m_Offset: {x: 0, y: 2.4375}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -6100,7 +6100,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 36.5625, y: 16.875}
+  m_Size: {x: 36.625, y: 16.875}
   m_EdgeRadius: 0
 --- !u!4 &945857408
 Transform:
@@ -7480,6 +7480,8 @@ MonoBehaviour:
   lampLights:
   - light: {fileID: 1645289640}
   - light: {fileID: 430670029}
+  useWindowLightsAtNight: 0
+  useCustomNightLights: 0
 --- !u!4 &1136107382
 Transform:
   m_ObjectHideFlags: 0
@@ -9496,7 +9498,7 @@ Transform:
   m_GameObject: {fileID: 1453213591}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.25, y: -6, z: 0}
+  m_LocalPosition: {x: -18.3125, y: -6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
