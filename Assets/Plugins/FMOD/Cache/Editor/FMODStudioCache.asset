@@ -285,10 +285,10 @@ MonoBehaviour:
   Path: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639308148570000000
+  lastModified: 639311290810000000
   FileSizes:
   - Name: Desktop
-    Value: 4842
+    Value: 5048
   Exists: 1
 --- !u!114 &-8439925383424642243
 MonoBehaviour:
@@ -398,6 +398,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 233
+--- !u!114 &-8111791816202694538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Music/AfterSchool_To_Evening_Transition
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Music/AfterSchool_To_Evening_Transition
+  Guid:
+    Data1: 222779770
+    Data2: 1134992081
+    Data3: 1886174397
+    Data4: 2121444316
+  Banks:
+  - {fileID: 8564245057458291114}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 6000
 --- !u!114 &-8070253992634884152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,6 +762,33 @@ MonoBehaviour:
   - Name: Desktop
     Value: 73888
   Exists: 1
+--- !u!114 &-6471939704315423080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: snapshot:/Duck_Music
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: snapshot:/Duck_Music
+  Guid:
+    Data1: 1314183427
+    Data2: 1141921796
+    Data3: 76178564
+    Data4: 1780080122
+  Banks:
+  - {fileID: -902401785392210237}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
 --- !u!114 &-6410489402040972856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1099,13 +1153,13 @@ MonoBehaviour:
     Data4: -1172624378
   Banks:
   - {fileID: 8542913798073580244}
-  IsStream: 0
+  IsStream: 1
   Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 9277
+  Length: 8887
 --- !u!114 &-4947899590026145124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2337,10 +2391,10 @@ MonoBehaviour:
   Path: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639308148570000000
+  lastModified: 639311242700000000
   FileSizes:
   - Name: Desktop
-    Value: 4352
+    Value: 6048
   Exists: 1
 --- !u!114 &-895539883216160527
 MonoBehaviour:
@@ -2713,13 +2767,17 @@ MonoBehaviour:
   - {fileID: -3815131987040654851}
   - {fileID: -1527709886920757373}
   - {fileID: -5679988125450890594}
+  - {fileID: -6471939704315423080}
+  - {fileID: 3853775609508401904}
+  - {fileID: -8111791816202694538}
+  - {fileID: 1054900922731069580}
   EditorParameters: []
   MasterBanks:
   - {fileID: -902401785392210237}
   StringsBanks:
   - {fileID: -8582110048938501589}
   cacheVersion: 131861
-  cacheTime: 639311137330000000
+  cacheTime: 639311933600000000
   SerializableEventsDict:
   - key: event:/UI/Button_Click
     index: 0
@@ -3082,6 +3140,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 349
+--- !u!114 &1054900922731069580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Music/Evening
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Music/Evening
+  Guid:
+    Data1: 2145170574
+    Data2: 1098648299
+    Data3: -1521607015
+    Data4: 33922913
+  Banks:
+  - {fileID: 8564245057458291114}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 44000
 --- !u!114 &1118532960224739923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3344,8 +3429,8 @@ MonoBehaviour:
     Data3: 1771030936
     Data4: -775768497
   Banks:
-  - {fileID: -902401785392210237}
   - {fileID: -6211040709425050808}
+  - {fileID: -902401785392210237}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -3589,6 +3674,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 400
+--- !u!114 &3853775609508401904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: snapshot:/Mute_Music
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: snapshot:/Mute_Music
+  Guid:
+    Data1: 373252912
+    Data2: 1320910598
+    Data3: 5863867
+    Data4: -925837623
+  Banks:
+  - {fileID: -902401785392210237}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
 --- !u!114 &4081172991543593470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4758,10 +4870,10 @@ MonoBehaviour:
   Path: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 639311137330000000
+  lastModified: 639311933600000000
   FileSizes:
   - Name: Desktop
-    Value: 1957056
+    Value: 2682976
   Exists: 1
 --- !u!114 &8564245057458291114
 MonoBehaviour:
@@ -4778,10 +4890,10 @@ MonoBehaviour:
   Path: ../../../Library/CloudStorage/Dropbox-DeveloperAcademy/AgainGame_FMOD/Again_v1/Build/Desktop/Music.bank
   Name: Music
   StudioPath: bank:/Music
-  lastModified: 639310764210000000
+  lastModified: 639311290810000000
   FileSizes:
   - Name: Desktop
-    Value: 2898368
+    Value: 3412192
   Exists: 1
 --- !u!114 &8692291725719941694
 MonoBehaviour:

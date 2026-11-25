@@ -8,7 +8,10 @@ namespace SunriseStudio.UI
 {
     public sealed class TitleScreenController : MonoBehaviour
     {
+        [Tooltip("With a save: continues it. Without one: starts a new game.")]
         [SerializeField] Button playButton;
+        [Tooltip("Shown only when a save exists. Starts the story from the beginning.")]
+        [SerializeField] Button newGameButton;
         [SerializeField] Button configButton;
         [SerializeField] GameObject configRoot;
         [SerializeField] SettingsController configController;
@@ -16,6 +19,7 @@ namespace SunriseStudio.UI
 
         [Header("Events")]
         [SerializeField] UnityEvent onPlayRequested = new();
+        [SerializeField] UnityEvent onNewGameRequested = new();
         [SerializeField] UnityEvent onConfigRequested = new();
 
         void Awake()
@@ -30,6 +34,8 @@ namespace SunriseStudio.UI
                 TimeLoopResetTransition.Instance.ResetForTitleScreen();
             if (configRoot != null)
                 configRoot.SetActive(false);
+            if (newGameButton != null)
+                newGameButton.gameObject.SetActive(SaveSystem.HasSave);
         }
 
         void Start()
@@ -41,6 +47,8 @@ namespace SunriseStudio.UI
         {
             if (playButton != null)
                 playButton.onClick.AddListener(HandlePlayClicked);
+            if (newGameButton != null)
+                newGameButton.onClick.AddListener(HandleNewGameClicked);
             if (configButton != null)
                 configButton.onClick.AddListener(HandleConfigClicked);
             if (configController != null)
@@ -51,6 +59,8 @@ namespace SunriseStudio.UI
         {
             if (playButton != null)
                 playButton.onClick.RemoveListener(HandlePlayClicked);
+            if (newGameButton != null)
+                newGameButton.onClick.RemoveListener(HandleNewGameClicked);
             if (configButton != null)
                 configButton.onClick.RemoveListener(HandleConfigClicked);
             if (configController != null)
@@ -61,6 +71,8 @@ namespace SunriseStudio.UI
         {
             if (playButton != null)
                 playButton.interactable = interactable;
+            if (newGameButton != null)
+                newGameButton.interactable = interactable;
             if (configButton != null)
                 configButton.interactable = interactable;
         }
@@ -69,6 +81,32 @@ namespace SunriseStudio.UI
         {
             Haptics.ButtonTap();
 
+            if (SaveSystem.HasSave)
+            {
+                // Puts the saved story state back; the save picks the scene. A broken save starts a new game instead.
+                if (SaveSystem.TryRestore(out string savedScene))
+                {
+                    onPlayRequested.Invoke();
+                    LoadGameplay(savedScene);
+                    return;
+                }
+                Debug.LogError("The save could not be loaded, so Play starts a new game.", this);
+            }
+
+            onPlayRequested.Invoke();
+            StartNewGame();
+        }
+
+        void HandleNewGameClicked()
+        {
+            Haptics.ButtonTap();
+            onNewGameRequested.Invoke();
+            // The old save stays on the device until the new game saves over it.
+            StartNewGame();
+        }
+
+        void StartNewGame()
+        {
             if (string.IsNullOrWhiteSpace(gameplayScene))
             {
                 Debug.LogError("The title screen has no gameplay scene configured.", this);
@@ -79,12 +117,15 @@ namespace SunriseStudio.UI
             YarnCutscene.ForgetPlayed();
             YarnCommands.ResetForNewGame();
             QuestTracker.ClearQuest();
-            onPlayRequested.Invoke();
+            LoadGameplay(gameplayScene.Trim());
+        }
+
+        void LoadGameplay(string sceneName)
+        {
+            SaveSystem.MarkGameStarted();
             Time.timeScale = 1f;
             AudioListener.pause = false;
             SetInteractable(false);
-
-            string sceneName = gameplayScene.Trim();
 
             if (CircleTransition.Instance != null)
                 CircleTransition.Instance.LoadSceneWithBlackFade(sceneName);

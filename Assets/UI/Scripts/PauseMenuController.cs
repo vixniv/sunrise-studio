@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
@@ -22,6 +23,13 @@ namespace SunriseStudio.UI
         [SerializeField] SettingsController configController;
         [SerializeField] string mainMenuScene = "TitleScreen";
 
+        [Header("Save feedback (optional)")]
+        [Tooltip("Text shown for a moment after tapping Save. Leave empty for no message.")]
+        [SerializeField] TMP_Text saveStatusLabel;
+        [SerializeField] string savedText = "SAVED";
+        [SerializeField] string saveFailedText = "CAN'T SAVE NOW";
+        [SerializeField, Min(0.1f)] float saveStatusSeconds = 1.5f;
+
         [Header("Events")]
         [SerializeField] UnityEvent onPaused = new();
         [SerializeField] UnityEvent onResumed = new();
@@ -31,6 +39,7 @@ namespace SunriseStudio.UI
         [SerializeField] UnityEvent onQuitRequested = new();
 
         float previousTimeScale = 1f;
+        Coroutine saveStatusRoutine;
 
         public bool IsPaused { get; private set; }
 
@@ -42,6 +51,7 @@ namespace SunriseStudio.UI
                 configRoot.SetActive(false);
             if (questLogButton != null)
                 questLogButton.gameObject.SetActive(false);
+            HideSaveStatus();
         }
 
         void OnEnable()
@@ -123,11 +133,49 @@ namespace SunriseStudio.UI
                 pauseRoot.SetActive(false);
             if (configRoot != null)
                 configRoot.SetActive(false);
+            HideSaveStatus();
 
             onResumed.Invoke();
         }
 
-        void HandleSaveClicked() => onSaveRequested.Invoke();
+        void HandleSaveClicked()
+        {
+            onSaveRequested.Invoke();
+            bool saved = SaveSystem.Save(out string reason);
+            if (!saved)
+                Debug.Log($"Pause menu: could not save because {reason}.", this);
+            ShowSaveStatus(saved ? savedText : saveFailedText);
+        }
+
+        void ShowSaveStatus(string message)
+        {
+            if (saveStatusLabel == null)
+                return;
+            if (saveStatusRoutine != null)
+                StopCoroutine(saveStatusRoutine);
+            saveStatusLabel.text = message;
+            saveStatusLabel.gameObject.SetActive(true);
+            saveStatusRoutine = StartCoroutine(HideSaveStatusLater());
+        }
+
+        // Realtime, because the game is paused (Time.timeScale is 0) while this shows.
+        IEnumerator HideSaveStatusLater()
+        {
+            yield return new WaitForSecondsRealtime(saveStatusSeconds);
+            saveStatusRoutine = null;
+            HideSaveStatus();
+        }
+
+        void HideSaveStatus()
+        {
+            if (saveStatusRoutine != null)
+            {
+                StopCoroutine(saveStatusRoutine);
+                saveStatusRoutine = null;
+            }
+            if (saveStatusLabel != null)
+                saveStatusLabel.gameObject.SetActive(false);
+        }
 
         void HandleSettingsClicked()
         {

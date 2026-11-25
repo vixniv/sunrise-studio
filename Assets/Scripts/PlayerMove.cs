@@ -136,6 +136,9 @@ public class PlayerMove : MonoBehaviour
         Face(moveX);
     }
 
+    // True when the sprite currently looks right. Used by SaveSystem to restore the facing.
+    public bool FacingRight => visual == null || (artFacesLeft ? visual.flipX : !visual.flipX);
+
     // Turns the sprite to look right (direction > 0) or left (direction < 0); 0 keeps the current facing.
     public void Face(float direction)
     {
