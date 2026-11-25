@@ -789,6 +789,8 @@ public class YarnCommands : MonoBehaviour
         Rigidbody2D body = target.GetComponent<Rigidbody2D>();
         if (body != null)
             body.position = new Vector2(destinationX, body.position.y);
+        // Keeps Y, which can be above this spot's floor: land there now rather than drop in view.
+        GroundSnap.Snap(body);
         if (target.GetComponent<PlayerMove>() != null)
         {
             CircleTransition transition = CircleTransition.Instance;
@@ -1452,6 +1454,10 @@ public class YarnCommands : MonoBehaviour
                     brain.UpdateMethod = CinemachineBrain.UpdateMethods.LateUpdate;
                 }
             }
+
+            // Physics is off during the walk, so land a character still in the air first,
+            // instead of walking along in the air and dropping when the walk ends.
+            GroundSnap.Snap(target);
 
             bodies = target.GetComponentsInChildren<Rigidbody2D>(true);
             bodyWasSimulated = new bool[bodies.Length];

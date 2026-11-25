@@ -111,6 +111,7 @@ public static class DoorSpawn
                     body.position = doorPosition;
                     body.linearVelocity = Vector2.zero;
                 }
+                GroundSnap.Snap(body);
                 FacePlayer(scene, player, candidate, doorPosition.x);
                 ResetCameraForArrival(scene);
                 Debug.Log($"DoorSpawn: story transition placed the player at {candidate.name}'s Spawn Point in {scene.name}.", candidate);
@@ -130,6 +131,7 @@ public static class DoorSpawn
                 body.position = new Vector2(pendingX, body.position.y);
                 body.linearVelocity = Vector2.zero;
             }
+            GroundSnap.Snap(body);
             player.Face(pendingFaceRight ? 1f : -1f);
             if (sitOnArrival)
             {
@@ -209,6 +211,9 @@ public static class DoorSpawn
             rb.position = position;
             rb.linearVelocity = Vector2.zero;
         }
+        // The player keeps the height placed in the scene, which can be above this room's floor
+        // (the Library's floor is lower): land them now, while the screen is still black.
+        GroundSnap.Snap(rb);
 
         FacePlayer(scene, player, door, position.x);
         ResetCameraForArrival(scene);
