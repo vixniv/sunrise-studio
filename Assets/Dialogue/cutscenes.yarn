@@ -63,3 +63,30 @@ This wasn't the day Anin had imagined, much less the one she'd wished for.
 <<sfx "fall_impact">>
 The day ended—and Fal's life with it.
 ===
+
+
+// ---------------------------------------------------------------------
+// FAL FALLS (ENDING): Locker Room at night, December 10 loop 1.
+// Played with <<detour Cutscene_FalFall_Ending>> from Loop1_Lockers_Night.
+// Art: Assets/Sprites/Cutscenes/Fal Fall New, renamed cutscene_fal_ending_*
+// so the names never match the older Fal Fall pictures.
+// ---------------------------------------------------------------------
+
+title: Cutscene_FalFall_Ending
+tags: cutscene ending
+---
+// Anin at the lockers.
+<<cutscene_image "cutscene_fal_ending_1a">>
+// The thud from outside catches her ear.
+<<cutscene_image "cutscene_fal_ending_1b">>
+<<sfx "fall_impact">>
+// The open window.
+<<cutscene_image "cutscene_fal_ending_2a">>
+Anin: ...?
+<<cutscene_image "cutscene_fal_ending_2b">>
+<<cutscene_image "cutscene_fal_ending_2c">>
+// This wasn't the day Anin had imagined, much less the one she'd wished for.
+<<cutscene_image "cutscene_fal_ending_3">>
+The day ended.
+And Fal's life with it.
+===
