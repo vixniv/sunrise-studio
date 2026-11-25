@@ -32,6 +32,7 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
     bool appIsPaused;
     bool mixerSuspended;
     bool needsMixerRecovery;
+    bool quitting;
     Coroutine pendingResumeCoroutine;
 
 #if (UNITY_IOS || UNITY_TVOS || UNITY_VISIONOS) && !UNITY_EDITOR
@@ -79,11 +80,41 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         RefreshForCurrentScene();
     }
 
+    void OnApplicationQuit()
+    {
+        quitting = true;
+        ResumeMixerIfSuspended();
+    }
+
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         YarnCommands.TimeOfDayChanged -= RefreshForCurrentScene;
+        // FMOD's Studio::System::release waits on the mixer thread to free streamed sounds.
+        // If the mixer is still suspended at that point, release never returns and the Editor
+        // freezes when leaving Play mode. Always hand FMOD back a running mixer.
+        ResumeMixerIfSuspended();
         StopManagedMusic();
+    }
+
+    void ResumeMixerIfSuspended()
+    {
+        if (pendingResumeCoroutine != null)
+        {
+            StopCoroutine(pendingResumeCoroutine);
+            pendingResumeCoroutine = null;
+        }
+
+        if (!mixerSuspended)
+            return;
+
+        if (RuntimeManager.IsInitialized && RuntimeManager.StudioSystem.isValid())
+        {
+            RuntimeManager.CoreSystem.mixerResume();
+            RuntimeManager.PauseAllEvents(false);
+        }
+        mixerSuspended = false;
+        needsMixerRecovery = false;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -154,6 +185,13 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
 
     void HandleApplicationLifecycleChange()
     {
+#if UNITY_EDITOR
+        // In the Editor, focus moves away from the Game view whenever you click the Inspector,
+        // another window or another app. Suspending FMOD's mixer there only causes trouble
+        // (pressing Stop while it is suspended deadlocks FMOD's shutdown). The suspend/resume
+        // handling is for real interruptions on the device (calls, Siri, Control Center).
+        return;
+#else
         if (!appHasFocus || appIsPaused)
         {
             if (pendingResumeCoroutine != null)
@@ -167,10 +205,14 @@ public sealed class FmodTimeOfDayMusic : MonoBehaviour
         {
             ScheduleResumeAfterInterruption();
         }
+#endif
     }
 
     void SuspendForInterruption()
     {
+        if (quitting)
+            return;
+
         needsMixerRecovery = true;
         if (mixerSuspended)
             return;
