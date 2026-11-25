@@ -19,6 +19,23 @@ public class PersistentVariableStorage : VariableStorageBehaviour
 
     public static void ClearForNewGame() => variables.Clear();
 
+    // Save file support (SaveSystem): a copy of every stored value, each a float, string or bool.
+    public static Dictionary<string, object> GetSnapshot() => new Dictionary<string, object>(variables);
+
+    // Save file support (SaveSystem): replaces every stored value. Call before the saved scene loads,
+    // so its Dialogue Runner and the ActiveIfYarnVariable objects already see the loaded values.
+    public static void RestoreSnapshot(Dictionary<string, object> values)
+    {
+        variables.Clear();
+        if (values == null) return;
+        foreach (KeyValuePair<string, object> value in values)
+        {
+            if (string.IsNullOrEmpty(value.Key) || !value.Key.StartsWith("$")) continue;
+            if (value.Value is float || value.Value is string || value.Value is bool)
+                variables[value.Key] = value.Value;
+        }
+    }
+
     // Playtesting only (Tools > Playtest Start): sets a value before any Dialogue Runner exists, such as $chapter_scene = 3.
     // value is a bool, float, or string, matching the variable's type in its <<declare>>.
     public static void SetValueForTesting(string variableName, object value)
