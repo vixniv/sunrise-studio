@@ -11,8 +11,7 @@
 // Rooftop: Fal leans on the railing (LeanPose, Start Leaning). When Anin walks near,
 // the screen fades and she reappears leaning beside Fal before the conversation.
 // CAMERA TODO: Pan from rooftop sign to Key Hook, then Janitor's Locker.
-// AUDIO TODO: No dedicated closing-bell cue was found. The day_transition cue
-// supplies the time-change bell and the late bell placeholder.
+// AUDIO: The day_transition cue supplies the time-change bell. No bell rings on the rooftop.
 // The Rooftop encounter plays in the Rooftop scene after its entrance notice.
 
 title: Dec10_Declarations
@@ -523,8 +522,6 @@ Fal: I know. That's why I like talking to you.
 <<close_dialogue_bubble>>
 // A brief, comfortable silence.
 <<delay 0.7>>
-// Early night: the school is nearing closing time.
-<<sfx "day_transition">>
 Anin: We should probably head down.
 Fal: Yeah.
 Fal: ...I'm glad you came up here.
@@ -534,6 +531,9 @@ Anin: Me too.
 // which leaves ~15 px between standing Anin and leaning Fal (his Lean Offset X is 1.9).
 <<face_character_to_actor "Anin" "Fal">>
 <<fade_teleport_character_to_actor "Anin" "Fal" -0.375 "stand">>
+// Goodbye side by side, before Anin walks to the exit door.
+Fal: I'll see you tomorrow, Anin.
+Anin: Yeah. See you tomorrow.
 <<cinematic_end>>
 <<quest_update "dec10" "Leave the rooftop">>
 <<set $dec10_rooftop_conversation_done to true>>
@@ -547,14 +547,11 @@ tags: december10 rooftop exit testing
     Anin: I should talk to Fal first.
     <<stop>>
 <<endif>>
-// Anin and Fal return downstairs together and part ways.
-// ROOFTOP EXIT TODO: Animate their descent when the character poses are ready.
+// Anin already said goodbye beside Fal at the end of Dec10_Rooftop_Conversation.
+// Fal stays at the railing. Anin walks back toward the Dorm through the quiet school.
 <<cinematic_start>>
-Fal: I'll see you tomorrow, Anin.
-Anin: Yeah. See you tomorrow.
 // HIDDEN CONTEXT: Fal is already experiencing a serious mental health crisis.
 // Anin does not recognize it. This connection is meaningful but does not resolve it.
-// Fal leaves. Anin walks back toward the Dorm through the quiet school.
 Anin: (I thought Fal had everything figured out.)
 Anin: (Guess we're all a little scared of tomorrow.)
 Anin: (I'm going to miss this.)
