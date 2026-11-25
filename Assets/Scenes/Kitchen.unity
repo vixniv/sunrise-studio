@@ -944,9 +944,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 1
-    height: 1
+    y: 0.058872305
+    width: 0.6651411
+    height: 0.66629314
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -1043,7 +1043,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 1
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -4116,6 +4116,8 @@ MonoBehaviour:
   lampLights:
   - light: {fileID: 1657810471}
   - light: {fileID: 844506021}
+  useWindowLightsAtNight: 0
+  useCustomNightLights: 0
 --- !u!4 &1993911681
 Transform:
   m_ObjectHideFlags: 0

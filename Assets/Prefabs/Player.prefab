@@ -269,8 +269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05006a984cf7d4e0c8592952039a256d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
-  walkSpeed: 3
-  runSpeed: 7
+  walkSpeed: 3.75
+  runSpeed: 7.5
   allowRunning: 1
   deadZone: 0.02
   runThreshold: 0.12
@@ -813,6 +813,7 @@ MonoBehaviour:
   randomStart: 1
   startLeaning: 0
   leanOffset: {x: 0, y: 0}
+  leanScale: 1
   faceFront: 1
   overrideSorting: 0
   leanSortingLayer: Default

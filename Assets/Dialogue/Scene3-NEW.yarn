@@ -11,8 +11,7 @@
 // Rooftop: Fal leans on the railing (LeanPose, Start Leaning). When Anin walks near,
 // the screen fades and she reappears leaning beside Fal before the conversation.
 // CAMERA TODO: Pan from rooftop sign to Key Hook, then Janitor's Locker.
-// AUDIO TODO: No dedicated closing-bell cue was found. The day_transition cue
-// supplies the time-change bell and the late bell placeholder.
+// AUDIO: The day_transition cue supplies the time-change bell. No bell rings on the rooftop.
 // The Rooftop encounter plays in the Rooftop scene after its entrance notice.
 
 title: Dec10_Declarations
@@ -245,8 +244,9 @@ tags: december10 classroom memory interactable testing
 // First entry: Anin walks to her old desk before remembering it.
 <<if $dec10_locker_intro_done is true and $dec10_seen_classroom is false>>
     <<place_character_near_x "Anin" 5.84 8>>
+    <<start_character_move "Anin" 5.84 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character "Anin" 5.84 4 "walk">>
+    <<wait_for_character_moves>>
     <<face_character "Anin" "right">>
     Anin: (I used to sit here so nobody would notice me leaving.)
     Anin: (Now there's always someone waiting for me.)
@@ -268,8 +268,9 @@ tags: december10 photographyclub memory interactable testing
 // First entry: Anin approaches Lila, who turns to face her.
 <<if $dec10_locker_intro_done is true and $dec10_seen_photography is false>>
     <<place_character_near_actor "Anin" "LilaSceneDec10" 2.5 8>>
+    <<start_character_move_to_actor "Anin" "LilaSceneDec10" 2.5 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character_to_actor "Anin" "LilaSceneDec10" 2.5 4 "walk">>
+    <<wait_for_character_moves>>
     <<face_character_to_actor "LilaSceneDec10" "Anin">>
     Lila: Anin! Look what I found while sorting photos for my interview!
     Anin: Please tell me I don't look awkward.
@@ -290,8 +291,9 @@ tags: december10 musicroom memory interactable testing
 // First entry: Anin walks toward the microphone or music stand.
 <<if $dec10_locker_intro_done is true and $dec10_seen_music is false>>
     <<place_character_near_x "Anin" 11.6 8>>
+    <<start_character_move "Anin" 11.6 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character "Anin" 11.6 4 "walk">>
+    <<wait_for_character_moves>>
     Anin: (Lila made me sing here once. I was terrified.)
     Anin: (Then everyone joined in. Somehow, they were even worse.)
     <<cinematic_end>>
@@ -312,8 +314,9 @@ tags: december10 library memory interactable testing
 // First entry: Anin approaches her old reading spot.
 <<if $dec10_locker_intro_done is true and $dec10_seen_library is false>>
     <<place_character_near_x "Anin" -1.26 8>>
+    <<start_character_move "Anin" -1.26 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character "Anin" -1.26 4 "walk">>
+    <<wait_for_character_moves>>
     Anin: (Dira found me hiding here during lunch.)
     Anin: (She didn't ask me to talk. She just stayed.)
     <<cinematic_end>>
@@ -328,8 +331,9 @@ tags: december10 cafetaria memory interactable testing
 // First entry: Anin approaches Kirana at their usual table. She is seated and has already ordered.
 <<if $dec10_locker_intro_done is true and $dec10_seen_cafetaria is false>>
     <<place_character_near_actor "Anin" "KiranaSceneDec10" -2.5 8>>
+    <<start_character_move_to_actor "Anin" "KiranaSceneDec10" -2.5 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character_to_actor "Anin" "KiranaSceneDec10" -2.5 4 "walk">>
+    <<wait_for_character_moves>>
     Kirana: Hey! Same table! I already ordered for us.
     Anin: One last lunch here, huh?
     Kirana: When I move, I'll find us a table just like this.
@@ -349,8 +353,9 @@ tags: december10 auditorium memory interactable testing
 // First entry: Anin approaches Dira, who turns right to face her.
 <<if $dec10_locker_intro_done is true and $dec10_seen_auditorium is false>>
     <<place_character_near_actor "Anin" "DiraSceneDec10" 2.5 8>>
+    <<start_character_move_to_actor "Anin" "DiraSceneDec10" 2.5 4 "walk" 0>>
     <<cinematic_start>>
-    <<move_character_to_actor "Anin" "DiraSceneDec10" 2.5 4 "walk">>
+    <<wait_for_character_moves>>
     <<face_character "DiraSceneDec10" "right">>
     Anin: Still checking everything?
     Dira: Two names were missing from the seating chart. Fixed it.
@@ -517,8 +522,6 @@ Fal: I know. That's why I like talking to you.
 <<close_dialogue_bubble>>
 // A brief, comfortable silence.
 <<delay 0.7>>
-// Early night: the school is nearing closing time.
-<<sfx "day_transition">>
 Anin: We should probably head down.
 Fal: Yeah.
 Fal: ...I'm glad you came up here.
@@ -528,6 +531,9 @@ Anin: Me too.
 // which leaves ~15 px between standing Anin and leaning Fal (his Lean Offset X is 1.9).
 <<face_character_to_actor "Anin" "Fal">>
 <<fade_teleport_character_to_actor "Anin" "Fal" -0.375 "stand">>
+// Goodbye side by side, before Anin walks to the exit door.
+Fal: I'll see you tomorrow, Anin.
+Anin: Yeah. See you tomorrow.
 <<cinematic_end>>
 <<quest_update "dec10" "Leave the rooftop">>
 <<set $dec10_rooftop_conversation_done to true>>
@@ -541,14 +547,11 @@ tags: december10 rooftop exit testing
     Anin: I should talk to Fal first.
     <<stop>>
 <<endif>>
-// Anin and Fal return downstairs together and part ways.
-// ROOFTOP EXIT TODO: Animate their descent when the character poses are ready.
+// Anin already said goodbye beside Fal at the end of Dec10_Rooftop_Conversation.
+// Fal stays at the railing. Anin walks back toward the Dorm through the quiet school.
 <<cinematic_start>>
-Fal: I'll see you tomorrow, Anin.
-Anin: Yeah. See you tomorrow.
 // HIDDEN CONTEXT: Fal is already experiencing a serious mental health crisis.
 // Anin does not recognize it. This connection is meaningful but does not resolve it.
-// Fal leaves. Anin walks back toward the Dorm through the quiet school.
 Anin: (I thought Fal had everything figured out.)
 Anin: (Guess we're all a little scared of tomorrow.)
 Anin: (I'm going to miss this.)

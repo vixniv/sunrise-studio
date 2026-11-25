@@ -228,6 +228,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 904a2dfba58a3497aadabe547dd62054, type: 3}
   - {fileID: 21300000, guid: 242fec1733a4c4ee3b45e71a5b23441a, type: 3}
   - {fileID: 21300000, guid: bc72338fd50ec4d4ca9b9bc83f317555, type: 3}
+  - {fileID: 21300000, guid: 89945cb088d554d1bac4b54e796596de, type: 3}
+  - {fileID: 21300000, guid: 609e03a0f92ef4a6c83dd8f2aa95f281, type: 3}
+  - {fileID: 21300000, guid: 15f111b19fc0c4258bc3818d4663d6e2, type: 3}
+  - {fileID: 21300000, guid: ff72d6be0fafb4e62bd08ad86ec29ae6, type: 3}
+  - {fileID: 21300000, guid: 557ff3b6e01994521a8b53eabdc4e6a2, type: 3}
+  - {fileID: 21300000, guid: 5715bdccf6d27455b86711b12cbc4616, type: 3}
   charactersPerSecond: 30
   fadeSeconds: 0.4
   pictureChangeSeconds: 0.3

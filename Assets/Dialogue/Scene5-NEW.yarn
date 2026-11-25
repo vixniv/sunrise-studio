@@ -7,7 +7,7 @@
 // Story_Loop1 objects, arrival nodes, interactables, actors, and exits in Unity.
 // Dorm uses the existing wake-up pose and the imported normal calendar art.
 // The Locker Room memory revisits Lila's original line in the Classroom.
-// ENDING TODO: Cutscene_FalFall is reused unchanged; its text and frame order are being reworked.
+// The ending plays Cutscene_FalFall_Ending (new Fal Fall art) from Loop1_Lockers_Night.
 // ADD CutsceneCanvas to PhotographyClub for the centered black narration.
 
 title: Loop1_Declarations
@@ -465,7 +465,7 @@ Anin: Why do I feel like I'm forgetting something important?
 <<wait_for_character_moves>>
 // The Fal fall pictures begin only after Anin reaches the left side.
 <<cinematic_end>>
-<<detour Cutscene_FalFall>>
+<<detour Cutscene_FalFall_Ending>>
 // Cut directly from its final image to a black thank-you card.
 <<cutscene_black>>
 Thank you for playing.
